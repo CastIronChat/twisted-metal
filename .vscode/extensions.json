@@ -1,0 +1,14 @@
+{
+    "recommendations": [
+        // Nice visual representation of git history, branching, merging.
+        "mhutchie.git-graph",
+        // Python support for VSCode
+        "ms-python.python",
+    ]
+    /*
+     * Others that I like:
+     *   "github.vscode-pull-request-github",
+     *   "GitHub.remotehub",
+     *   "eamodio.gitlens"
+     */
+}
