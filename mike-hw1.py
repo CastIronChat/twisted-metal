@@ -9,6 +9,8 @@ print(" ")
 x = input("What's your guess? ")
 print(" ")
 
+z = 56
+
 #gonna try this try except thing here incase someone enters not a number
 
 try :
@@ -17,13 +19,13 @@ except :
     print("Error 404")
     
 try :
-    if y == 56 :
+    if y == z :
         print("56? Fifty-six?? Aww man! Now that's all I can think about!!")
     elif y <= 0 :
         print("That's not even a positive number.")
     elif y <= 10 :
         print("Close.")
-    elif y < 56 :
+    elif y < z :
         print("Lower.")
     elif y <=9999 :
         print("Much lower.")
@@ -36,7 +38,7 @@ except :
 print(" ")
 
 try :
-    if y == 56 :
+    if y == z :
         print("You no good fifty-six'en!! (stab, stab)")
     else :
         print("Try again Red...")
