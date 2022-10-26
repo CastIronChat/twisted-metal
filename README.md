@@ -22,6 +22,7 @@ Getting started on Windows:
 
     ```
     pip install black
+    pip install arcade
     ```
 
 Restart VSCode to detect installed changes.
