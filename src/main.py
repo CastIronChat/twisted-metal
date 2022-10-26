@@ -5,7 +5,7 @@ from player_input import PlayerInput
 
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
-SCREEN_TITLE = "John Deer Clown School"
+SCREEN_TITLE = "Whatever I want"
 
 
 class MyGame(arcade.Window):
