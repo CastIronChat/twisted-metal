@@ -1,12 +1,12 @@
-# top-down twisted metal
+# top-down twisted metal: sweet tooth's revenge
 
-# sweet tooth's revenge
+Trello board: https://trello.com/b/1LSRKOHM/twisted-metal
 
 ## Development
 
 Getting started on Windows:
 
-*Easiest to screen-share and ask one of us to walk you through the list.*
+*Easiest to screen-share and ask one of us to walk you through this list.*
 
 - install VSCode: <https://code.visualstudio.com/>
 - install Git for Windows: <https://gitforwindows.org/>
@@ -26,3 +26,5 @@ Getting started on Windows:
     ```
 
 Restart VSCode to detect installed changes.
+
+At this point, you should be able to press F5 in VSCode and for the game to launch.
