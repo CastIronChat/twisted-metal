@@ -15,14 +15,15 @@ Getting started on Windows:
   - VSCode should prompt for this when you open our code.
   - Alternatively, open the "Extensions" sidebar, type `@recommended` into the
   search box, and install the items in that list.
-- Install the latest Python 3
-  - VSCode's python extension should prompt you with a button to do this.
-  - Alternatively, find it in the Windows Store: "Python 3.10"
+- Install Python 3.10
+  - Install from the python website; do not use the Windows Store version.
+  - Install 3.10, *not* 3.11, because a transitive dependency of `arcade` cannot easily
+  be installed on Windows on Python 3.11.
+  - https://www.python.org/downloads/
 - Install Python dependencies:
 
     ```
-    pip install black
-    pip install arcade
+    pip install -r requirements.txt
     ```
 
 Restart VSCode to detect installed changes.
