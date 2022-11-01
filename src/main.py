@@ -16,6 +16,7 @@ class MyGame(arcade.Window):
     allSprites: arcade.SpriteList = None
     player1: Player = None
     player1_input: PlayerInput = None
+    player2_input: PlayerInput = None
     input_debug_hud: InputDebugHud = None
     controller_manager: ControllerManager = None
 
@@ -34,18 +35,27 @@ class MyGame(arcade.Window):
         if len(controllers) >= 1:
             player1_controller = controllers[0]
             player1_controller.open()
-
         self.player1_input = PlayerInput(self.keyboard, player1_controller)
         bind_to_keyboard(self.player1_input)
         set_default_controller_layout(self.player1_input)
 
+        player2_controller = None
+        if len(controllers) >= 2:
+            player2_controller = controllers[1]
+            player2_controller.open()
+
+        self.player2_input = PlayerInput(self.keyboard, player2_controller)
+        set_default_controller_layout(self.player2_input)
+
         # Debug UI for input handling
-        self.input_debug_hud = InputDebugHud([self.player1_input])
+        self.input_debug_hud = InputDebugHud([self.player1_input, self.player2_input])
 
         # Player
         self.player1 = Player(self.player1_input)
+        self.player2 = Player(self.player2_input)
 
         self.allSprites.append(self.player1.sprite)
+        self.allSprites.append(self.player2.sprite)
 
     def on_draw(self):
         # clear screen
