@@ -18,11 +18,11 @@ class Player:
         self.turn_speed = 100
 
     def update(self, delta_time: float):
-        if self.input.left:
+        if self.input.x_axis.value < 0:
             self.sprite.angle -= delta_time * self.turn_speed
-        if self.input.right:
+        if self.input.x_axis.value > 0:
             self.sprite.angle += delta_time * self.turn_speed
-        if self.input.up:
+        if self.input.y_axis.value > 0:
             self.sprite.center_y += delta_time * self.drive_speed
-        if self.input.down:
+        if self.input.y_axis.value < 0:
             self.sprite.center_y -= delta_time * self.drive_speed
