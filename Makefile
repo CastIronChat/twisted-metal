@@ -1,16 +1,22 @@
 .PHONY: default
 default:
 
-formatSources = "src"
+sources = "src"
 
 # Reformat all code
 .PHONY: fmt
 fmt:
-	python -m black $(formatSources)
+	python -m black $(sources)
 
 check: lint
 
 # Check code formatting
-.PHONY: lint
-lint:
-	python.exe -m black --check $(formatSources)
+lint: lint-fmt lint-typecheck
+
+.PHONY: lint-fmt
+lint-fmt:
+	python -m black --check $(sources)
+
+.PHONY: lint-typecheck
+lint-typecheck:
+	python -m mypy $(sources)
