@@ -4,6 +4,10 @@
         "mhutchie.git-graph",
         // Python support for VSCode
         "ms-python.python",
+        // Justfile support
+        "sclu1034.justfile",
+        // Makefile support
+        "ms-vscode.makefile-tools"
     ]
     /*
      * Others that I like:
