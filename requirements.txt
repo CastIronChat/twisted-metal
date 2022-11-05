@@ -1,4 +1,4 @@
 # `pip install -r requirements.txt` to install python dependencies
 arcade
-mypy
+pyright
 black
