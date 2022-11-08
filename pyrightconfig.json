@@ -28,5 +28,4 @@
 
     // Disabled because arcade library does not follow this rule.
     "strictParameterNoneValue": false,
-
 }

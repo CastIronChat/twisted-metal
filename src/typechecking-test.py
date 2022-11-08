@@ -1,15 +1,29 @@
 import arcade
+from typing import TYPE_CHECKING
+
+arcade.color.AERO_BLUE
 
 
-class Foo(arcade.Window):
-    sprite: arcade.Sprite
-    sprite_list: arcade.SpriteList
+class Zombie:
+
+    shambling: bool
+    max_health: int
 
     def __init__(self):
-        super().__init__()
-        self.sprite = arcade.Sprite()
-        self.sprite_list = arcade.SpriteList()
+        self.shambling = True
 
-    def foo(self):
-        self.sprite.drawwww()  # Good; we get a typechecking error
-        self.sprite_list.drawwww()  # Bad; we do not get a typechecking error
+    def take_hit(self):
+        self.sambling = False
+
+
+class MadZombie(Zombie):
+    health: int
+
+    def take_hit(self):
+        self.sambling = False
+        self.health += 1
+
+
+z = Zombie()
+z.foo = 123
+print(z.foo)
