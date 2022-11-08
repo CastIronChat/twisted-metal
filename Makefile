@@ -19,4 +19,4 @@ lint-fmt:
 
 .PHONY: lint-typecheck
 lint-typecheck:
-	python -m mypy $(sources)
+	python -m pyright
