@@ -3,6 +3,8 @@ import arcade
 from input_debug_hud import InputDebugHud
 
 from player import Player
+from hud import Hud
+
 from player_input import PlayerInput, bind_to_keyboard, set_default_controller_layout
 from pyglet.input import ControllerManager
 
@@ -57,6 +59,14 @@ class MyGame(arcade.Window):
         self.allSprites.append(self.player1.sprite)
         self.allSprites.append(self.player2.sprite)
 
+        # HUD
+
+        self.player1hud = Hud(self.player1)
+        self.player2hud = Hud(self.player2)
+
+        self.allSprites.append(self.player1hud.sprite)
+        self.allSprites.append(self.player2hud.sprite2)
+                
     def on_draw(self):
         # clear screen
         self.clear()
