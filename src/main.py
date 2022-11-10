@@ -56,6 +56,8 @@ class MyGame(arcade.Window):
 
         self.allSprites.append(self.player1.sprite)
         self.allSprites.append(self.player2.sprite)
+        self.allSprites.append(self.player1.shoot_visual)
+        self.allSprites.append(self.player2.shoot_visual)
 
     def on_draw(self):
         # clear screen
