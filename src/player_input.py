@@ -83,6 +83,8 @@ class VirtualAxis:
         axis_value_from_analog = 0
         if self.__controller:
             axis_value_from_analog = getattr(self.__controller, self.axis)
+        if abs(axis_value_from_analog) < 0.1:
+            axis_value_from_analog = 0
 
         # Combine keyboard/button/stick values, and clamp
         return min(max(axis_value_from_analog + axis_value_from_buttons, -1), 1)
