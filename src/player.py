@@ -2,6 +2,7 @@ import arcade
 
 from player_input import PlayerInput
 from weapon import Laser
+from weapon import Rocket
 
 
 class Player:
@@ -12,6 +13,7 @@ class Player:
     drive_speed: float
     turn_speed: float
     primary_weapon: Laser
+    secondary_weapon: Rocket
 
     def __init__(self, input: PlayerInput):
         self.sprite = arcade.Sprite("assets/vehicle/temp-art.png")
@@ -19,6 +21,7 @@ class Player:
         self.drive_speed = 100
         self.turn_speed = 100
         self.primary_weapon = Laser(self.input, self.sprite)
+        self.secondary_weapon = Rocket(self.input, self.sprite)
         
     def update(self, delta_time: float):
         if self.input.x_axis.value < 0:
@@ -30,5 +33,6 @@ class Player:
         if self.input.y_axis.value < 0:
             self.sprite.center_y -= delta_time * self.drive_speed
 
-        (added,removed) = self.primary_weapon.update(delta_time)
-        return (added,removed)
+        (added1,removed1) = self.primary_weapon.update(delta_time)
+        (added2,removed2) = self.secondary_weapon.update(delta_time)
+        return (added1,removed1,added2,removed2)
