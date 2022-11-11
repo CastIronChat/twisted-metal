@@ -1,22 +1,26 @@
 import arcade
 import math
-from player_input import PlayerInput
+from player_input import PlayerInput, VirtualButton
 
-#TODO   see if sprites can be added and removed better
-#       create parent Weapon with Laser and Rocket as Children
-#       Instead of passing PlayerInput, pass a specific button so weapons aren't locked to a particur button
-#       Make Laser not extend from both sides of ship
+class Weapon:
+    def __init__(self, input: VirtualButton, car: arcade.Sprite):
+        self.input = input
+        self.car = car
+    
+    def update(self, delta_time: float):
+        ...
 
-class Laser:
-    #stays on while button is pressed and moved with the ship
-    input: PlayerInput
+class Laser(Weapon):
+    """
+    stays on while button is pressed and moved with the ship
+    """
+    input: VirtualButton
     car: arcade.Sprite
     shoot_visual: arcade.Sprite
     shooting: bool
 
-    def __init__(self, input: PlayerInput, car: arcade.Sprite):
-        self.input = input
-        self.car = car
+    def __init__(self, input: VirtualButton, car: arcade.Sprite):
+        super().__init__(input,car)
         self.shoot_visual = arcade.SpriteSolidColor(1000, 5, arcade.color.RED)
         self.shooting = False
         self.sprite_added = None
@@ -24,11 +28,11 @@ class Laser:
 
     def update(self, delta_time: float):
         
-        if self.shooting == False and self.input.primary_fire_button.value == True:
+        if self.shooting == False and self.input.value == True:
             self.shoot()
         if self.shooting == True:
             self.update_active_weapon()
-        if self.shooting == True and self.input.primary_fire_button.value == False:
+        if self.shooting == True and self.input.value == False:
             self.end_active_weapon()
 
         added = self.sprite_added
@@ -50,8 +54,10 @@ class Laser:
         self.sprite_removed = self.shoot_visual
         self.shooting = False
 
-class Rocket:
-    #Fires a projectile that is now independent of the ship and travels unil it reaches a designated distance
+class Rocket(Weapon):
+    """
+    Fires a projectile that is now independent of the ship and travels unil it reaches a designated distance
+    """
     input: PlayerInput
     car: arcade.Sprite
     shoot_visual: arcade.Sprite
@@ -59,9 +65,8 @@ class Rocket:
     rocket_speed: float
     rocket_angle: float
 
-    def __init__(self, input: PlayerInput, car: arcade.Sprite):
-        self.input = input
-        self.car = car
+    def __init__(self, input: VirtualButton, car: arcade.Sprite):
+        super().__init__(input,car)
         self.shoot_visual = arcade.SpriteSolidColor(50, 30, arcade.color.ORANGE)
         self.shooting = False
         self.rocket_speed = 200
@@ -69,7 +74,7 @@ class Rocket:
         self.sprite_removed = None
 
     def update(self, delta_time: float):
-        if self.shooting == False and self.input.secondary_fire_button.value == True:
+        if self.shooting == False and self.input.value == True:
             self.shoot()
         if self.shooting == True:
             self.update_active_weapon(delta_time)

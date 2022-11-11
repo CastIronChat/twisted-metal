@@ -1,9 +1,7 @@
 import arcade
 
 from player_input import PlayerInput
-from weapon import Laser
-from weapon import Rocket
-
+from weapon import Weapon, Laser, Rocket
 
 class Player:
     # TODO seems like the arcade engine wants us to subclass Sprite for all
@@ -12,16 +10,16 @@ class Player:
     input: PlayerInput
     drive_speed: float
     turn_speed: float
-    primary_weapon: Laser
-    secondary_weapon: Rocket
+    primary_weapon: Weapon
+    secondary_weapon: Weapon
 
     def __init__(self, input: PlayerInput):
         self.sprite = arcade.Sprite("assets/vehicle/temp-art.png")
         self.input = input
         self.drive_speed = 100
         self.turn_speed = 100
-        self.primary_weapon = Laser(self.input, self.sprite)
-        self.secondary_weapon = Rocket(self.input, self.sprite)
+        self.primary_weapon = Laser(self.input.primary_fire_button, self.sprite)
+        self.secondary_weapon = Rocket(self.input.secondary_fire_button, self.sprite)
         
     def update(self, delta_time: float):
         if self.input.x_axis.value < 0:
