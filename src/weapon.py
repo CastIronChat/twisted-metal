@@ -2,7 +2,13 @@ import arcade
 import math
 from player_input import PlayerInput
 
+#TODO   see if sprites can be added and removed better
+#       create parent Weapon with Laser and Rocket as Children
+#       Instead of passing PlayerInput, pass a specific button so weapons aren't locked to a particur button
+#       Make Laser not extend from both sides of ship
+
 class Laser:
+    #stays on while button is pressed and moved with the ship
     input: PlayerInput
     car: arcade.Sprite
     shoot_visual: arcade.Sprite
@@ -45,6 +51,7 @@ class Laser:
         self.shooting = False
 
 class Rocket:
+    #Fires a projectile that is now independent of the ship and travels unil it reaches a designated distance
     input: PlayerInput
     car: arcade.Sprite
     shoot_visual: arcade.Sprite
