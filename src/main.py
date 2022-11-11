@@ -56,8 +56,6 @@ class MyGame(arcade.Window):
 
         self.allSprites.append(self.player1.sprite)
         self.allSprites.append(self.player2.sprite)
-        self.allSprites.append(self.player1.shoot_visual)
-        self.allSprites.append(self.player2.shoot_visual)
 
     def on_draw(self):
         # clear screen
@@ -68,9 +66,16 @@ class MyGame(arcade.Window):
     def on_update(self, delta_time):
         # Pretty sure this does animation updates, in case any of the sprites
         # Have animations
+        (added,removed) = self.player1.update(delta_time)
+        if added is not None:
+            self.allSprites.append(added)
+        if removed is not None:
+            self.allSprites.remove(removed)
+
         self.allSprites.update()
 
-        self.player1.update(delta_time)
+
+
 
 
 def main():
