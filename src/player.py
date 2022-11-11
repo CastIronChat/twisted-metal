@@ -26,3 +26,8 @@ class Player:
             self.sprite.center_y += delta_time * self.drive_speed
         if self.input.y_axis.value < 0:
             self.sprite.center_y -= delta_time * self.drive_speed
+        
+# move to drivecontrols
+
+    def move():
+
