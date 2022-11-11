@@ -71,7 +71,7 @@ class MyGame(arcade.Window):
             self.allSprites.append(added)
         if removed is not None:
             self.allSprites.remove(removed)
-
+            
         self.allSprites.update()
 
 
