@@ -105,18 +105,24 @@ class VirtualButton:
     @property
     def value(self) -> bool:
         key_pressed = self.key != None and self.__keys[self.key]
-        button_pressed = self.__controller != None and self.button != None and getattr(self.__controller, self.button)
+        button_pressed = (
+            self.__controller != None
+            and self.button != None
+            and getattr(self.__controller, self.button)
+        )
         return key_pressed or button_pressed
 
+
 def set_default_controller_layout(player_input: PlayerInput):
-    player_input.x_axis.axis = 'leftx'
-    player_input.y_axis.axis = 'lefty'
-    player_input.rx_axis.axis = 'rightx'
-    player_input.ry_axis.axis = 'righty'
-    player_input.accelerate_button.button = 'righttrigger'
-    player_input.brake_button.button = 'lefttrigger'
-    player_input.primary_fire_button.button = 'a'
-    player_input.secondary_fire_button.button = 'b'
+    player_input.x_axis.axis = "leftx"
+    player_input.y_axis.axis = "lefty"
+    player_input.rx_axis.axis = "rightx"
+    player_input.ry_axis.axis = "righty"
+    player_input.accelerate_button.button = "righttrigger"
+    player_input.brake_button.button = "lefttrigger"
+    player_input.primary_fire_button.button = "a"
+    player_input.secondary_fire_button.button = "b"
+
 
 def bind_to_keyboard(player_input: PlayerInput):
     player_input.x_axis.key_negative = arcade.key.A

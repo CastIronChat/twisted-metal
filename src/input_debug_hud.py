@@ -37,7 +37,7 @@ class InputDebugHud:
     def get_readout(self):
         lines = []
         for (index, player_input) in enumerate(self.player_inputs):
-            lines += [f'Player #{index + 1}']
+            lines += [f"Player #{index + 1}"]
             lines += [
                 f"{control}: {getattr(player_input, control).value}"
                 for control in self.controls

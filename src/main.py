@@ -67,21 +67,18 @@ class MyGame(arcade.Window):
         # Pretty sure this does animation updates, in case any of the sprites
         # Have animations
 
-        #Get Sprites from player to add or remove from sprite list
-        (added1,removed1,added2,removed2) = self.player1.update(delta_time)
+        # Get Sprites from player to add or remove from sprite list
+        (added1, removed1, added2, removed2) = self.player1.update(delta_time)
         if added1 is not None:
             self.allSprites.append(added1)
         if added2 is not None:
-            self.allSprites.append(added2)  
+            self.allSprites.append(added2)
         if removed1 is not None:
             self.allSprites.remove(removed1)
         if removed2 is not None:
             self.allSprites.remove(removed2)
 
         self.allSprites.update()
-
-
-
 
 
 def main():
