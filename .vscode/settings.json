@@ -3,5 +3,8 @@
     // I have no experience with python formatting,
     // but this one seems as good as any other,
     // and VSCode supports it automatically.
-    "python.formatting.provider": "black"
+    "python.formatting.provider": "black",
+    "[python]": {
+        "editor.formatOnSave": true
+    }
 }
