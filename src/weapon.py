@@ -1,48 +1,56 @@
 import arcade
 import math
-from player_input import PlayerInput, VirtualButton
+
+from player_input import VirtualButton
 
 
 class Weapon:
-    def __init__(self, input: VirtualButton, car: arcade.Sprite):
-        self.input = input
-        self.car = car
-
-    def update(self, delta_time: float):
-        ...
-
-
-class Laser(Weapon):
     """
-    stays on while button is pressed and moved with the ship
+    Slotted into player's car and behaves according to it's subclass weapon type
     """
 
-    input: VirtualButton
+    input_button: VirtualButton
     car: arcade.Sprite
     shoot_visual: arcade.Sprite
     shooting: bool
+    sprite_added: arcade.Sprite
+    sprite_removed: arcade.Sprite
 
-    def __init__(self, input: VirtualButton, car: arcade.Sprite):
-        super().__init__(input, car)
-        self.shoot_visual = arcade.SpriteSolidColor(1000, 5, arcade.color.RED)
+    def __init__(self, input_button: VirtualButton, car: arcade.Sprite):
+        self.input_button = input_button
+        self.car = car
         self.shooting = False
         self.sprite_added = None
         self.sprite_removed = None
 
     def update(self, delta_time: float):
+        ...
 
-        if self.shooting == False and self.input.value == True:
-            self.shoot()
-        if self.shooting == True:
-            self.update_active_weapon()
-        if self.shooting == True and self.input.value == False:
-            self.end_active_weapon()
-
+    def send_to_spritelist(self):
         added = self.sprite_added
         removed = self.sprite_removed
         self.sprite_added = None
         self.sprite_removed = None
         return (added, removed)
+
+
+class Beam(Weapon):
+    """
+    stays on while button is pressed and moved with the ship
+    """
+
+    def __init__(self, input_button: VirtualButton, car: arcade.Sprite):
+        super().__init__(input_button, car)
+        self.shoot_visual = arcade.SpriteSolidColor(1000, 5, arcade.color.RED)
+
+    def update(self, delta_time: float):
+        if not self.shooting and self.input_button.value:
+            self.shoot()
+        if self.shooting:
+            self.update_active_weapon()
+            if not self.input_button.value:
+                self.end_active_weapon()
+        return super().send_to_spritelist()
 
     def shoot(self):
         self.shooting = True
@@ -63,34 +71,22 @@ class Rocket(Weapon):
     Fires a projectile that is now independent of the ship and travels unil it reaches a designated distance
     """
 
-    input: PlayerInput
-    car: arcade.Sprite
-    shoot_visual: arcade.Sprite
-    shooting: bool
     rocket_speed: float
     rocket_angle: float
 
-    def __init__(self, input: VirtualButton, car: arcade.Sprite):
-        super().__init__(input, car)
+    def __init__(self, input_button: VirtualButton, car: arcade.Sprite):
+        super().__init__(input_button, car)
         self.shoot_visual = arcade.SpriteSolidColor(50, 30, arcade.color.ORANGE)
-        self.shooting = False
         self.rocket_speed = 200
-        self.sprite_added = None
-        self.sprite_removed = None
 
     def update(self, delta_time: float):
-        if self.shooting == False and self.input.value == True:
+        if not self.shooting and self.input_button.value:
             self.shoot()
-        if self.shooting == True:
+        if self.shooting:
             self.update_active_weapon(delta_time)
             if self.shoot_visual.center_x > 500:
                 self.end_active_weapon()
-
-        added = self.sprite_added
-        removed = self.sprite_removed
-        self.sprite_added = None
-        self.sprite_removed = None
-        return (added, removed)
+        return super().send_to_spritelist()
 
     def shoot(self):
         self.shoot_visual.center_x = self.car.center_x
