@@ -44,11 +44,11 @@ class Beam(Weapon):
         self.shoot_visual = arcade.SpriteSolidColor(1000, 5, arcade.color.RED)
 
     def update(self, delta_time: float):
-        if self.shooting == False and self.input_button.value == True:
+        if not self.shooting and self.input_button.value:
             self.shoot()
-        if self.shooting == True:
+        if self.shooting:
             self.update_active_weapon()
-            if self.input_button.value == False:
+            if not self.input_button.value:
                 self.end_active_weapon()
         return super().send_to_spritelist()
 
@@ -80,9 +80,9 @@ class Rocket(Weapon):
         self.rocket_speed = 200
 
     def update(self, delta_time: float):
-        if self.shooting == False and self.input_button.value == True:
+        if not self.shooting and self.input_button.value:
             self.shoot()
-        if self.shooting == True:
+        if self.shooting:
             self.update_active_weapon(delta_time)
             if self.shoot_visual.center_x > 500:
                 self.end_active_weapon()
