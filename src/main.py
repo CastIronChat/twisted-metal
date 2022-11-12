@@ -21,6 +21,7 @@ class MyGame(arcade.Window):
     player2_input: PlayerInput = None
     input_debug_hud: InputDebugHud = None
     controller_manager: ControllerManager = None
+    playerlist: list = []
 
     def __init__(self, width, height, title):
         super().__init__(width, height, title, enable_polling=True)
@@ -59,14 +60,16 @@ class MyGame(arcade.Window):
         self.allSprites.append(self.player1.sprite)
         self.allSprites.append(self.player2.sprite)
 
-        # HUD
+        # Playerlist
+        self.playerlist = []
+        self.playerlist.append(self.player1)
+        self.playerlist.append(self.player2)
 
-        self.player1hud = Hud(self.player1)
-        self.player2hud = Hud(self.player2)
+        # Player Huds
+        self.hud = Hud(self.playerlist)
+        for sprite in self.hud.hud_sprite_list:
+            self.allSprites.append(sprite)
 
-        self.allSprites.append(self.player1hud.sprite)
-        self.allSprites.append(self.player2hud.sprite2)
-                
     def on_draw(self):
         # clear screen
         self.clear()
@@ -89,6 +92,8 @@ class MyGame(arcade.Window):
             self.allSprites.remove(removed2)
 
         self.allSprites.update()
+        self.hud.update()
+        self.player1.update(delta_time)
 
 
 def main():

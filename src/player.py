@@ -14,6 +14,7 @@ class Player:
     primary_weapon: Weapon
     secondary_weapon: Weapon
     playerhealth: int
+    player_health: int
 
     def __init__(self, input: PlayerInput):
         self.sprite = arcade.Sprite("assets/vehicle/temp-art.png")
@@ -23,6 +24,7 @@ class Player:
         self.primary_weapon = Beam(self.input.primary_fire_button, self.sprite)
         self.secondary_weapon = Rocket(self.input.secondary_fire_button, self.sprite)
         self.playerhealth = 100
+        self.player_health = 100
 
     def update(self, delta_time: float):
         if self.input.x_axis.value < 0:

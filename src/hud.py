@@ -1,32 +1,42 @@
 import arcade
 
 from player import Player
+from playerhud import PlayerHud
 
 
 class Hud:
 
     sprite: arcade.Sprite
-    sprite2: arcade.Sprite
-    health: Player
-    width: int = 80
-    height: int = 4
-    full_color: arcade.Color = arcade.color.GREEN
-    background_color: arcade.Color = arcade.color.RED
-    player1startx: int = 100
-    player1starty: int = 575
-    player2startx: int = 700
-    player2starty: int = 575
-
+    player_hud_startx: int = 100
+    player_hud_starty: int = 575
+    hud_sprite_list: list = []
+    player_number_tracker: int = 0
+    player_huds: list[PlayerHud]
+    player_hud_avatars: list[arcade.Sprite]
     
-    
-
-    def __init__(self, health: Player):
-
-        self.health = health.playerhealth
-        self.sprite = arcade.SpriteSolidColor(self.width, self.height, self.background_color)
-        self.sprite.center_x = self.player1startx
-        self.sprite.center_y = self.player1starty
+    # generates Player Huds and stores each instance in player_huds.    
+    def __init__(self, playerlist):
         
-        self.sprite2 = arcade.SpriteSolidColor(self.width, self.height, self.background_color)
-        self.sprite2.center_x = self.player2startx
-        self.sprite2.center_y = self.player2starty
+        self.player_huds = []
+        self.player_hud_avatars = [arcade.Sprite("assets\hud\player1avatar.png"), arcade.Sprite("assets\hud\player2avatar.png")]
+        
+        for player in playerlist:
+            self.sprite = PlayerHud(player, self.player_hud_startx, self.player_hud_starty, self.player_hud_avatars[self.player_number_tracker])
+            self.player_huds.append(self.sprite) 
+            
+            self.hud_sprite_list.append(self.sprite.background_sprite)
+            self.hud_sprite_list.append(self.sprite.health_sprite)
+            self.hud_sprite_list.append(self.sprite.player_hud_avatar)
+            
+            self.player_hud_startx += 150
+            self.player_number_tracker += 1
+            
+
+
+    def update(self):
+
+         for player_hud in self.player_huds:
+            
+            player_hud.update()
+
+            
