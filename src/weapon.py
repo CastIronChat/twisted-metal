@@ -18,6 +18,7 @@ class Weapon:
     sprite_removed: arcade.Sprite
 
     def __init__(self, input_button: VirtualButton, car: arcade.Sprite):
+        self.bullet_list = arcade.SpriteList()
         self.input_button = input_button
         self.car = car
         self.shooting = False
@@ -26,6 +27,9 @@ class Weapon:
 
     def update(self, delta_time: float):
         ...
+
+    def draw(self):
+        self.bullet_list.draw()
 
     def send_to_spritelist(self):
         added = self.sprite_added
@@ -120,14 +124,13 @@ class MachineGun(Weapon):
     def __init__(self, input_button: VirtualButton, car: arcade.Sprite):
         super().__init__(input_button, car)
         self.bullet_speed = 300
-        self.bullet_list = arcade.SpriteList()
 
     def update(self, delta_time: float):
         if not self.shooting and self.input_button.value:
             self.shoot(delta_time)
         if self.shooting and not self.input_button.value:
             self.shooting = False
-
+        self.bullet_list.update()
         return super().send_to_spritelist()
 
     def shoot(self, delta_time: float):

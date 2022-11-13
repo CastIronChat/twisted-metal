@@ -14,7 +14,6 @@ SCREEN_TITLE = "John Deer Clown School"
 class MyGame(arcade.Window):
     # Declare class members; enables tab-completion
     allSprites: arcade.SpriteList = None
-    bullet_list: arcade.SpriteList = None
     player1: Player = None
     player1_input: PlayerInput = None
     player2_input: PlayerInput = None
@@ -28,7 +27,6 @@ class MyGame(arcade.Window):
 
     def setup(self):
         self.allSprites = arcade.SpriteList()
-        self.bullet_list = arcade.SpriteList()
 
         # Input handling
         self.controller_manager = ControllerManager()
@@ -63,7 +61,7 @@ class MyGame(arcade.Window):
         # clear screen
         self.clear()
         self.allSprites.draw()
-        self.bullet_list.draw()
+        self.player1.draw()
         self.input_debug_hud.draw()
 
     def on_update(self, delta_time):
@@ -81,10 +79,6 @@ class MyGame(arcade.Window):
         if removed2 is not None:
             self.allSprites.remove(removed2)
         self.allSprites.update()
-
-        # bad hardcoded way to retrieve the bulletlist from machinge gun. Will fix
-        self.bullet_list = self.player1.primary_weapon.bullet_list
-        self.bullet_list.update()
 
 
 def main():

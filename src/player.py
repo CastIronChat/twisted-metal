@@ -35,3 +35,7 @@ class Player:
         (added1, removed1) = self.primary_weapon.update(delta_time)
         (added2, removed2) = self.secondary_weapon.update(delta_time)
         return (added1, removed1, added2, removed2)
+
+    def draw(self):
+        self.primary_weapon.draw()
+        self.secondary_weapon.draw()
