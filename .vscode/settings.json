@@ -4,6 +4,7 @@
     // but this one seems as good as any other,
     // and VSCode supports it automatically.
     "python.formatting.provider": "black",
+    "python.linting.mypyEnabled": true,
     "[python]": {
         "editor.formatOnSave": true
     }
