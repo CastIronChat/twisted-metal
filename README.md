@@ -26,6 +26,15 @@ Getting started on Windows:
     pip install -r requirements.txt
     ```
 
+- Install `make`
+  - I did this via `scoop`.  If you don't have scoop, follow the quick-start
+  instructions here: https://scoop.sh/
+  - Then install `make` via `scoop`:
+
+    ```
+    scoop install make
+    ```
+
 Restart VSCode to detect installed changes.
 
 At this point, you should be able to press F5 in VSCode and for the game to launch.
