@@ -1,0 +1,20 @@
+{
+    "issueLinkingConfig": {
+        "issue": "#(\\d+)",
+        "url": "https://github.com/CastIronChat/twisted-metal/issues/$1"
+    },
+    "pullRequestConfig": {
+        "provider": "github",
+        "hostRootUrl": "https://github.com",
+        "sourceRemote": "origin",
+        "sourceOwner": "CastIronChat",
+        "sourceRepo": "twisted-metal",
+        "destRemote": "origin",
+        "destOwner": "CastIronChat",
+        "destRepo": "twisted-metal",
+        "destProjectId": "",
+        "destBranch": "main",
+        "custom": null
+    },
+    "exportedAt": 1668179202265
+}
