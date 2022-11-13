@@ -26,17 +26,14 @@ Getting started on Windows:
     pip install -r requirements.txt
     ```
 
-- Install `just`/`make` (for the sake of this spike, I explain how to install both)
+- Install `make`
   - I did this via `scoop`.  If you don't have scoop, follow the quick-start
   instructions here: https://scoop.sh/
-  - Then install `just`/`make` via `scoop`:
+  - Then install `make` via `scoop`:
 
     ```
-    scoop install just
     scoop install make
     ```
-
-  - If you don't want to use `scoop`, other options are available: https://github.com/casey/just
 
 Restart VSCode to detect installed changes.
 
