@@ -1,5 +1,6 @@
 import arcade
 import math
+from constants import TICK_DURATION
 
 from player_input import VirtualButton
 
@@ -25,7 +26,7 @@ class Weapon:
         self.sprite_added = None
         self.sprite_removed = None
 
-    def update(self, delta_time: float):
+    def update(self):
         ...
 
     def draw(self):
@@ -48,7 +49,7 @@ class Beam(Weapon):
         super().__init__(input_button, car)
         self.shoot_visual = arcade.SpriteSolidColor(1000, 5, arcade.color.RED)
 
-    def update(self, delta_time: float):
+    def update(self):
         if not self.shooting and self.input_button.value:
             self.shoot()
         if self.shooting:
@@ -82,13 +83,13 @@ class Rocket(Weapon):
     def __init__(self, input_button: VirtualButton, car: arcade.Sprite):
         super().__init__(input_button, car)
         self.shoot_visual = arcade.SpriteSolidColor(50, 30, arcade.color.ORANGE)
-        self.rocket_speed = 200
+        self.rocket_speed = 200 * TICK_DURATION
 
-    def update(self, delta_time: float):
+    def update(self):
         if not self.shooting and self.input_button.value:
             self.shoot()
         if self.shooting:
-            self.update_active_weapon(delta_time)
+            self.update_active_weapon()
             if self.shoot_visual.center_x > 500:
                 self.end_active_weapon()
         return super().send_to_spritelist()
@@ -101,13 +102,9 @@ class Rocket(Weapon):
         self.shooting = True
         self.sprite_added = self.shoot_visual
 
-    def update_active_weapon(self, delta_time: float):
-        self.shoot_visual.center_x += (
-            delta_time * self.rocket_speed * math.cos(self.rocket_angle)
-        )
-        self.shoot_visual.center_y += (
-            delta_time * self.rocket_speed * math.sin(self.rocket_angle)
-        )
+    def update_active_weapon(self):
+        self.shoot_visual.center_x += self.rocket_speed * math.cos(self.rocket_angle)
+        self.shoot_visual.center_y += self.rocket_speed * math.sin(self.rocket_angle)
 
     def end_active_weapon(self):
         self.sprite_removed = self.shoot_visual
@@ -123,23 +120,23 @@ class MachineGun(Weapon):
 
     def __init__(self, input_button: VirtualButton, car: arcade.Sprite):
         super().__init__(input_button, car)
-        self.bullet_speed = 300
+        self.bullet_speed = 300 * TICK_DURATION
 
-    def update(self, delta_time: float):
+    def update(self):
         if not self.shooting and self.input_button.value:
-            self.shoot(delta_time)
+            self.shoot()
         if self.shooting and not self.input_button.value:
             self.shooting = False
         self.bullet_list.update()
         return super().send_to_spritelist()
 
-    def shoot(self, delta_time: float):
+    def shoot(self):
         bullet = arcade.SpriteSolidColor(10, 5, arcade.color.RED)
         bullet.center_x = self.car.center_x
         bullet.center_y = self.car.center_y
         bullet.angle = self.car.angle
         bullet_angle = math.radians(self.car.angle)
-        bullet.change_x = delta_time * self.bullet_speed * math.cos(bullet_angle)
-        bullet.change_y = delta_time * self.bullet_speed * math.sin(bullet_angle)
+        bullet.change_x = self.bullet_speed * math.cos(bullet_angle)
+        bullet.change_y = self.bullet_speed * math.sin(bullet_angle)
         self.shooting = True
         self.bullet_list.append(bullet)
