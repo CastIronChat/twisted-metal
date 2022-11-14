@@ -33,10 +33,6 @@ class Player:
             self.sprite.center_y += delta_time * self.drive_speed
         if self.input.y_axis.value < 0:
             self.sprite.center_y -= delta_time * self.drive_speed
-        if self.input.accelerate_button.value:
-            self.player_health -= 1
-        if self.input.brake_button.value:
-            self.player_health = 100
         
 
         (added1, removed1) = self.primary_weapon.update(delta_time)

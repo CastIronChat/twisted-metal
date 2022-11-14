@@ -21,12 +21,12 @@ class MyGame(arcade.Window):
     player2_input: PlayerInput = None
     input_debug_hud: InputDebugHud = None
     controller_manager: ControllerManager = None
-    playerlist: list = []
-
+    
     def __init__(self, width, height, title):
         super().__init__(width, height, title, enable_polling=True)
 
         arcade.set_background_color(arcade.color.AMAZON)
+        self.player_list: list = []
 
     def setup(self):
         self.allSprites = arcade.SpriteList()
@@ -61,12 +61,12 @@ class MyGame(arcade.Window):
         self.allSprites.append(self.player2.sprite)
 
         # Playerlist
-        self.playerlist = []
-        self.playerlist.append(self.player1)
-        self.playerlist.append(self.player2)
+        self.player_list = []
+        self.player_list.append(self.player1)
+        self.player_list.append(self.player2)
 
         # Player Huds
-        self.hud = Hud(self.playerlist)
+        self.hud = Hud(self.player_list)
         for sprite in self.hud.hud_sprite_list:
             self.allSprites.append(sprite)
 

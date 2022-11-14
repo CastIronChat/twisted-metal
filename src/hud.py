@@ -5,22 +5,22 @@ from playerhud import PlayerHud
 
 
 class Hud:
-
-    sprite: arcade.Sprite
-    player_hud_startx: int = 100
-    player_hud_starty: int = 575
-    hud_sprite_list: list = []
-    player_number_tracker: int = 0
-    player_huds: list[PlayerHud]
-    player_hud_avatars: list[arcade.Sprite]
-    
+   
     # generates Player Huds and stores each instance in player_huds.    
-    def __init__(self, playerlist):
+    def __init__(self, player_list):
+
+        self.sprite: arcade.Sprite
+        self.player_hud_startx: int = 100
+        self.player_hud_starty: int = 575
+        self.hud_sprite_list: list = []
+        self.player_number_tracker: int = 0
+        self.player_huds: list[PlayerHud]
+        self.player_hud_avatars: list[arcade.Sprite]
         
         self.player_huds = []
         self.player_hud_avatars = [arcade.Sprite("assets\hud\player1avatar.png"), arcade.Sprite("assets\hud\player2avatar.png")]
         
-        for player in playerlist:
+        for player in player_list:
             self.sprite = PlayerHud(player, self.player_hud_startx, self.player_hud_starty, self.player_hud_avatars[self.player_number_tracker])
             self.player_huds.append(self.sprite) 
             
