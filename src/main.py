@@ -3,6 +3,8 @@ import arcade
 from input_debug_hud import InputDebugHud
 
 from player import Player
+from hud import Hud
+
 from player_input import PlayerInput, bind_to_keyboard, set_default_controller_layout
 from pyglet.input import ControllerManager
 
@@ -19,11 +21,12 @@ class MyGame(arcade.Window):
     player2_input: PlayerInput = None
     input_debug_hud: InputDebugHud = None
     controller_manager: ControllerManager = None
-
+    
     def __init__(self, width, height, title):
         super().__init__(width, height, title, enable_polling=True)
 
         arcade.set_background_color(arcade.color.AMAZON)
+        self.player_list: list = []
 
     def setup(self):
         self.allSprites = arcade.SpriteList()
@@ -57,6 +60,16 @@ class MyGame(arcade.Window):
         self.allSprites.append(self.player1.sprite)
         self.allSprites.append(self.player2.sprite)
 
+        # Playerlist
+        self.player_list = []
+        self.player_list.append(self.player1)
+        self.player_list.append(self.player2)
+
+        # Player Huds
+        self.hud = Hud(self.player_list)
+        for sprite in self.hud.hud_sprite_list:
+            self.allSprites.append(sprite)
+
     def on_draw(self):
         # clear screen
         self.clear()
@@ -79,6 +92,8 @@ class MyGame(arcade.Window):
             self.allSprites.remove(removed2)
 
         self.allSprites.update()
+        self.hud.update()
+        self.player1.update(delta_time)
 
 
 def main():
