@@ -1,5 +1,4 @@
 import arcade
-from constants import TICK_DURATION
 
 from player_input import PlayerInput
 from weapon import Weapon, Beam, Rocket, MachineGun
@@ -19,23 +18,23 @@ class Player:
     def __init__(self, input: PlayerInput):
         self.sprite = arcade.Sprite("assets/vehicle/temp-art.png")
         self.input = input
-        self.drive_speed = 100 * TICK_DURATION
-        self.turn_speed = 100 * TICK_DURATION
+        self.drive_speed = 100
+        self.turn_speed = 100
         self.primary_weapon = MachineGun(self.input.primary_fire_button, self.sprite)
         self.secondary_weapon = Rocket(self.input.secondary_fire_button, self.sprite)
         self.player_health = 100
 
-    def update(self):
+    def update(self, delta_time):
         if self.input.x_axis.value < 0:
-            self.sprite.angle -= self.turn_speed
+            self.sprite.angle -= self.turn_speed * delta_time
         if self.input.x_axis.value > 0:
-            self.sprite.angle += self.turn_speed
+            self.sprite.angle += self.turn_speed * delta_time
         if self.input.y_axis.value > 0:
-            self.sprite.center_y += self.drive_speed
+            self.sprite.center_y += self.drive_speed * delta_time
         if self.input.y_axis.value < 0:
-            self.sprite.center_y -= self.drive_speed
-        self.primary_weapon.update()
-        self.secondary_weapon.update()
+            self.sprite.center_y -= self.drive_speed * delta_time
+        self.primary_weapon.update(delta_time)
+        self.secondary_weapon.update(delta_time)
 
     def draw(self):
         self.primary_weapon.draw()

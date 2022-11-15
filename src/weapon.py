@@ -1,6 +1,6 @@
 import arcade
 import math
-from constants import SCREEN_HEIGHT, SCREEN_WIDTH, TICK_DURATION
+from constants import SCREEN_HEIGHT, SCREEN_WIDTH
 
 from player_input import VirtualButton
 
@@ -41,7 +41,7 @@ class Beam(Weapon):
         super().__init__(input_button, car)
         self.beam_projection = arcade.SpriteSolidColor(1000, 5, arcade.color.RED)
 
-    def update(self):
+    def update(self, delta_time):
         if not self.button_held and self.input_button.value:
             self.shoot()
         if self.button_held:
@@ -73,17 +73,17 @@ class Rocket(Weapon):
 
     def __init__(self, input_button: VirtualButton, car: arcade.Sprite):
         super().__init__(input_button, car)
-        self.rocket_speed = 200 * TICK_DURATION
+        self.rocket_speed = 200
         self.fire_rate = 0.5
 
-    def update(self):
+    def update(self, delta_time):
         if not self.button_held and self.input_button.value:
             self.button_held = True
             if self.time_since_shoot > 1 / self.fire_rate:
                 self.shoot()
         if self.button_held and not self.input_button.value:
             self.button_held = False
-        self.update_active_weapon()
+        self.update_active_weapon(delta_time)
         self.remove_bullets()
 
     def shoot(self):
@@ -94,11 +94,15 @@ class Rocket(Weapon):
         self.time_since_shoot = 0
         self.bullet_list.append(rocket)
 
-    def update_active_weapon(self):
+    def update_active_weapon(self, delta_time):
         for rocket in self.bullet_list:
-            rocket.center_x += self.rocket_speed * math.cos(math.radians(rocket.angle))
-            rocket.center_y += self.rocket_speed * math.sin(math.radians(rocket.angle))
-        self.time_since_shoot += TICK_DURATION
+            rocket.center_x += (
+                self.rocket_speed * math.cos(math.radians(rocket.angle)) * delta_time
+            )
+            rocket.center_y += (
+                self.rocket_speed * math.sin(math.radians(rocket.angle)) * delta_time
+            )
+        self.time_since_shoot += delta_time
 
     def remove_bullets(self):
         for rocket in self.bullet_list:
@@ -121,15 +125,17 @@ class MachineGun(Weapon):
 
     def __init__(self, input_button: VirtualButton, car: arcade.Sprite):
         super().__init__(input_button, car)
-        self.bullet_speed = 300 * TICK_DURATION
+        self.bullet_speed = 300
         self.fire_rate = 10
 
-    def update(self):
+    def update(self, delta_time):
         if self.input_button.value and self.time_since_shoot > 1 / self.fire_rate:
             self.shoot()
         self.remove_bullets()
-        self.bullet_list.update()
-        self.time_since_shoot += TICK_DURATION
+        for bullet in self.bullet_list:
+            bullet.center_x += bullet.change_x * delta_time
+            bullet.center_y += bullet.change_y * delta_time
+        self.time_since_shoot += delta_time
 
     def shoot(self):
         bullet = arcade.SpriteSolidColor(10, 5, arcade.color.RED)

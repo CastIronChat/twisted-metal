@@ -81,8 +81,7 @@ class MyGame(arcade.Window):
         # Have animations
 
         # Get Sprites from player to add or remove from sprite list
-        self.player1.update()
-        self.allSprites.update()
+        self.player1.update(delta_time)
         self.hud.update()
 
 
