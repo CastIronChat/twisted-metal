@@ -12,19 +12,16 @@ class Weapon:
 
     input_button: VirtualButton
     car: arcade.Sprite
-    shoot_visual: arcade.Sprite
     bullet_list: arcade.SpriteList
     button_held: bool
-    sprite_added: arcade.Sprite
-    sprite_removed: arcade.Sprite
+    time_since_shoot: float
 
     def __init__(self, input_button: VirtualButton, car: arcade.Sprite):
         self.bullet_list = arcade.SpriteList()
         self.input_button = input_button
         self.car = car
         self.button_held = False
-        self.sprite_added = None
-        self.sprite_removed = None
+        self.time_since_shoot = 100
 
     def update(self):
         ...
@@ -32,22 +29,17 @@ class Weapon:
     def draw(self):
         self.bullet_list.draw()
 
-    def send_to_spritelist(self):
-        added = self.sprite_added
-        removed = self.sprite_removed
-        self.sprite_added = None
-        self.sprite_removed = None
-        return (added, removed)
-
 
 class Beam(Weapon):
     """
     stays on while button is pressed and moved with the ship
     """
 
+    beam_projection: arcade.Sprite
+
     def __init__(self, input_button: VirtualButton, car: arcade.Sprite):
         super().__init__(input_button, car)
-        self.shoot_visual = arcade.SpriteSolidColor(1000, 5, arcade.color.RED)
+        self.beam_projection = arcade.SpriteSolidColor(1000, 5, arcade.color.RED)
 
     def update(self):
         if not self.button_held and self.input_button.value:
@@ -55,20 +47,19 @@ class Beam(Weapon):
         if self.button_held:
             self.update_active_weapon()
             if not self.input_button.value:
-                self.end_active_weapon()
-        return super().send_to_spritelist()
+                self.remove_bullets()
 
     def shoot(self):
         self.button_held = True
-        self.sprite_added = self.shoot_visual
+        self.bullet_list.append(self.beam_projection)
 
     def update_active_weapon(self):
-        self.shoot_visual.center_x = self.car.center_x
-        self.shoot_visual.center_y = self.car.center_y
-        self.shoot_visual.angle = self.car.angle
+        self.beam_projection.center_x = self.car.center_x
+        self.beam_projection.center_y = self.car.center_y
+        self.beam_projection.angle = self.car.angle
 
-    def end_active_weapon(self):
-        self.sprite_removed = self.shoot_visual
+    def remove_bullets(self):
+        self.bullet_list.remove(self.beam_projection)
         self.button_held = False
 
 
@@ -78,69 +69,67 @@ class Rocket(Weapon):
     """
 
     rocket_speed: float
-    rocket_angle: float
+    fire_rate: float
 
     def __init__(self, input_button: VirtualButton, car: arcade.Sprite):
         super().__init__(input_button, car)
-        self.shoot_visual = arcade.SpriteSolidColor(50, 30, arcade.color.ORANGE)
         self.rocket_speed = 200 * TICK_DURATION
+        self.fire_rate = 0.5
 
     def update(self):
         if not self.button_held and self.input_button.value:
-            self.shoot()
-        if self.button_held:
-            self.update_active_weapon()
-            if self.shoot_visual.center_x > 500:
-                self.end_active_weapon()
-        return super().send_to_spritelist()
+            self.button_held = True
+            if self.time_since_shoot > 1 / self.fire_rate:
+                self.shoot()
+        if self.button_held and not self.input_button.value:
+            self.button_held = False
+        self.update_active_weapon()
+        self.remove_bullets()
 
     def shoot(self):
-        self.shoot_visual.center_x = self.car.center_x
-        self.shoot_visual.center_y = self.car.center_y
-        self.shoot_visual.angle = self.car.angle
-        self.rocket_angle = math.radians(self.car.angle)
-        self.button_held = True
-        self.sprite_added = self.shoot_visual
+        rocket = arcade.SpriteSolidColor(50, 30, arcade.color.ORANGE)
+        rocket.center_x = self.car.center_x
+        rocket.center_y = self.car.center_y
+        rocket.angle = self.car.angle
+        self.time_since_shoot = 0
+        self.bullet_list.append(rocket)
 
     def update_active_weapon(self):
-        self.shoot_visual.center_x += self.rocket_speed * math.cos(self.rocket_angle)
-        self.shoot_visual.center_y += self.rocket_speed * math.sin(self.rocket_angle)
+        for rocket in self.bullet_list:
+            rocket.center_x += self.rocket_speed * math.cos(math.radians(rocket.angle))
+            rocket.center_y += self.rocket_speed * math.sin(math.radians(rocket.angle))
+        self.time_since_shoot += TICK_DURATION
 
-    def end_active_weapon(self):
-        self.sprite_removed = self.shoot_visual
-        self.button_held = False
+    def remove_bullets(self):
+        for rocket in self.bullet_list:
+            if (
+                rocket.center_x < 0
+                or rocket.center_x > SCREEN_WIDTH - 300
+                or rocket.center_y < 0
+                or rocket.center_y > SCREEN_HEIGHT
+            ):
+                self.bullet_list.remove(rocket)
 
 
 class MachineGun(Weapon):
     """
-    Fires a projectile that is now independent of the ship and travels unil it reaches a designated distance
+    Fires many projectiles that move idependently from each other at a given fire rate
     """
 
     bullet_speed: float
     fire_rate: float
-    time_since_shoot: float
 
     def __init__(self, input_button: VirtualButton, car: arcade.Sprite):
         super().__init__(input_button, car)
         self.bullet_speed = 300 * TICK_DURATION
         self.fire_rate = 10
-        self.time_since_shoot = 0
 
     def update(self):
         if self.input_button.value and self.time_since_shoot > 1 / self.fire_rate:
             self.shoot()
-        # Remove bullets when they leave the screen
-        for bullet in self.bullet_list:
-            if (
-                bullet.center_x < 0
-                or bullet.center_x > SCREEN_WIDTH
-                or bullet.center_y < 0
-                or bullet.center_y > SCREEN_HEIGHT
-            ):
-                self.bullet_list.remove(bullet)
+        self.remove_bullets()
         self.bullet_list.update()
         self.time_since_shoot += TICK_DURATION
-        return super().send_to_spritelist()
 
     def shoot(self):
         bullet = arcade.SpriteSolidColor(10, 5, arcade.color.RED)
@@ -152,3 +141,13 @@ class MachineGun(Weapon):
         bullet.change_y = self.bullet_speed * math.sin(bullet_angle)
         self.time_since_shoot = 0
         self.bullet_list.append(bullet)
+
+    def remove_bullets(self):
+        for bullet in self.bullet_list:
+            if (
+                bullet.center_x < 0
+                or bullet.center_x > SCREEN_WIDTH
+                or bullet.center_y < 0
+                or bullet.center_y > SCREEN_HEIGHT
+            ):
+                self.bullet_list.remove(bullet)

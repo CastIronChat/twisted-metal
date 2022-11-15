@@ -32,10 +32,8 @@ class Player:
             self.sprite.center_y += self.drive_speed
         if self.input.y_axis.value < 0:
             self.sprite.center_y -= self.drive_speed
-
-        (added1, removed1) = self.primary_weapon.update()
-        (added2, removed2) = self.secondary_weapon.update()
-        return (added1, removed1, added2, removed2)
+        self.primary_weapon.update()
+        self.secondary_weapon.update()
 
     def draw(self):
         self.primary_weapon.draw()
