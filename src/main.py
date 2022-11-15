@@ -18,7 +18,7 @@ class MyGame(arcade.Window):
     player2_input: PlayerInput = None
     input_debug_hud: InputDebugHud = None
     controller_manager: ControllerManager = None
-    
+
     def __init__(self, width, height, title):
         super().__init__(
             width, height, title, enable_polling=True, update_rate=TICK_DURATION
@@ -84,7 +84,6 @@ class MyGame(arcade.Window):
         self.player1.update()
         self.allSprites.update()
         self.hud.update()
-        self.player1.update(delta_time)
 
 
 def main():
