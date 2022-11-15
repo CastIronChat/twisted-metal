@@ -14,6 +14,7 @@ class Player:
     turn_speed: float
     primary_weapon: Weapon
     secondary_weapon: Weapon
+    player_health: int
 
     def __init__(self, input: PlayerInput):
         self.sprite = arcade.Sprite("assets/vehicle/temp-art.png")
@@ -22,6 +23,7 @@ class Player:
         self.turn_speed = 100 * TICK_DURATION
         self.primary_weapon = MachineGun(self.input.primary_fire_button, self.sprite)
         self.secondary_weapon = Rocket(self.input.secondary_fire_button, self.sprite)
+        self.player_health = 100
 
     def update(self):
         if self.input.x_axis.value < 0:
