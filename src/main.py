@@ -48,7 +48,8 @@ class MyGame(arcade.Window):
         # clear screen
         self.clear()
         self.all_sprites.draw()
-        self.player1.draw()
+        for player in self.player_manager.players:
+            player.draw()
         self.input_debug_hud.draw()
 
     def on_update(self, delta_time):
