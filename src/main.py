@@ -8,9 +8,14 @@ from input_debug_hud import InputDebugHud
 from player import Player
 from player_manager import PlayerManager
 
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
-SCREEN_TITLE = "John Deer Clown School"
+from constants import SCREEN_HEIGHT, SCREEN_TITLE, SCREEN_WIDTH, TICK_DURATION
+from input_debug_hud import InputDebugHud
+
+from player import Player
+from hud import Hud
+
+from player_input import PlayerInput, bind_to_keyboard, set_default_controller_layout
+from pyglet.input import ControllerManager
 
 
 class MyGame(arcade.Window):
@@ -20,7 +25,9 @@ class MyGame(arcade.Window):
     controller_manager: ControllerManager = None
 
     def __init__(self, width, height, title):
-        super().__init__(width, height, title, enable_polling=True)
+        super().__init__(
+            width, height, title, enable_polling=True, update_rate=TICK_DURATION
+        )
 
         arcade.set_background_color(arcade.color.AMAZON)
         self.player_manager = PlayerManager(self.keyboard)
@@ -47,6 +54,7 @@ class MyGame(arcade.Window):
         # clear screen
         self.clear()
         self.all_sprites.draw()
+        self.player1.draw()
         self.input_debug_hud.draw()
 
     def on_update(self, delta_time):
@@ -55,15 +63,7 @@ class MyGame(arcade.Window):
 
         # Get Sprites from player to add or remove from sprite list
         for player in self.player_manager.players:
-            (added1, removed1, added2, removed2) = player.update(delta_time)
-            if added1 is not None:
-                self.all_sprites.append(added1)
-            if added2 is not None:
-                self.all_sprites.append(added2)
-            if removed1 is not None:
-                self.all_sprites.remove(removed1)
-            if removed2 is not None:
-                self.all_sprites.remove(removed2)
+            player.update(delta_time)
 
         self.all_sprites.update()
         self.hud.update()
