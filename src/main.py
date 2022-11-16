@@ -1,7 +1,6 @@
 from typing import List
 
 import arcade
-from pyglet.input import ControllerManager
 
 from constants import SCREEN_HEIGHT, SCREEN_TITLE, SCREEN_WIDTH, TICK_DURATION
 from input_debug_hud import InputDebugHud
@@ -9,14 +8,11 @@ from input_debug_hud import InputDebugHud
 from player_manager import PlayerManager
 from hud import Hud
 
-from pyglet.input import ControllerManager
-
 
 class MyGame(arcade.Window):
     # Declare class members; enables tab-completion
     all_sprites: arcade.SpriteList = None
     input_debug_hud: InputDebugHud = None
-    controller_manager: ControllerManager = None
 
     def __init__(self, width, height, title):
         super().__init__(
