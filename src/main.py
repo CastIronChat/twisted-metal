@@ -16,7 +16,6 @@ SCREEN_TITLE = "John Deer Clown School"
 class MyGame(arcade.Window):
     # Declare class members; enables tab-completion
     all_sprites: arcade.SpriteList = None
-    players: List[Player]
     input_debug_hud: InputDebugHud = None
     controller_manager: ControllerManager = None
 
@@ -31,15 +30,16 @@ class MyGame(arcade.Window):
 
         # Players
         self.player_manager.setup()
-        self.players = self.player_manager.players
-        for player in self.players:
+        for player in self.player_manager.players:
             self.all_sprites.append(player.sprite)
 
         # Debug UI for input handling
-        self.input_debug_hud = InputDebugHud([player.input for player in self.players])
+        self.input_debug_hud = InputDebugHud(
+            [player.input for player in self.player_manager.players]
+        )
 
         # Player Huds
-        self.hud = Hud(self.players)
+        self.hud = Hud(self.player_manager.players)
         for sprite in self.hud.hud_sprite_list:
             self.all_sprites.append(sprite)
 
@@ -54,7 +54,7 @@ class MyGame(arcade.Window):
         # Have animations
 
         # Get Sprites from player to add or remove from sprite list
-        for player in self.players:
+        for player in self.player_manager.players:
             (added1, removed1, added2, removed2) = player.update(delta_time)
             if added1 is not None:
                 self.all_sprites.append(added1)

@@ -25,15 +25,19 @@ class PlayerManager:
     """
 
     def __init__(self, keyboard: KeyStateHandler) -> None:
-        self.players: list[Player] = []
+        self._players: list[Player] = []
+        self._keyboard = keyboard
+        self._controller_manager: ControllerManager
+        self._did_setup = False
+
+    @property
+    def players(self):
         """
         Guaranteed to never be replaced, only mutated.
         References to this list can be passed elsewhere so that other code
         can access the current players.
         """
-        self._keyboard = keyboard
-        self._controller_manager: ControllerManager
-        self._did_setup = False
+        return self._players
 
     def setup(self):
         if self._did_setup:
