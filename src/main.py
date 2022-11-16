@@ -1,5 +1,6 @@
 from msilib.schema import Control
 import arcade
+from constants import SCREEN_HEIGHT, SCREEN_TITLE, SCREEN_WIDTH, TICK_DURATION
 from input_debug_hud import InputDebugHud
 
 from player import Player
@@ -7,10 +8,6 @@ from hud import Hud
 
 from player_input import PlayerInput, bind_to_keyboard, set_default_controller_layout
 from pyglet.input import ControllerManager
-
-SCREEN_WIDTH = 800
-SCREEN_HEIGHT = 600
-SCREEN_TITLE = "John Deer Clown School"
 
 
 class MyGame(arcade.Window):
@@ -21,9 +18,11 @@ class MyGame(arcade.Window):
     player2_input: PlayerInput = None
     input_debug_hud: InputDebugHud = None
     controller_manager: ControllerManager = None
-    
+
     def __init__(self, width, height, title):
-        super().__init__(width, height, title, enable_polling=True)
+        super().__init__(
+            width, height, title, enable_polling=True, update_rate=TICK_DURATION
+        )
 
         arcade.set_background_color(arcade.color.AMAZON)
         self.player_list: list = []
@@ -74,6 +73,7 @@ class MyGame(arcade.Window):
         # clear screen
         self.clear()
         self.allSprites.draw()
+        self.player1.draw()
         self.input_debug_hud.draw()
 
     def on_update(self, delta_time):
@@ -81,19 +81,8 @@ class MyGame(arcade.Window):
         # Have animations
 
         # Get Sprites from player to add or remove from sprite list
-        (added1, removed1, added2, removed2) = self.player1.update(delta_time)
-        if added1 is not None:
-            self.allSprites.append(added1)
-        if added2 is not None:
-            self.allSprites.append(added2)
-        if removed1 is not None:
-            self.allSprites.remove(removed1)
-        if removed2 is not None:
-            self.allSprites.remove(removed2)
-
-        self.allSprites.update()
-        self.hud.update()
         self.player1.update(delta_time)
+        self.hud.update()
 
 
 def main():

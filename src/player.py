@@ -1,7 +1,7 @@
 import arcade
 
 from player_input import PlayerInput
-from weapon import Weapon, Beam, Rocket
+from weapon import Weapon, Beam, Rocket, MachineGun
 
 
 class Player:
@@ -20,21 +20,22 @@ class Player:
         self.input = input
         self.drive_speed = 100
         self.turn_speed = 100
-        self.primary_weapon = Beam(self.input.primary_fire_button, self.sprite)
+        self.primary_weapon = MachineGun(self.input.primary_fire_button, self.sprite)
         self.secondary_weapon = Rocket(self.input.secondary_fire_button, self.sprite)
         self.player_health = 100
 
-    def update(self, delta_time: float):
+    def update(self, delta_time):
         if self.input.x_axis.value < 0:
-            self.sprite.angle -= delta_time * self.turn_speed
+            self.sprite.angle -= self.turn_speed * delta_time
         if self.input.x_axis.value > 0:
-            self.sprite.angle += delta_time * self.turn_speed
+            self.sprite.angle += self.turn_speed * delta_time
         if self.input.y_axis.value > 0:
-            self.sprite.center_y += delta_time * self.drive_speed
+            self.sprite.center_y += self.drive_speed * delta_time
         if self.input.y_axis.value < 0:
-            self.sprite.center_y -= delta_time * self.drive_speed
-        
+            self.sprite.center_y -= self.drive_speed * delta_time
+        self.primary_weapon.update(delta_time)
+        self.secondary_weapon.update(delta_time)
 
-        (added1, removed1) = self.primary_weapon.update(delta_time)
-        (added2, removed2) = self.secondary_weapon.update(delta_time)
-        return (added1, removed1, added2, removed2)
+    def draw(self):
+        self.primary_weapon.draw()
+        self.secondary_weapon.draw()
