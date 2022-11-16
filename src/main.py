@@ -3,18 +3,12 @@ from typing import List
 import arcade
 from pyglet.input import ControllerManager
 
-from hud import Hud
-from input_debug_hud import InputDebugHud
-from player import Player
-from player_manager import PlayerManager
-
 from constants import SCREEN_HEIGHT, SCREEN_TITLE, SCREEN_WIDTH, TICK_DURATION
 from input_debug_hud import InputDebugHud
 
-from player import Player
+from player_manager import PlayerManager
 from hud import Hud
 
-from player_input import PlayerInput, bind_to_keyboard, set_default_controller_layout
 from pyglet.input import ControllerManager
 
 
