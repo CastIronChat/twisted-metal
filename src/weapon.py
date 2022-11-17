@@ -13,14 +13,12 @@ class Weapon:
     input_button: VirtualButton
     car: arcade.Sprite
     bullet_list: arcade.SpriteList
-    button_held: bool
     time_since_shoot: float
 
     def __init__(self, input_button: VirtualButton, car: arcade.Sprite):
         self.bullet_list = arcade.SpriteList()
         self.input_button = input_button
         self.car = car
-        self.button_held = False
         self.time_since_shoot = 100
 
     def update(self):
@@ -36,13 +34,15 @@ class Beam(Weapon):
     """
 
     beam_projection: arcade.Sprite
+    button_held: bool
 
     def __init__(self, input_button: VirtualButton, car: arcade.Sprite):
         super().__init__(input_button, car)
         self.beam_projection = arcade.SpriteSolidColor(1000, 5, arcade.color.RED)
+        self.button_held = False
 
     def update(self, delta_time):
-        if not self.button_held and self.input_button.value:
+        if self.input_button.pressed:
             self.shoot()
         if self.button_held:
             self.update_active_weapon()
@@ -77,12 +77,9 @@ class Rocket(Weapon):
         self.fire_rate = 0.5
 
     def update(self, delta_time):
-        if not self.button_held and self.input_button.value:
-            self.button_held = True
+        if self.input_button.pressed:
             if self.time_since_shoot > 1 / self.fire_rate:
                 self.shoot()
-        if self.button_held and not self.input_button.value:
-            self.button_held = False
         self.update_active_weapon(delta_time)
         self.remove_bullets()
 

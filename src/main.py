@@ -49,9 +49,7 @@ class MyGame(arcade.Window):
         self.input_debug_hud.draw()
 
     def on_update(self, delta_time):
-        # Pretty sure this does animation updates, in case any of the sprites
-        # Have animations
-
+        self.player_manager.update_inputs()
         for player in self.player_manager.players:
             player.update(delta_time)
 

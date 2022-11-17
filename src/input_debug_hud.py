@@ -19,8 +19,8 @@ class InputDebugHud:
             "y_axis",
             "rx_axis",
             "ry_axis",
-            "accelerate_button",
-            "brake_button",
+            "accelerate_axis",
+            "brake_axis",
             "primary_fire_button",
             "secondary_fire_button",
         ]
