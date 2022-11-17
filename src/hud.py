@@ -18,7 +18,12 @@ class Hud:
         self.player_hud_avatars: list[arcade.Sprite]
         
         self.player_huds = []
-        self.player_hud_avatars = [arcade.Sprite("assets\hud\player1avatar.png"), arcade.Sprite("assets\hud\player2avatar.png")]
+        self.player_hud_avatars = [
+            arcade.Sprite("assets\hud\player1avatar.png"),
+            arcade.Sprite("assets\hud\player2avatar.png"),
+            arcade.Sprite("assets\hud\player3avatar.png"),
+            arcade.Sprite("assets\hud\player4avatar.png"),
+        ]
         
         for player in player_list:
             self.sprite = PlayerHud(player, self.player_hud_startx, self.player_hud_starty, self.player_hud_avatars[self.player_number_tracker])
