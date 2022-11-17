@@ -10,6 +10,17 @@
             "request": "launch",
             "program": "src/main.py",
             "console": "integratedTerminal",
+            "justMyCode": true,
+            "env": {
+                "USE_DEBUGGER_TIMING_FIXES": "true"
+            }
+        },
+        {
+            "name": "Run game, do *not* fix delta_time and update / draw ordering issues.",
+            "type": "python",
+            "request": "launch",
+            "program": "src/main.py",
+            "console": "integratedTerminal",
             "justMyCode": true
         }
     ]
