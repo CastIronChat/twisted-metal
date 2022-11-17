@@ -28,19 +28,6 @@ class Player:
         self.player_health = 100
 
     def update(self, delta_time):
-        # if self.input.x_axis.value < 0:  # left or right rotate the sprite
-        #     self.sprite.angle -= self.turn_speed * delta_time
-        # if self.input.x_axis.value > 0:
-        #     self.sprite.angle += self.turn_speed * delta_time
-
-        # if self.input.x_axis.value != 0:
-        
-        # self.sprite.angle -= self.turn_speed * delta_time * self.input.x_axis.value
-        #     
-        # if self.input.y_axis.value > 0:  # i want this to accelerate or brake the car
-        #     self.sprite.center_y += self.drive_speed * delta_time
-        # if self.input.y_axis.value < 0:
-        #     self.sprite.center_y -= self.drive_speed * delta_time
         if self.input.accelerate_button.value > 0:
             self.sprite.angle -= self.turn_speed * delta_time * self.input.x_axis.value
             self.sprite.center_x += (
