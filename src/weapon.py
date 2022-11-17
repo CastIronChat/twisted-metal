@@ -108,7 +108,7 @@ class Rocket(Weapon):
         for rocket in self.bullet_list:
             if (
                 rocket.center_x < 0
-                or rocket.center_x > SCREEN_WIDTH - 300
+                or rocket.center_x > SCREEN_WIDTH
                 or rocket.center_y < 0
                 or rocket.center_y > SCREEN_HEIGHT
             ):

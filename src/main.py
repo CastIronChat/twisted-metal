@@ -52,9 +52,6 @@ class MyGame(arcade.Window):
         # Debug UI for input handling
         self.input_debug_hud = InputDebugHud([self.player1_input, self.player2_input])
 
-        # create physics engine
-        # self.physics_engine = arcade.PhysicsEngineSimple(self.player_sprite)
-
         # Player
         self.player1 = Player(self.player1_input)
         self.player2 = Player(self.player2_input)
