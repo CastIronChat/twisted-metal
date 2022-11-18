@@ -1,6 +1,8 @@
 from typing import List
 
 import arcade
+from arena.arena import Arena
+from arena.arena_loader import load_arena_by_name
 
 from constants import SCREEN_HEIGHT, SCREEN_TITLE, SCREEN_WIDTH, TICK_DURATION
 from input_debug_hud import InputDebugHud
@@ -21,6 +23,7 @@ class MyGame(arcade.Window):
         self.physics_engine = None
         arcade.set_background_color(arcade.color.AMAZON)
         self.player_manager = PlayerManager(self.keyboard)
+        self.arena: Arena
 
     def setup(self):
         self.all_sprites = arcade.SpriteList()
@@ -40,9 +43,13 @@ class MyGame(arcade.Window):
         for sprite in self.hud.hud_sprite_list:
             self.all_sprites.append(sprite)
 
+        self.arena = load_arena_by_name("default")
+        self.arena.init_for_drawing()
+
     def on_draw(self):
         # clear screen
         self.clear()
+        self.arena.draw()
         self.all_sprites.draw()
         for player in self.player_manager.players:
             player.draw()
