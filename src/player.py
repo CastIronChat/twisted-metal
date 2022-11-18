@@ -21,7 +21,7 @@ class Player:
         self.input = input
         self.drive_speed = 100
         self.turn_speed = 100
-        self.primary_weapon = MachineGun(self.input.primary_fire_button, self.sprite)
+        self.primary_weapon = Beam(self.input.primary_fire_button, self.sprite)
         self.secondary_weapon = Rocket(self.input.secondary_fire_button, self.sprite)
         self.spawn_target = Target(self.input.spawn_target)
         self.player_health = 100
