@@ -38,6 +38,10 @@ class Player:
         self.primary_weapon.update(delta_time)
         self.secondary_weapon.update(delta_time)
         self.spawn_target.update(delta_time)
+        for bullet in self.primary_weapon.bullet_list:
+            test = arcade.check_for_collision_with_list(bullet, self.spawn_target.target_list)
+            for sprite in test:
+                self.spawn_target.target_list.remove(sprite)
 
     def draw(self):
         self.primary_weapon.draw()
