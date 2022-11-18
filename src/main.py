@@ -2,7 +2,13 @@ from typing import List
 
 import arcade
 
-from constants import SCREEN_HEIGHT, SCREEN_TITLE, SCREEN_WIDTH, TICK_DURATION
+from constants import (
+    SCREEN_HEIGHT,
+    SCREEN_TITLE,
+    SCREEN_WIDTH,
+    TICK_DURATION,
+    USE_DEBUGGER_TIMING_FIXES,
+)
 from input_debug_hud import InputDebugHud
 
 from player_manager import PlayerManager
@@ -40,15 +46,15 @@ class MyGame(arcade.Window):
         for sprite in self.hud.hud_sprite_list:
             self.all_sprites.append(sprite)
 
-    def on_draw(self):
-        # clear screen
-        self.clear()
-        self.all_sprites.draw()
-        for player in self.player_manager.players:
-            player.draw()
-        self.input_debug_hud.draw()
-
     def on_update(self, delta_time):
+        # Arcade engine has a quirk where, in the debugger, it calls `on_update` twice back-to-back,
+        # then `on_draw` twice, and so on.
+        # We avoid this bug by ignoring the `on_update()` call from arcade, instead calling it ourselves
+        # from `on_draw`
+        if not USE_DEBUGGER_TIMING_FIXES:
+            self.our_update(delta_time)
+
+    def our_update(self, delta_time):
         # Pretty sure this does animation updates, in case any of the sprites
         # Have animations
 
@@ -56,6 +62,17 @@ class MyGame(arcade.Window):
             player.update(delta_time)
 
         self.hud.update()
+
+    def on_draw(self):
+        if USE_DEBUGGER_TIMING_FIXES:
+            self.our_update(TICK_DURATION)
+
+        # clear screen
+        self.clear()
+        self.all_sprites.draw()
+        for player in self.player_manager.players:
+            player.draw()
+        self.input_debug_hud.draw()
 
 
 def main():
