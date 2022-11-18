@@ -18,7 +18,7 @@ class MyGame(arcade.Window):
         super().__init__(
             width, height, title, enable_polling=True, update_rate=TICK_DURATION
         )
-
+        self.physics_engine = None
         arcade.set_background_color(arcade.color.AMAZON)
         self.player_manager = PlayerManager(self.keyboard)
 

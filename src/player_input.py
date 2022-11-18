@@ -127,13 +127,13 @@ def set_default_controller_layout(player_input: PlayerInput):
 def bind_to_keyboard(player_input: PlayerInput):
     player_input.x_axis.key_negative = arcade.key.A
     player_input.x_axis.key_positive = arcade.key.D
-    player_input.y_axis.key_negative = arcade.key.S
-    player_input.y_axis.key_positive = arcade.key.W
+    player_input.y_axis.key_negative = arcade.key.DOWN
+    player_input.y_axis.key_positive = arcade.key.UP
     player_input.rx_axis.key_negative = arcade.key.J
     player_input.rx_axis.key_positive = arcade.key.L
     player_input.ry_axis.key_negative = arcade.key.K
     player_input.ry_axis.key_positive = arcade.key.I
-    player_input.accelerate_button.key = arcade.key.UP
-    player_input.brake_button.key = arcade.key.DOWN
+    player_input.accelerate_button.key = arcade.key.W
+    player_input.brake_button.key = arcade.key.S
     player_input.primary_fire_button.key = arcade.key.SPACE
     player_input.secondary_fire_button.key = arcade.key.LCTRL
