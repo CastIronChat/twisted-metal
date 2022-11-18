@@ -40,6 +40,7 @@ class PlayerInput:
         self.brake_button = VirtualButton(keys, controller)
         self.primary_fire_button = VirtualButton(keys, controller)
         self.secondary_fire_button = VirtualButton(keys, controller)
+        self.spawn_target = VirtualButton(keys, controller)
 
 
 class VirtualAxis:
@@ -137,3 +138,4 @@ def bind_to_keyboard(player_input: PlayerInput):
     player_input.brake_button.key = arcade.key.DOWN
     player_input.primary_fire_button.key = arcade.key.SPACE
     player_input.secondary_fire_button.key = arcade.key.LCTRL
+    player_input.spawn_target.key = arcade.key.BACKSPACE

@@ -4,20 +4,20 @@ from player import Player
 
 
 class PlayerHud:
-    width: int = 100
-    health_width: int = 100
-    height: int = 4
-    background_sprite: arcade.Sprite
-    health_sprite: arcade.Sprite
-    full_color: arcade.Color = arcade.color.GREEN
-    background_color: arcade.Color = arcade.color.RED
-    player: Player
-    hud_x: int
-    hud_y: int
-    player_hud_avatar: arcade.Sprite
     
-
     def __init__(self, player: Player, hud_x: int, hud_y: int, player_hud_avatar: arcade.Sprite):
+        self.width: int = 100
+        self.health_width: int = 100
+        self.height: int = 4
+        self.background_sprite: arcade.Sprite
+        self.health_sprite: arcade.Sprite
+        self.full_color: arcade.Color = arcade.color.GREEN
+        self.background_color: arcade.Color = arcade.color.RED
+        self.player: Player
+        self.hud_x: int
+        self.hud_y: int
+        self.player_hud_avatar: arcade.Sprite
+
         self.player = player
         self.hud_x = hud_x
         self.hud_y = hud_y

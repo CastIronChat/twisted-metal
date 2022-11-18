@@ -2,6 +2,7 @@ import arcade
 
 from player_input import PlayerInput
 from weapon import Weapon, Beam, Rocket, MachineGun
+from targets import Target
 
 
 class Player:
@@ -22,6 +23,7 @@ class Player:
         self.turn_speed = 100
         self.primary_weapon = MachineGun(self.input.primary_fire_button, self.sprite)
         self.secondary_weapon = Rocket(self.input.secondary_fire_button, self.sprite)
+        self.spawn_target = Target(self.input.spawn_target)
         self.player_health = 100
 
     def update(self, delta_time):
@@ -35,7 +37,9 @@ class Player:
             self.sprite.center_y -= self.drive_speed * delta_time
         self.primary_weapon.update(delta_time)
         self.secondary_weapon.update(delta_time)
+        self.spawn_target.update(delta_time)
 
     def draw(self):
         self.primary_weapon.draw()
         self.secondary_weapon.draw()
+        self.spawn_target.draw()
