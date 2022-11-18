@@ -47,18 +47,10 @@ class MyGame(arcade.Window):
             self.all_sprites.append(sprite)
 
     def on_update(self, delta_time):
-        # In the debugger, we intentionally ignore the on_update() call we get from arcade engine.
-        # Instead, we call our own our_update() within on_draw()
-        # This avoids a known issue where debugger pauses can cause `on_update`` and `on_draw`` to happen in this order:
-        #   update
-        #   update
-        #   draw
-        #   draw
-        #   update
-        #   update
-        #   draw
-        #   draw
-        #   ...and so on.  Each is called twice, back-to-back.
+        # Arcade engine has a quirk where, in the debugger, it calls `on_update` twice back-to-back,
+        # then `on_draw` twice, and so on.
+        # We avoid this bug by ignoring the `on_update()` call from arcade, instead calling it ourselves
+        # from `on_draw`
         if not USE_DEBUGGER_TIMING_FIXES:
             self.our_update(delta_time)
 
