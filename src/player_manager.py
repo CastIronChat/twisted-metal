@@ -64,3 +64,11 @@ class PlayerManager:
             set_default_controller_layout(player_input)
             player = Player(player_input)
             self.players.append(player)
+
+    def update_inputs(self):
+        """
+        Must be called at the *start* of every frame, before calling other
+        gameplay logic.  Does internal input-handling bookkeeping.
+        """
+        for player in self.players:
+            player.input.update()

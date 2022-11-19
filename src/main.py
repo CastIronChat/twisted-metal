@@ -64,6 +64,7 @@ class MyGame(arcade.Window):
         # Pretty sure this does animation updates, in case any of the sprites
         # Have animations
 
+        self.player_manager.update_inputs()
         for player in self.player_manager.players:
             player.update(delta_time)
 

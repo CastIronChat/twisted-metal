@@ -10,53 +10,48 @@ hardcoded gamepad IDs, etc.
 
 from __future__ import annotations
 from tokenize import String
+from typing import Optional
 import arcade
 from pyglet.input import Controller
 from pyglet.window.key import KeyStateHandler
 
 
 class PlayerInput:
-
-    # Left stick
-    x_axis: VirtualAxis
-    y_axis: VirtualAxis
-
-    # Right stick
-    rx_axis: VirtualAxis
-    ry_axis: VirtualAxis
-
-    # Buttons
-    accelerate_button: VirtualButton
-    brake_button: VirtualButton
-    primary_fire_button: VirtualButton
-    secondary_fire_button: VirtualButton
-
     def __init__(self, keys: KeyStateHandler, controller: Controller) -> None:
+        # Left stick
         self.x_axis = VirtualAxis(keys, controller)
         self.y_axis = VirtualAxis(keys, controller)
+
+        # Right stick
         self.rx_axis = VirtualAxis(keys, controller)
         self.ry_axis = VirtualAxis(keys, controller)
-        self.accelerate_button = VirtualButton(keys, controller)
-        self.brake_button = VirtualButton(keys, controller)
+
+        # Accelerate/brake
+        self.accelerate_axis = VirtualAxis(keys, controller)
+        self.brake_axis = VirtualAxis(keys, controller)
+
+        # Buttons
         self.primary_fire_button = VirtualButton(keys, controller)
         self.secondary_fire_button = VirtualButton(keys, controller)
 
+    def update(self):
+        self.primary_fire_button._update()
+        self.secondary_fire_button._update()
+
 
 class VirtualAxis:
-    key_negative: str = None
-    key_positive: str = None
-    button_positive: int = None
-    button_negative: int = None
-    axis: str = None
-
-    value: float
-
     __keys: KeyStateHandler = None
     __controller: Controller = None
 
     def __init__(self, keys: KeyStateHandler, controller: Controller):
         self.__keys = keys
         self.__controller = controller
+
+        self.key_negative: Optional[str] = None
+        self.key_positive: Optional[str] = None
+        self.button_positive: Optional[int] = None
+        self.button_negative: Optional[int] = None
+        self.axis: Optional[str] = None
 
     @property
     def value(self) -> float:
@@ -91,19 +86,35 @@ class VirtualAxis:
 
 
 class VirtualButton:
-    key: str = None
-    button: str = None
-    __keys: KeyStateHandler
-    __controller: Controller
-
-    value: bool
-
     def __init__(self, keys: KeyStateHandler, controller: Controller):
         self.__keys = keys
         self.__controller = controller
+        self.key: Optional[str] = None
+        self.button: Optional[str] = None
+        self._value: bool = False
+        self._value_last_frame: bool = False
+        self._pressed: bool
+        self._released: bool
 
     @property
-    def value(self) -> bool:
+    def value(self):
+        return self._value
+
+    @property
+    def pressed(self):
+        """
+        True of the button was pressed on this frame, meaning it is held now but was not last frame.
+        """
+        return self._pressed
+
+    @property
+    def released(self):
+        """
+        True of the button was released on this frame, meaning it was held last frame but is not any more.
+        """
+        return self._released
+
+    def _get_value(self) -> bool:
         key_pressed = self.key != None and self.__keys[self.key]
         button_pressed = (
             self.__controller != None
@@ -112,14 +123,24 @@ class VirtualButton:
         )
         return key_pressed or button_pressed
 
+    def _update(self):
+        value_last_frame = self._value_last_frame = self._value
+        value_this_frame = self._value = self._get_value()
+        self._pressed = False
+        self._released = False
+        if value_this_frame and not value_last_frame:
+            self._pressed = True
+        if not value_this_frame and value_last_frame:
+            self._released = True
+
 
 def set_default_controller_layout(player_input: PlayerInput):
     player_input.x_axis.axis = "leftx"
     player_input.y_axis.axis = "lefty"
     player_input.rx_axis.axis = "rightx"
     player_input.ry_axis.axis = "righty"
-    player_input.accelerate_button.button = "righttrigger"
-    player_input.brake_button.button = "lefttrigger"
+    player_input.accelerate_axis.axis = "righttrigger"
+    player_input.brake_axis.axis = "lefttrigger"
     player_input.primary_fire_button.button = "a"
     player_input.secondary_fire_button.button = "b"
 
@@ -133,7 +154,7 @@ def bind_to_keyboard(player_input: PlayerInput):
     player_input.rx_axis.key_positive = arcade.key.L
     player_input.ry_axis.key_negative = arcade.key.K
     player_input.ry_axis.key_positive = arcade.key.I
-    player_input.accelerate_button.key = arcade.key.W
-    player_input.brake_button.key = arcade.key.S
+    player_input.accelerate_axis.key_positive = arcade.key.W
+    player_input.brake_axis.key_positive = arcade.key.S
     player_input.primary_fire_button.key = arcade.key.SPACE
     player_input.secondary_fire_button.key = arcade.key.LCTRL
