@@ -33,28 +33,32 @@ class Player:
         self.player_health = 100
 
     def update(self, delta_time):
-        if self.input.accelerate_button.value > 0:
+        if self.input.accelerate_axis.value > 0:
             self.sprite.angle -= self.turn_speed * delta_time * self.input.x_axis.value
             self.sprite.center_x += (
                 self.drive_speed
-                * self.input.accelerate_button.value * math.cos(math.radians(self.sprite.angle))
+                * self.input.accelerate_axis.value
+                * math.cos(math.radians(self.sprite.angle))
                 * delta_time
             )
             self.sprite.center_y += (
                 self.drive_speed
-                * self.input.accelerate_button.value * math.sin(math.radians(self.sprite.angle))
+                * self.input.accelerate_axis.value
+                * math.sin(math.radians(self.sprite.angle))
                 * delta_time
             )
-        if self.input.brake_button.value > 0:
+        if self.input.brake_axis.value > 0:
             self.sprite.angle += self.turn_speed * delta_time * self.input.x_axis.value
             self.sprite.center_x -= (
                 self.drive_speed
-                * self.input.brake_button.value * math.cos(math.radians(self.sprite.angle))
+                * self.input.brake_axis.value
+                * math.cos(math.radians(self.sprite.angle))
                 * delta_time
             )
             self.sprite.center_y -= (
                 self.drive_speed
-                * self.input.brake_button.value * math.sin(math.radians(self.sprite.angle))
+                * self.input.brake_axis.value
+                * math.sin(math.radians(self.sprite.angle))
                 * delta_time
             )
 

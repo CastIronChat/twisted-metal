@@ -1,6 +1,8 @@
 from typing import List
 
 import arcade
+from arena.arena import Arena
+from arena.arena_loader import load_arena_by_name
 
 from constants import (
     SCREEN_HEIGHT,
@@ -27,6 +29,7 @@ class MyGame(arcade.Window):
         self.physics_engine = None
         arcade.set_background_color(arcade.color.AMAZON)
         self.player_manager = PlayerManager(self.keyboard)
+        self.arena: Arena
 
     def setup(self):
         self.all_sprites = arcade.SpriteList()
@@ -46,6 +49,9 @@ class MyGame(arcade.Window):
         for sprite in self.hud.hud_sprite_list:
             self.all_sprites.append(sprite)
 
+        self.arena = load_arena_by_name("default")
+        self.arena.init_for_drawing()
+
     def on_update(self, delta_time):
         # Arcade engine has a quirk where, in the debugger, it calls `on_update` twice back-to-back,
         # then `on_draw` twice, and so on.
@@ -58,6 +64,7 @@ class MyGame(arcade.Window):
         # Pretty sure this does animation updates, in case any of the sprites
         # Have animations
 
+        self.player_manager.update_inputs()
         for player in self.player_manager.players:
             player.update(delta_time)
 
@@ -69,6 +76,7 @@ class MyGame(arcade.Window):
 
         # clear screen
         self.clear()
+        self.arena.draw()
         self.all_sprites.draw()
         for player in self.player_manager.players:
             player.draw()
