@@ -10,8 +10,8 @@ class Player:
     # TODO seems like the arcade engine wants us to subclass Sprite for all
     # our game entities.  Seems like composition would be better?
     sprite: arcade.Sprite
-    projectile_list: arcade.SpriteList = None
-    beam_list: arcade.SpriteList = None
+    projectile_list: arcade.SpriteList
+    beam_list: arcade.SpriteList
     input: PlayerInput
     drive_speed: float
     turn_speed: float
@@ -58,8 +58,8 @@ class Player:
                 * delta_time
             )
 
-        self.primary_weapon.update(delta_time,self.projectile_list, self.beam_list)
-        self.secondary_weapon.update(delta_time,self.projectile_list, self.beam_list)
+        self.primary_weapon.update(delta_time, self.projectile_list, self.beam_list)
+        self.secondary_weapon.update(delta_time, self.projectile_list, self.beam_list)
         for projectile in self.projectile_list:
             projectile.center_x += projectile.change_x * delta_time
             projectile.center_y += projectile.change_y * delta_time
@@ -72,8 +72,8 @@ class Player:
                 self.projectile_list.remove(projectile)
         for beam in self.beam_list:
             beam.angle = self.sprite.angle
-            beam.center_x = self.sprite.center_x + beam.velocity * math.cos(math.radians(self.sprite.angle))
-            beam.center_y = self.sprite.center_y + beam.velocity * math.sin(math.radians(self.sprite.angle))
+            beam.center_x = self.sprite.center_x + beam.velocity * math.cos(self.sprite.radians)
+            beam.center_y = self.sprite.center_y + beam.velocity * math.sin(self.sprite.radians)
 
     def draw(self):
         self.projectile_list.draw()

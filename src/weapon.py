@@ -37,6 +37,7 @@ class LaserBeam(Weapon):
         super().__init__(input_button, car)
         self.beam_range = 500
         self.beam_projection = arcade.SpriteSolidColor(self.beam_range, 5, arcade.color.RED)
+        #this is currently used to store half the lenght so the update method can make the beam not centered on the car
         self.beam_projection.velocity = self.beam_range/2
 
     def update(self, delta_time, projectile_list: arcade.SpriteList, beam_list: arcade.SpriteList):
@@ -81,7 +82,7 @@ class Rocket(Weapon):
         rocket = arcade.SpriteSolidColor(50, 30, arcade.color.ORANGE)
         rocket.center_x = self.car.center_x
         rocket.center_y = self.car.center_y
-        rocket_angle = math.radians(self.car.angle)
+        rocket_angle = self.car.radians
         rocket.change_x = self.rocket_speed * math.cos(rocket_angle)
         rocket.change_y = self.rocket_speed * math.sin(rocket_angle)
         rocket.angle = self.car.angle
@@ -115,7 +116,7 @@ class MachineGun(Weapon):
         bullet.center_x = self.car.center_x
         bullet.center_y = self.car.center_y
         bullet.angle = self.car.angle
-        bullet_angle = math.radians(self.car.angle)
+        bullet_angle = self.car.radians
         bullet.change_x = self.bullet_speed * math.cos(bullet_angle)
         bullet.change_y = self.bullet_speed * math.sin(bullet_angle)
         self.time_since_shoot = 0
