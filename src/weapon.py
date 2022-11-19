@@ -1,6 +1,5 @@
 import arcade
 import math
-from constants import SCREEN_HEIGHT, SCREEN_WIDTH
 
 from player_input import VirtualButton
 

@@ -1,9 +1,10 @@
 from typing import List
-
+import math
 import arcade
+
 from arena.arena import Arena
 from arena.arena_loader import load_arena_by_name
-
+from bullet import bullet_behavior
 from constants import (
     SCREEN_HEIGHT,
     SCREEN_TITLE,
@@ -63,11 +64,10 @@ class MyGame(arcade.Window):
     def our_update(self, delta_time):
         # Pretty sure this does animation updates, in case any of the sprites
         # Have animations
-
         self.player_manager.update_inputs()
         for player in self.player_manager.players:
             player.update(delta_time)
-
+        bullet_behavior(delta_time, self.player_manager)
         self.hud.update()
 
     def on_draw(self):

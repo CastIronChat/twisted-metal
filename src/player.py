@@ -64,20 +64,6 @@ class Player:
 
         self.primary_weapon.update(delta_time, self.projectile_list, self.beam_list)
         self.secondary_weapon.update(delta_time, self.projectile_list, self.beam_list)
-        for projectile in self.projectile_list:
-            projectile.center_x += projectile.change_x * delta_time
-            projectile.center_y += projectile.change_y * delta_time
-            if (
-                projectile.center_x < 0
-                or projectile.center_x > SCREEN_WIDTH
-                or projectile.center_y < 0
-                or projectile.center_y > SCREEN_HEIGHT
-            ):
-                self.projectile_list.remove(projectile)
-        for beam in self.beam_list:
-            beam.angle = self.sprite.angle
-            beam.center_x = self.sprite.center_x + beam.velocity * math.cos(self.sprite.radians)
-            beam.center_y = self.sprite.center_y + beam.velocity * math.sin(self.sprite.radians)
 
     def draw(self):
         self.projectile_list.draw()
