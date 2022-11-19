@@ -30,10 +30,15 @@ class LaserBeam(Weapon):
 
     beam_projection: arcade.Sprite
     button_held: bool
+    beam_range: float
+
 
     def __init__(self, input_button: VirtualButton, car: arcade.Sprite):
         super().__init__(input_button, car)
-        self.beam_projection = arcade.SpriteSolidColor(1000, 5, arcade.color.RED)
+        self.beam_range = 500
+        self.beam_projection = arcade.SpriteSolidColor(self.beam_range, 5, arcade.color.RED)
+        #this is currently used to store half the lenght so the update method can make the beam not centered on the car
+        self.beam_projection.velocity = self.beam_range/2
         self.button_held = False
 
     def update(self, delta_time, projectile_list: arcade.SpriteList, beam_list: arcade.SpriteList):
