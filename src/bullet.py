@@ -3,6 +3,7 @@ import math
 from constants import SCREEN_HEIGHT, SCREEN_WIDTH
 from player_manager import PlayerManager
 
+#For naming purposes, a bullet can be anything that comes out of a weapon included beams, rockets, etc
 def bullet_behavior(delta_time, player_manager: PlayerManager):
     for player in player_manager.players:
         for projectile in player.projectile_list:

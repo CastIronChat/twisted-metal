@@ -75,6 +75,7 @@ class Player:
             self.swap_weapons()
 
     def swap_weapons(self):
+        #Moves the current secondary weapon to the primary weapon slot and the next weapon on the list becomes the secondary weapon
         self.primary_weapon.swap_out(self.beam_list)
         self.secondary_weapon.swap_out(self.beam_list)
         self.primary_weapon = self.weapons_list[self.weapon_index](self.input.primary_fire_button, self.sprite)
