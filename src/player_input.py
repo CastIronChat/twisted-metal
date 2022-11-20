@@ -33,10 +33,14 @@ class PlayerInput:
         # Buttons
         self.primary_fire_button = VirtualButton(keys, controller)
         self.secondary_fire_button = VirtualButton(keys, controller)
+        self.swap_weapons_button = VirtualButton(keys, controller)
+        self.reload_button = VirtualButton(keys, controller)
 
     def update(self):
         self.primary_fire_button._update()
         self.secondary_fire_button._update()
+        self.swap_weapons_button._update()
+        self.reload_button._update()
 
 
 class VirtualAxis:
@@ -143,6 +147,8 @@ def set_default_controller_layout(player_input: PlayerInput):
     player_input.brake_axis.axis = "lefttrigger"
     player_input.primary_fire_button.button = "a"
     player_input.secondary_fire_button.button = "b"
+    player_input.swap_weapons_button.button = "y"
+    player_input.reload_button.button = "x"
 
 
 def bind_to_keyboard(player_input: PlayerInput):
@@ -158,3 +164,5 @@ def bind_to_keyboard(player_input: PlayerInput):
     player_input.brake_axis.key_positive = arcade.key.S
     player_input.primary_fire_button.key = arcade.key.SPACE
     player_input.secondary_fire_button.key = arcade.key.LCTRL
+    player_input.swap_weapons_button.key = arcade.key.Q
+    player_input.reload_button.key = arcade.key.R

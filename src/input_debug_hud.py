@@ -23,6 +23,8 @@ class InputDebugHud:
             "brake_axis",
             "primary_fire_button",
             "secondary_fire_button",
+            "swap_weapons_button",
+            "reload_button",
         ]
         self.__text = Text(
             "Text Drawing Examples",

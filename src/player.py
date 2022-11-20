@@ -3,13 +3,13 @@ import math
 
 from player_input import PlayerInput
 from weapon import Weapon, LaserBeam, Rocket, MachineGun
-from constants import SCREEN_HEIGHT, SCREEN_WIDTH
 
 
 class Player:
     # TODO seems like the arcade engine wants us to subclass Sprite for all
     # our game entities.  Seems like composition would be better?
     sprite: arcade.Sprite
+    weapons_list: list
     projectile_list: arcade.SpriteList
     beam_list: arcade.SpriteList
     input: PlayerInput
@@ -17,6 +17,7 @@ class Player:
     turn_speed: float
     primary_weapon: Weapon
     secondary_weapon: Weapon
+    weapon_index: int
     player_health: int
 
     def __init__(self, input: PlayerInput):
@@ -28,8 +29,14 @@ class Player:
         self.input = input
         self.drive_speed = 200
         self.turn_speed = 100
-        self.primary_weapon = LaserBeam(self.input.primary_fire_button, self.sprite)
-        self.secondary_weapon = Rocket(self.input.secondary_fire_button, self.sprite)
+        self.weapons_list = [
+            LaserBeam,
+            Rocket,
+            MachineGun,
+        ]
+        self.primary_weapon = self.weapons_list[0](self.input.primary_fire_button, self.sprite)
+        self.secondary_weapon = self.weapons_list[1](self.input.secondary_fire_button, self.sprite)
+        self.weapon_index = 1
         self.player_health = 100
 
     def update(self, delta_time):
@@ -38,13 +45,13 @@ class Player:
             self.sprite.center_x += (
                 self.drive_speed
                 * self.input.accelerate_axis.value
-                * math.cos(math.radians(self.sprite.angle))
+                * math.cos(self.sprite.radians)
                 * delta_time
             )
             self.sprite.center_y += (
                 self.drive_speed
                 * self.input.accelerate_axis.value
-                * math.sin(math.radians(self.sprite.angle))
+                * math.sin(self.sprite.radians)
                 * delta_time
             )
         if self.input.brake_axis.value > 0:
@@ -52,32 +59,31 @@ class Player:
             self.sprite.center_x -= (
                 self.drive_speed
                 * self.input.brake_axis.value
-                * math.cos(math.radians(self.sprite.angle))
+                * math.cos(self.sprite.radians)
                 * delta_time
             )
             self.sprite.center_y -= (
                 self.drive_speed
                 * self.input.brake_axis.value
-                * math.sin(math.radians(self.sprite.angle))
+                * math.sin(self.sprite.radians)
                 * delta_time
             )
 
         self.primary_weapon.update(delta_time, self.projectile_list, self.beam_list)
         self.secondary_weapon.update(delta_time, self.projectile_list, self.beam_list)
-        for projectile in self.projectile_list:
-            projectile.center_x += projectile.change_x * delta_time
-            projectile.center_y += projectile.change_y * delta_time
-            if (
-                projectile.center_x < 0
-                or projectile.center_x > SCREEN_WIDTH
-                or projectile.center_y < 0
-                or projectile.center_y > SCREEN_HEIGHT
-            ):
-                self.projectile_list.remove(projectile)
-        for beam in self.beam_list:
-            beam.angle = self.sprite.angle
-            beam.center_x = self.sprite.center_x + beam.velocity * math.cos(self.sprite.radians)
-            beam.center_y = self.sprite.center_y + beam.velocity * math.sin(self.sprite.radians)
+        if self.input.swap_weapons_button.pressed:
+            self.swap_weapons()
+
+    def swap_weapons(self):
+        #Moves the current secondary weapon to the primary weapon slot and the next weapon on the list becomes the secondary weapon
+        self.primary_weapon.swap_out(self.beam_list)
+        self.secondary_weapon.swap_out(self.beam_list)
+        self.primary_weapon = self.weapons_list[self.weapon_index](self.input.primary_fire_button, self.sprite)
+        self.weapon_index += 1
+        if self.weapon_index >= len(self.weapons_list):
+            self.weapon_index = 0
+        self.secondary_weapon = self.weapons_list[self.weapon_index](self.input.secondary_fire_button, self.sprite)
+
 
     def draw(self):
         self.projectile_list.draw()
