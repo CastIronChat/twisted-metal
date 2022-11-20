@@ -19,10 +19,12 @@ class InputDebugHud:
             "y_axis",
             "rx_axis",
             "ry_axis",
-            "accelerate_button",
-            "brake_button",
+            "accelerate_axis",
+            "brake_axis",
             "primary_fire_button",
             "secondary_fire_button",
+            "swap_weapons_button",
+            "reload_button",
         ]
         self.__text = Text(
             "Text Drawing Examples",
@@ -37,7 +39,7 @@ class InputDebugHud:
     def get_readout(self):
         lines = []
         for (index, player_input) in enumerate(self.player_inputs):
-            lines += [f'Player #{index + 1}']
+            lines += [f"Player #{index + 1}"]
             lines += [
                 f"{control}: {getattr(player_input, control).value}"
                 for control in self.controls
