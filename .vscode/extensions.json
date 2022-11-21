@@ -5,7 +5,9 @@
         // Python support for VSCode
         "ms-python.python",
         // Makefile support
-        "ms-vscode.makefile-tools"
+        "ms-vscode.makefile-tools",
+        // Allow configuring arbitrary scripts to auto-format code
+        "jkillian.custom-local-formatters",
     ]
     /*
      * Others that I like:
