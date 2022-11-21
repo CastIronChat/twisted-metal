@@ -5,12 +5,17 @@
         // Python support for VSCode
         "ms-python.python",
         // Makefile support
-        "ms-vscode.makefile-tools"
+        "ms-vscode.makefile-tools",
     ]
     /*
      * Others that I like:
      *   "github.vscode-pull-request-github",
      *   "GitHub.remotehub",
-     *   "eamodio.gitlens"
+     *   "eamodio.gitlens",
+
+     *   // Live Share.
+     *   // Install version 1.0.5711; newer versions have
+     *   // bugs.
+     *   "ms-vsliveshare.vsliveshare"
      */
 }
