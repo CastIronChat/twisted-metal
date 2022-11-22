@@ -15,6 +15,7 @@ class Weapon:
     car: arcade.Sprite
     time_since_shoot: float
     weapon_icon: arcade.texture
+    muzzle_offset: Tuple[float, float]
 
     def __init__(
         self,
@@ -63,10 +64,10 @@ class LaserBeam(Weapon):
         self.beam_projection = arcade.SpriteSolidColor(
             self.beam_range, 5, arcade.color.RED
         )
-
-        self.beam_projection.properties[
-            "yeah_its_a_hack_come_at_me_bro"
-        ] = self.weapon_sprite_offset
+        self.muzzle_offset = [20, 5]
+        self.beam_projection.properties["yeah_its_a_hack_come_at_me_bro"] = add_vec2(
+            self.weapon_sprite_offset, self.muzzle_offset
+        )
 
     def update(
         self,
@@ -104,6 +105,7 @@ class Rocket(Weapon):
         weapon_sprite_offset: Tuple[float, float],
     ):
         super().__init__(input_button, car, weapon_sprite_offset)
+        self.muzzle_offset = [30, 2]
         self.rocket_speed = 300
         self.fire_rate = 0.5
 
@@ -121,7 +123,7 @@ class Rocket(Weapon):
 
     def shoot(self, projectile_list: arcade.SpriteList):
         rocket = arcade.SpriteSolidColor(30, 20, arcade.color.ORANGE)
-        rocket.position = self.weapon_sprite.position
+        rocket.position = add_vec2(self.weapon_sprite.position, self.muzzle_offset)
         rocket.change_x = self.rocket_speed * math.cos(self.car.radians)
         rocket.change_y = self.rocket_speed * math.sin(self.car.radians)
         rocket.angle = self.car.angle
@@ -145,6 +147,7 @@ class MachineGun(Weapon):
         weapon_sprite_offset: Tuple[float, float],
     ):
         super().__init__(input_button, car, weapon_sprite_offset)
+        self.muzzle_offset = [20, 7]
         self.bullet_speed = 500
         self.fire_rate = 10
 
@@ -161,7 +164,7 @@ class MachineGun(Weapon):
 
     def shoot(self, projectile_list: arcade.SpriteList):
         bullet = arcade.SpriteSolidColor(10, 5, arcade.color.RED)
-        bullet.position = self.weapon_sprite.position
+        bullet.position = add_vec2(self.weapon_sprite.position, self.muzzle_offset)
         bullet.change_x = self.bullet_speed * math.cos(self.weapon_sprite.radians)
         bullet.change_y = self.bullet_speed * math.sin(self.weapon_sprite.radians)
         bullet.angle = self.weapon_sprite.angle
