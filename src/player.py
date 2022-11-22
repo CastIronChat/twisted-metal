@@ -37,34 +37,6 @@ class Player:
         self.vehicle = MovementControls()
 
     def update(self, delta_time: float):
-        if self.input.accelerate_axis.value > 0:
-            self.sprite.angle -= self.turn_speed * delta_time * self.input.x_axis.value
-            self.sprite.center_x += (
-                self.drive_speed
-                * self.input.accelerate_axis.value
-                * math.cos(self.sprite.radians)
-                * delta_time
-            )
-            self.sprite.center_y += (
-                self.drive_speed
-                * self.input.accelerate_axis.value
-                * math.sin(self.sprite.radians)
-                * delta_time
-            )
-        if self.input.brake_axis.value > 0:
-            self.sprite.angle += self.turn_speed * delta_time * self.input.x_axis.value
-            self.sprite.center_x -= (
-                self.drive_speed
-                * self.input.brake_axis.value
-                * math.cos(self.sprite.radians)
-                * delta_time
-            )
-            self.sprite.center_y -= (
-                self.drive_speed
-                * self.input.brake_axis.value
-                * math.sin(self.sprite.radians)
-                * delta_time
-            )
         self.primary_weapon.update(delta_time, self.projectile_list, self.beam_list)
         self.secondary_weapon.update(delta_time, self.projectile_list, self.beam_list)
         if self.input.swap_weapons_button.pressed:
