@@ -1,5 +1,4 @@
 from typing import List
-import math
 import arcade
 
 from arena.arena import Arena

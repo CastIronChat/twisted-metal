@@ -1,7 +1,6 @@
 import arcade
 import math
 from typing import List
-from iron_math import add_vec2, rotate_vec2
 from player_input import PlayerInput
 from weapon import Weapon, LaserBeam, Rocket, MachineGun
 from textures import RED_CAR
@@ -15,8 +14,8 @@ class Player:
         self.input = input
         self.drive_speed = 200
         self.turn_speed = 100
-        self.primary_weapon_sprite_offset = (50, 20)
-        self.secondary_weapon_sprite_offset = (50, -20)
+        self.primary_weapon_sprite_offset = (50, 20, 0)
+        self.secondary_weapon_sprite_offset = (50, -20, 0)
         # Weapons
         self.projectile_list = arcade.SpriteList()
         self.beam_list = arcade.SpriteList()
