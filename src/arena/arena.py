@@ -15,6 +15,10 @@ class Arena:
     def walls(self) -> Sequence[Wall]:
         return self._walls
 
+    @property
+    def wall_sprite_list(self) -> SpriteList:
+        return self._sprite_list
+
     def init_for_drawing(self):
         """
         One-time initialization to prepare for rendering

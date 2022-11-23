@@ -9,7 +9,7 @@ from textures import RED_CAR
 
 class Player:
     def __init__(self, input: PlayerInput):
-        self.sprite = arcade.Sprite(texture=RED_CAR, scale=0.5)
+        self.sprite: SpriteForPlayer = SpriteForPlayer(self)
         self.sprite.center_x = 256
         self.sprite.center_y = 256
         self.input = input
@@ -97,3 +97,9 @@ class Player:
         self.beam_list.draw()
         self.primary_weapon.draw()
         self.secondary_weapon.draw()
+
+
+class SpriteForPlayer(arcade.Sprite):
+    def __init__(self, player: Player):
+        super().__init__(texture=RED_CAR, scale=0.5)
+        self.player = player
