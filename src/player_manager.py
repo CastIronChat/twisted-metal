@@ -63,6 +63,7 @@ class PlayerManager:
                 bind_to_keyboard(player_input)
             set_default_controller_layout(player_input)
             player = Player(player_input)
+
             self.players.append(player)
 
     def update_inputs(self):

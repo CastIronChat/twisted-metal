@@ -1,4 +1,5 @@
 from arcade import Sprite, SpriteSolidColor, color
+import arcade
 
 
 class Wall:
@@ -8,7 +9,7 @@ class Wall:
         self._width = width
         self._height = height
         self._angle = angle
-        self._sprite: Sprite
+        self._sprite: SpriteForWall
         self.init_for_drawing()
 
     @property
@@ -20,6 +21,13 @@ class Wall:
         call once all other attributes are set, to initialize graphical
         representation
         """
-        self._sprite = SpriteSolidColor(self._width, self._height, color.BLACK)
+
+        self._sprite = SpriteForWall(self._width, self._height, color.BLACK)
+        self._sprite.wall = self
+
         self._sprite.set_position(self._x, self._y)
         self._sprite.radians = self._angle
+
+
+class SpriteForWall(SpriteSolidColor):
+    wall: Wall
