@@ -3,11 +3,21 @@ import math
 from constants import SCREEN_HEIGHT, SCREEN_WIDTH
 from iron_math import add_vec2, rotate_vec2
 from player_manager import PlayerManager
+from typing import List, cast
+from arena.wall import SpriteForWall
 
 # For naming purposes, a bullet can be anything that comes out of a weapon included beams, rockets, etc
-def bullet_behavior(delta_time, player_manager: PlayerManager):
+def bullet_behavior(
+    delta_time, player_manager: PlayerManager, list_of_walls: arcade.SpriteList
+):
     for player in player_manager.players:
         for projectile in player.projectile_list:
+            wall_sprites_collided_with_bullet = cast(
+                List[SpriteForWall],
+                arcade.check_for_collision_with_list(projectile, list_of_walls),
+            )
+            if len(wall_sprites_collided_with_bullet) > 0:
+                player.projectile_list.remove(projectile)
             projectile.center_x += projectile.change_x * delta_time
             projectile.center_y += projectile.change_y * delta_time
             if (

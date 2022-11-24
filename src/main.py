@@ -4,6 +4,7 @@ import arcade
 
 from arena.arena import Arena
 from arena.arena_loader import load_arena_by_name
+from arena.wall import SpriteForWall
 from bullet import bullet_behavior
 from constants import (
     SCREEN_HEIGHT,
@@ -67,7 +68,7 @@ class MyGame(arcade.Window):
         self.player_manager.update_inputs()
         for player in self.player_manager.players:
             player.update(delta_time)
-        bullet_behavior(delta_time, self.player_manager)
+        bullet_behavior(delta_time, self.player_manager, self.arena.wall_sprite_list)
         self.hud.update()
 
     def on_draw(self):
