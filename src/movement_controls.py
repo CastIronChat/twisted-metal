@@ -14,7 +14,8 @@ from player_input import PlayerInput
 
 
 class MovementControls:
-
+    # used to create pacman style screen wrapping preventing vehicles from going off screen
+    debug_world_boundary: float
     # The stat for max (x,y) linear speed
     drive_speed: float
     # The stat for max rotational speed
@@ -22,15 +23,14 @@ class MovementControls:
 
     # how fast the current acceleration goes from 0 -> 1
     acceleration_rate: float
-    # how fast the brake applies to current acceleration
-    deceleration_rate: float
     # how fast the vehicle's current acceleration slows while not accelerating
     friction: float
 
     # These are the values the vehicle updates in "drive_input"
     current_velocity_x: float
     current_velocity_y: float
-    current_turnVelocity: float
+    # changed as per requested to be similar to linear movement
+    current_velocity_turn: float
     current_acceleration: float
 
     # which control scheme to use
@@ -39,32 +39,35 @@ class MovementControls:
     toggle: bool
 
     def __init__(self):
+        self.debug_world_boundary = 750
         self.current_velocity_x = 0
         self.current_velocity_y = 0
-        self.current_turnVelocity = 0
+        self.current_velocity_turn = 0
         self.current_acceleration = 0
-        self.acceleration_rate = 0.5
-        self.decceleration_rate = 0.3
+        self.acceleration_rate = 0.9
         self.brake_rate = 0.3
         self.friction = 0.1
         self.drive_speed = 100
         self.turn_speed = 100
         self.toggle = False
-        self.vehicle_type = 1
+        self.vehicle_type = 0
 
-    #   Drive input is called by the player and passed that player's input to set what the vehicle's
-    #    velocity and rotation should be
+    #   Drive input is called by the player and passed that player's input
+    #   to set what the vehicle's Velocity and rotation should be
     #   Does not change the vehicles position
-    def drive_input(self, delta_time, input, vehicle):
+    #   Does not need a just x,y position and angle.
+    def drive_input(self, delta_time, input, vehicle: arcade.Sprite):
         # for testing to change between driving types
+        # while holding brake and accelerate, pressing reload changes types
         # TODO:find a permanent place for this logic that is not in movement
         if self.toggle:
-            if input.secondary_fire_button.value == False:
+            if input.reload_button.value == False:
                 self.toggle = False
         else:
-            if input.secondary_fire_button.value == True:
-                self.toggle = True
-                self.change_vehicle()
+            if self.toggle == False and input.reload_button.value == True:
+                if input.accelerate_axis.value == 1 and input.brake_axis.value == 1:
+                    self.toggle = True
+                    self.change_vehicle()
 
         # updates the vehicles intended  velocity and rotation based on type
         if self.vehicle_type == 0:
@@ -82,28 +85,26 @@ class MovementControls:
         self.current_acceleration = 0
         self.current_velocity_x = 0
         self.current_velocity_y = 0
-        self.current_turnVelocity = 0
+        self.current_velocity_turn = 0
         self.vehicle_type += 1
         if self.vehicle_type > 4:
             self.vehicle_type = 0
 
     # called from the player to tell the vehicle to act on it's intended velocity and rotation
-    def move(self, vehicle):
+    def move(self, vehicle: arcade.Sprite):
         # find the X and Y movement based on the angle of the sprite
         new_x_pos = self.current_velocity_x + vehicle.center_x
         new_y_pos = self.current_velocity_y + vehicle.center_y
 
         # NOTE: place holder boundaries
-        if new_x_pos < 0 or new_x_pos > 500 or new_y_pos < 0 or new_y_pos > 500:
-            # bounce of the imaginary collision and roll away
-            # vehicle.center_x -= self.current_velocity_x * 3
-            # vehicle.center_y -= self.current_velocity_y * 3
-            self.current_acceleration *= -0.1
-        else:
-            vehicle.center_x += self.current_velocity_x
-            vehicle.center_y += self.current_velocity_y
+        if self.debug_world_boundary != 0:
+            new_x_pos = new_x_pos % self.debug_world_boundary
+            new_y_pos = new_y_pos % self.debug_world_boundary
 
-        vehicle.angle += self.current_turnVelocity
+        vehicle.center_x = new_x_pos
+        vehicle.center_y = new_y_pos
+
+        vehicle.angle += self.current_velocity_turn
 
     def car(self, delta_time, input, vehicle):
         # speed progressing from 0 to max while either acceleration is held
@@ -116,8 +117,10 @@ class MovementControls:
                 acceleration_change += self.brake_rate
             acceleration_change += self.acceleration_rate
         elif input.brake_axis.value:
-            acceleration_change -= self.decceleration_rate
+            acceleration_change -= self.brake_rate
         else:
+            # if neither brake or acceleration is being held
+            # cost to a stop based on friction
             if abs(self.current_acceleration) != 0:
                 if abs(self.current_acceleration) <= delta_time * self.friction:
                     self.current_acceleration = 0
@@ -147,7 +150,7 @@ class MovementControls:
         )
 
         # a stationary car cant turn
-        self.current_turnVelocity = (
+        self.current_velocity_turn = (
             input.x_axis.value
             * self.turn_speed
             * delta_time
@@ -158,10 +161,10 @@ class MovementControls:
         # drive as if on two treads set to the leftstick  Y and rightstick Y axis
         # if both inputs are in the same direction, drive in that direction
         acceleration_change = 0
-        self.current_turnVelocity = 0
+        self.current_velocity_turn = 0
 
         diff_axis_value = input.y_axis.value - input.ry_axis.value
-        self.current_turnVelocity = diff_axis_value * -self.turn_speed * delta_time
+        self.current_velocity_turn = diff_axis_value * -self.turn_speed * delta_time
 
         if input.y_axis.value > 0.1 and input.ry_axis.value > 0.1:
             acceleration_change += self.acceleration_rate
@@ -194,7 +197,7 @@ class MovementControls:
 
         acceleration_change = 0
         if input.brake_axis.value:
-            acceleration_change -= self.decceleration_rate
+            acceleration_change -= self.brake_rate
         elif input.x_axis.value != 0 or input.y_axis.value != 0:
             acceleration_change += self.acceleration_rate
         else:
@@ -242,7 +245,7 @@ class MovementControls:
         )
 
         # a stationary car cant turn
-        self.current_turnVelocity = input.rx_axis.value * self.turn_speed * delta_time
+        self.current_velocity_turn = input.rx_axis.value * -self.turn_speed * delta_time
 
     def ghost_screen_facing(self, delta_time, input, vehicle):
         # ghost controls but agnostic of the current facing of the car
@@ -264,7 +267,6 @@ class MovementControls:
 
         car_angle = math.radians(vehicle.angle)
 
-
         xNormalized = input.x_axis.value
         yNormalized = input.y_axis.value
         if abs(input.y_axis.value) + abs(input.x_axis.value) > 1:
@@ -282,7 +284,7 @@ class MovementControls:
             self.drive_speed * xNormalized * self.current_acceleration * delta_time
         )
 
-        self.current_turnVelocity = input.rx_axis.value * self.turn_speed * delta_time
+        self.current_velocity_turn = input.rx_axis.value * -self.turn_speed * delta_time
 
     def mars_walker(self, delta_time, input, vehicle):
         # speed progressing from 0 to max while either acceleration is held
@@ -291,11 +293,11 @@ class MovementControls:
         if input.x_axis.value != 0:
             self.current_velocity_x = 0
             self.current_velocity_y = 0
-            self.current_turnVelocity = (
-                input.x_axis.value * self.turn_speed * delta_time
+            self.current_velocity_turn = (
+                input.x_axis.value * -self.turn_speed * delta_time
             )
         else:
-            self.current_turnVelocity = 0
+            self.current_velocity_turn = 0
             car_angle = math.radians(vehicle.angle)
 
             # find the X and Y movement based on the angle of the sprite
