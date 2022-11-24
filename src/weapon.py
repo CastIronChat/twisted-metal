@@ -28,7 +28,12 @@ class Weapon:
         self.time_since_shoot = 100
         self.weapon_sprite = arcade.Sprite(texture=self.weapon_icon, scale=3)
 
-    def update(self):
+    def update(
+        self,
+        delta_time: float,
+        projectile_list: arcade.SpriteList,
+        beam_list: arcade.SpriteList,
+    ):
         self.weapon_sprite.angle = self.car.angle
         self.weapon_sprite.position = add_vec2(
             self.car.position,
@@ -68,13 +73,8 @@ class LaserBeam(Weapon):
             "yeah_its_a_hack_come_at_me_bro"
         ] = self.weapon_sprite_offset
 
-    def update(
-        self,
-        delta_time,
-        projectile_list: arcade.SpriteList,
-        beam_list: arcade.SpriteList,
-    ):
-        super().update()
+    def update(self, delta_time, projectile_list, beam_list):
+        super().update(delta_time, projectile_list, beam_list)
         if self.input_button.pressed:
             self.shoot(beam_list)
         if self.input_button.released and self.beam_projection in beam_list:
@@ -83,7 +83,7 @@ class LaserBeam(Weapon):
     def shoot(self, beam_list: arcade.SpriteList):
         beam_list.append(self.beam_projection)
 
-    def swap_out(self, beam_list: arcade.SpriteList):
+    def swap_out(self, beam_list):
         if self.beam_projection in beam_list:
             beam_list.remove(self.beam_projection)
 
@@ -107,13 +107,8 @@ class Rocket(Weapon):
         self.rocket_speed = 300
         self.fire_rate = 0.5
 
-    def update(
-        self,
-        delta_time,
-        projectile_list: arcade.SpriteList,
-        beam_list: arcade.SpriteList,
-    ):
-        super().update()
+    def update(self, delta_time, projectile_list, beam_list):
+        super().update(delta_time, projectile_list, beam_list)
         if self.input_button.pressed:
             if self.time_since_shoot > 1 / self.fire_rate:
                 self.shoot(projectile_list)
@@ -154,7 +149,7 @@ class MachineGun(Weapon):
         projectile_list: arcade.SpriteList,
         beam_list: arcade.SpriteList,
     ):
-        super().update()
+        super().update(delta_time, projectile_list, beam_list)
         if self.input_button.value and self.time_since_shoot > 1 / self.fire_rate:
             self.shoot(projectile_list)
         self.time_since_shoot += delta_time
