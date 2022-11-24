@@ -2,9 +2,15 @@ from typing import List
 
 from pyglet.input import ControllerManager
 from pyglet.window.key import KeyStateHandler
+from constants import USE_ALTERNATE_CONTROLLER_LAYOUT
 
 from player import Player
-from player_input import PlayerInput, bind_to_keyboard, set_default_controller_layout
+from player_input import (
+    PlayerInput,
+    bind_to_keyboard,
+    set_alternate_controller_layout,
+    set_default_controller_layout,
+)
 
 PLAYER_COUNT = 4
 KEYBOARD_PLAYER_INDEX = 0
@@ -61,7 +67,10 @@ class PlayerManager:
             player_input = PlayerInput(self._keyboard, controller)
             if player_index == KEYBOARD_PLAYER_INDEX:
                 bind_to_keyboard(player_input)
-            set_default_controller_layout(player_input)
+            if USE_ALTERNATE_CONTROLLER_LAYOUT:
+                set_alternate_controller_layout(player_input)
+            else:
+                set_default_controller_layout(player_input)
             player = Player(player_input)
 
             self.players.append(player)

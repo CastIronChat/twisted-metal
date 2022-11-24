@@ -151,6 +151,14 @@ def set_default_controller_layout(player_input: PlayerInput):
     player_input.reload_button.button = "x"
 
 
+def set_alternate_controller_layout(player_input: PlayerInput):
+    set_default_controller_layout(player_input)
+    player_input.accelerate_axis.button_positive = "a"
+    player_input.brake_axis.button_positive = "b"
+    player_input.primary_fire_button.button = "righttrigger"
+    player_input.secondary_fire_button.button = "lefttrigger"
+
+
 def bind_to_keyboard(player_input: PlayerInput):
     player_input.x_axis.key_negative = arcade.key.A
     player_input.x_axis.key_positive = arcade.key.D
