@@ -1,6 +1,6 @@
 from typing import Tuple
 import arcade
-from textures import LASER_PISTOL, ROCKET_LAUNCHER, MACHINE_GUN
+from textures import LASER_PISTOL, ROCKET_LAUNCHER, MACHINE_GUN, ROCKET
 from iron_math import add_vec, offset_sprite_from, polar_to_vec
 from player_input import VirtualButton
 
@@ -118,6 +118,8 @@ class Rocket(Weapon):
         rocket: SpriteForRocket = SpriteForRocket(self)
         offset_sprite_from(rocket, self.weapon_sprite, self.muzzle_offset)
         rocket.velocity = polar_to_vec(self.rocket_speed, self.weapon_sprite.radians)
+        #Corrects for rocket texture angled up 45 degrees 
+        rocket.angle -= 45
         self.time_since_shoot = 0
         projectile_list.append(rocket)
 
@@ -174,7 +176,7 @@ class SpriteForMachineGun(arcade.SpriteSolidColor):
         self.machine_gun = machine_gun
 
 
-class SpriteForRocket(arcade.SpriteSolidColor):
+class SpriteForRocket(arcade.Sprite):
     def __init__(self, rocket: Rocket):
-        super().__init__(30, 20, arcade.color.ORANGE)
+        super().__init__(texture=ROCKET, scale=2)
         self.rocket = rocket
