@@ -56,9 +56,7 @@ class LaserBeam(Weapon):
     ):
         super().__init__(input_button, car, weapon_sprite_offset)
         self.beam_range = 500
-        self.beam_projection = arcade.SpriteSolidColor(
-            self.beam_range, 5, arcade.color.RED
-        )
+        self.beam_projection: SpriteForBeam = SpriteForBeam(self)
         self.muzzle_offset = (20, 5, 0)
         self.beam_projection.properties["yeah_its_a_hack_come_at_me_bro"] = add_vec(
             self.weapon_sprite_offset, self.muzzle_offset[:2]
@@ -117,7 +115,7 @@ class Rocket(Weapon):
         self.time_since_shoot += delta_time
 
     def shoot(self, projectile_list: arcade.SpriteList):
-        rocket = arcade.SpriteSolidColor(30, 20, arcade.color.ORANGE)
+        rocket: SpriteForRocket = SpriteForRocket(self)
         offset_sprite_from(rocket, self.weapon_sprite, self.muzzle_offset)
         rocket.velocity = polar_to_vec(self.rocket_speed, self.weapon_sprite.radians)
         self.time_since_shoot = 0
@@ -156,8 +154,27 @@ class MachineGun(Weapon):
         self.time_since_shoot += delta_time
 
     def shoot(self, projectile_list: arcade.SpriteList):
-        bullet = arcade.SpriteSolidColor(10, 5, arcade.color.RED)
+        bullet: SpriteForMachineGun = SpriteForMachineGun(self)
         offset_sprite_from(bullet, self.weapon_sprite, self.muzzle_offset)
         bullet.velocity = polar_to_vec(self.bullet_speed, self.weapon_sprite.radians)
         self.time_since_shoot = 0
         projectile_list.append(bullet)
+
+
+class SpriteForBeam(arcade.SpriteSolidColor):
+    def __init__(self, laser_beam: LaserBeam):
+        self.beam_range = laser_beam.beam_range
+        super().__init__(self.beam_range, 5, arcade.color.RED)
+        self.laser_beam = laser_beam
+
+
+class SpriteForMachineGun(arcade.SpriteSolidColor):
+    def __init__(self, machine_gun: MachineGun):
+        super().__init__(10, 5, arcade.color.RED)
+        self.machine_gun = machine_gun
+
+
+class SpriteForRocket(arcade.SpriteSolidColor):
+    def __init__(self, rocket: Rocket):
+        super().__init__(30, 20, arcade.color.ORANGE)
+        self.rocket = rocket
