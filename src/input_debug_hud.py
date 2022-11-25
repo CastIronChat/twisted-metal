@@ -25,12 +25,16 @@ class InputDebugHud:
             "secondary_fire_button",
             "swap_weapons_button",
             "reload_button",
+            "debug_1",
+            "debug_2",
+            "debug_3",
+            "debug_4",
         ]
         self.__text = Text(
             "Text Drawing Examples",
             0,
             550,
-            arcade.color.BLACK,
+            arcade.color.WHITE,
             12,
             multiline=True,
             width=9999,  # Only wrap on explicit newline

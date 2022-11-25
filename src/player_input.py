@@ -9,7 +9,6 @@ hardcoded gamepad IDs, etc.
 """
 
 from __future__ import annotations
-from tokenize import String
 from typing import Optional
 import arcade
 from pyglet.input import Controller
@@ -36,42 +35,48 @@ class PlayerInput:
         self.swap_weapons_button = VirtualButton(keys, controller)
         self.reload_button = VirtualButton(keys, controller)
 
+        # Debugging
+        self.debug_1 = VirtualButton(keys, controller)
+        self.debug_2 = VirtualButton(keys, controller)
+        self.debug_3 = VirtualButton(keys, controller)
+        self.debug_4 = VirtualButton(keys, controller)
+
     def update(self):
         self.primary_fire_button._update()
         self.secondary_fire_button._update()
         self.swap_weapons_button._update()
         self.reload_button._update()
+        self.debug_1._update()
+        self.debug_2._update()
+        self.debug_3._update()
+        self.debug_4._update()
 
 
 class VirtualAxis:
-    __keys: KeyStateHandler = None
-    __controller: Controller = None
+    _keys: KeyStateHandler = None
+    _controller: Controller = None
 
     def __init__(self, keys: KeyStateHandler, controller: Controller):
-        self.__keys = keys
-        self.__controller = controller
+        self._keys = keys
+        self._controller = controller
 
-        self.key_negative: Optional[str] = None
-        self.key_positive: Optional[str] = None
+        self.key_negative: Optional[int] = None
+        self.key_positive: Optional[int] = None
         self.button_positive: Optional[int] = None
         self.button_negative: Optional[int] = None
         self.axis: Optional[str] = None
 
     @property
     def value(self) -> float:
-        neg_pressed = (
-            self.key_negative != None and self.__keys[self.key_negative]
-        ) or (
+        neg_pressed = (self.key_negative != None and self._keys[self.key_negative]) or (
             self.button_negative != None
-            and self.__controller
-            and self.__controller.buttons[self.button_negative]
+            and self._controller
+            and self._controller.buttons[self.button_negative]
         )
-        pos_pressed = (
-            self.key_positive != None and self.__keys[self.key_positive]
-        ) or (
+        pos_pressed = (self.key_positive != None and self._keys[self.key_positive]) or (
             self.button_positive != None
-            and self.__controller
-            and self.__controller.buttons[self.button_positive]
+            and self._controller
+            and self._controller.buttons[self.button_positive]
         )
         axis_value_from_buttons = 0
         if neg_pressed and not pos_pressed:
@@ -80,8 +85,8 @@ class VirtualAxis:
             axis_value_from_buttons = 1
 
         axis_value_from_analog = 0
-        if self.__controller:
-            axis_value_from_analog = getattr(self.__controller, self.axis)
+        if self._controller:
+            axis_value_from_analog = getattr(self._controller, self.axis)
         if abs(axis_value_from_analog) < 0.1:
             axis_value_from_analog = 0
 
@@ -91,14 +96,21 @@ class VirtualAxis:
 
 class VirtualButton:
     def __init__(self, keys: KeyStateHandler, controller: Controller):
-        self.__keys = keys
-        self.__controller = controller
-        self.key: Optional[str] = None
+        self._keys = keys
+        self._controller = controller
+        self.key: Optional[int] = None
         self.button: Optional[str] = None
         self._value: bool = False
         self._value_last_frame: bool = False
         self._pressed: bool
         self._released: bool
+        self.toggle: bool = False
+        """
+        Every time the button is pressed, this toggles between true to false. May be useful for switching debug
+        features on and off; should probably not be used for gameplay.
+
+        Debug logic is permitted to write to this value, in case it makes sense to reset it.
+        """
 
     @property
     def value(self):
@@ -119,11 +131,11 @@ class VirtualButton:
         return self._released
 
     def _get_value(self) -> bool:
-        key_pressed = self.key != None and self.__keys[self.key]
+        key_pressed = self.key != None and self._keys[self.key]
         button_pressed = (
-            self.__controller != None
+            self._controller != None
             and self.button != None
-            and getattr(self.__controller, self.button)
+            and getattr(self._controller, self.button)
         )
         return key_pressed or button_pressed
 
@@ -134,6 +146,7 @@ class VirtualButton:
         self._released = False
         if value_this_frame and not value_last_frame:
             self._pressed = True
+            self.toggle = not self.toggle
         if not value_this_frame and value_last_frame:
             self._released = True
 
@@ -149,6 +162,10 @@ def set_default_controller_layout(player_input: PlayerInput):
     player_input.secondary_fire_button.button = "b"
     player_input.swap_weapons_button.button = "y"
     player_input.reload_button.button = "x"
+    player_input.debug_1.button = "dpup"
+    player_input.debug_2.button = "dpdown"
+    player_input.debug_3.button = "dpleft"
+    player_input.debug_4.button = "dpright"
 
 
 def set_alternate_controller_layout(player_input: PlayerInput):
@@ -174,3 +191,7 @@ def bind_to_keyboard(player_input: PlayerInput):
     player_input.secondary_fire_button.key = arcade.key.LCTRL
     player_input.swap_weapons_button.key = arcade.key.Q
     player_input.reload_button.key = arcade.key.R
+    player_input.debug_1.key = arcade.key.KEY_1
+    player_input.debug_2.key = arcade.key.KEY_2
+    player_input.debug_3.key = arcade.key.KEY_3
+    player_input.debug_4.key = arcade.key.KEY_4
