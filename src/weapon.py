@@ -97,7 +97,8 @@ class Rocket(Weapon):
     def setup(self):
         self.rocket_speed = 300
         self.fire_rate = 0.5
-        self.muzzle_offset = (30, 2, 0)
+        #the -45 degree angle in the offset corrects for rocket texture angled up 45 degrees
+        self.muzzle_offset = (30, 2, -45)
 
     def update(
         self,
@@ -114,9 +115,7 @@ class Rocket(Weapon):
     def shoot(self, projectile_list: arcade.SpriteList):
         rocket: SpriteForRocket = SpriteForRocket(self)
         offset_sprite_from(rocket, self.weapon_sprite, self.muzzle_offset)
-        rocket.velocity = polar_to_vec(self.rocket_speed, self.weapon_sprite.radians)
-        #Corrects for rocket texture angled up 45 degrees 
-        rocket.angle -= 45
+        rocket.velocity = polar_to_vec(self.rocket_speed, self.weapon_sprite.radians) 
         self.time_since_shoot = 0
         projectile_list.append(rocket)
 
