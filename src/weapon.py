@@ -27,6 +27,15 @@ class Weapon:
         self.weapon_sprite_offset = weapon_sprite_offset
         self.time_since_shoot = 100
         self.weapon_sprite = arcade.Sprite(texture=self.weapon_icon, scale=3)
+        self.setup()
+
+    def setup(self):
+        """
+        Override this method if you want to add initialization logic without
+        writing a verbose __init__
+        This method will be called by Weapon's __init__
+        """
+        ...
 
     def update(self):
         offset_sprite_from(self.weapon_sprite, self.car, self.weapon_sprite_offset)
@@ -48,13 +57,7 @@ class LaserBeam(Weapon):
     # Is a class attribute, not instance attribute
     weapon_icon = LASER_PISTOL
 
-    def __init__(
-        self,
-        input_button: VirtualButton,
-        car: arcade.Sprite,
-        weapon_sprite_offset: Tuple[float, float, float],
-    ):
-        super().__init__(input_button, car, weapon_sprite_offset)
+    def setup(self):
         self.beam_range = 500
         self.beam_projection: SpriteForBeam = SpriteForBeam(self)
         self.muzzle_offset = (20, 5, 0)
@@ -91,16 +94,10 @@ class Rocket(Weapon):
     fire_rate: float
     weapon_icon = ROCKET_LAUNCHER
 
-    def __init__(
-        self,
-        input_button: VirtualButton,
-        car: arcade.Sprite,
-        weapon_sprite_offset: Tuple[float, float, float],
-    ):
-        super().__init__(input_button, car, weapon_sprite_offset)
-        self.muzzle_offset = (30, 2, 0)
+    def setup(self):
         self.rocket_speed = 300
         self.fire_rate = 0.5
+        self.muzzle_offset = (30, 2, 0)
 
     def update(
         self,
@@ -133,16 +130,10 @@ class MachineGun(Weapon):
     fire_rate: float
     weapon_icon = MACHINE_GUN
 
-    def __init__(
-        self,
-        input_button: VirtualButton,
-        car: arcade.Sprite,
-        weapon_sprite_offset: Tuple[float, float, float],
-    ):
-        super().__init__(input_button, car, weapon_sprite_offset)
-        self.muzzle_offset = (20, 7, 0)
+    def setup(self):
         self.bullet_speed = 500
         self.fire_rate = 10
+        self.muzzle_offset = (20, 7, 0)
 
     def update(
         self,

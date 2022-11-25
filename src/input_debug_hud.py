@@ -25,12 +25,16 @@ class InputDebugHud:
             "secondary_fire_button",
             "swap_weapons_button",
             "reload_button",
+            "debug_1",
+            "debug_2",
+            "debug_3",
+            "debug_4",
         ]
         self.__text = Text(
             "Text Drawing Examples",
             0,
             550,
-            arcade.color.BLACK,
+            arcade.color.WHITE,
             12,
             multiline=True,
             width=9999,  # Only wrap on explicit newline
@@ -39,7 +43,7 @@ class InputDebugHud:
     def get_readout(self):
         lines = []
         for (index, player_input) in enumerate(self.player_inputs):
-            lines += [f"Player #{index + 1}"]
+            lines += [f"Player #{index + 1}: {player_input.layout_name} layout"]
             lines += [
                 f"{control}: {getattr(player_input, control).value}"
                 for control in self.controls
