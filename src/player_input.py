@@ -17,6 +17,9 @@ from pyglet.window.key import KeyStateHandler
 
 class PlayerInput:
     def __init__(self, keys: KeyStateHandler, controller: Controller) -> None:
+        self.layout_name = ""
+        "Name of current control scheme, for diagnostic purposes"
+
         # Left stick
         self.x_axis = VirtualAxis(keys, controller)
         self.y_axis = VirtualAxis(keys, controller)
@@ -68,15 +71,19 @@ class VirtualAxis:
 
     @property
     def value(self) -> float:
-        neg_pressed = (self.key_negative != None and self._keys[self.key_negative]) or (
-            self.button_negative != None
+        neg_pressed = (
+            self.key_negative is not None and self._keys[self.key_negative]
+        ) or (
+            self.button_negative is not None
             and self._controller
-            and self._controller.buttons[self.button_negative]
+            and getattr(self._controller, self.button_negative)
         )
-        pos_pressed = (self.key_positive != None and self._keys[self.key_positive]) or (
-            self.button_positive != None
+        pos_pressed = (
+            self.key_positive is not None and self._keys[self.key_positive]
+        ) or (
+            self.button_positive is not None
             and self._controller
-            and self._controller.buttons[self.button_positive]
+            and getattr(self._controller, self.button_positive)
         )
         axis_value_from_buttons = 0
         if neg_pressed and not pos_pressed:
@@ -85,7 +92,7 @@ class VirtualAxis:
             axis_value_from_buttons = 1
 
         axis_value_from_analog = 0
-        if self._controller:
+        if self._controller and self.axis is not None:
             axis_value_from_analog = getattr(self._controller, self.axis)
         if abs(axis_value_from_analog) < 0.1:
             axis_value_from_analog = 0
@@ -131,10 +138,10 @@ class VirtualButton:
         return self._released
 
     def _get_value(self) -> bool:
-        key_pressed = self.key != None and self._keys[self.key]
+        key_pressed = self.key is not None and self._keys[self.key]
         button_pressed = (
-            self._controller != None
-            and self.button != None
+            self._controller is not None
+            and self.button is not None
             and getattr(self._controller, self.button)
         )
         return key_pressed or button_pressed
@@ -151,15 +158,25 @@ class VirtualButton:
             self._released = True
 
 
-def set_default_controller_layout(player_input: PlayerInput):
+def set_controller_layout(player_input: PlayerInput, alternate: bool):
+    if alternate:
+        set_alternate_controller_layout(player_input)
+    else:
+        set_default_controller_layout(player_input)
+
+
+def _set_common_controller_layout(player_input: PlayerInput):
+    # A few controls must be reset when switching between layouts
+    player_input.accelerate_axis.button_positive = None
+    player_input.brake_axis.button_positive = None
+    player_input.accelerate_axis.axis = None
+    player_input.brake_axis.axis = None
+
+    # These bindings are common to both layouts
     player_input.x_axis.axis = "leftx"
     player_input.y_axis.axis = "lefty"
     player_input.rx_axis.axis = "rightx"
     player_input.ry_axis.axis = "righty"
-    player_input.accelerate_axis.axis = "righttrigger"
-    player_input.brake_axis.axis = "lefttrigger"
-    player_input.primary_fire_button.button = "a"
-    player_input.secondary_fire_button.button = "b"
     player_input.swap_weapons_button.button = "y"
     player_input.reload_button.button = "x"
     player_input.debug_1.button = "dpup"
@@ -168,10 +185,24 @@ def set_default_controller_layout(player_input: PlayerInput):
     player_input.debug_4.button = "dpright"
 
 
+def set_default_controller_layout(player_input: PlayerInput):
+    player_input.layout_name = "Default"
+    _set_common_controller_layout(player_input)
+    # Drive with triggers
+    player_input.accelerate_axis.axis = "righttrigger"
+    player_input.brake_axis.axis = "lefttrigger"
+    # Shoot with A/B
+    player_input.primary_fire_button.button = "a"
+    player_input.secondary_fire_button.button = "b"
+
+
 def set_alternate_controller_layout(player_input: PlayerInput):
-    set_default_controller_layout(player_input)
+    player_input.layout_name = "Alternate"
+    _set_common_controller_layout(player_input)
+    # Drive with A/B
     player_input.accelerate_axis.button_positive = "a"
     player_input.brake_axis.button_positive = "b"
+    # Shoot with triggers
     player_input.primary_fire_button.button = "righttrigger"
     player_input.secondary_fire_button.button = "lefttrigger"
 

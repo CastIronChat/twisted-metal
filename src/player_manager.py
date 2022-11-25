@@ -2,14 +2,13 @@ from typing import List
 
 from pyglet.input import ControllerManager
 from pyglet.window.key import KeyStateHandler
-from constants import USE_ALTERNATE_CONTROLLER_LAYOUT
+from constants import START_WITH_ALTERNATE_CONTROLLER_LAYOUT
 
 from player import Player
 from player_input import (
     PlayerInput,
     bind_to_keyboard,
-    set_alternate_controller_layout,
-    set_default_controller_layout,
+    set_controller_layout,
 )
 
 PLAYER_COUNT = 4
@@ -67,10 +66,7 @@ class PlayerManager:
             player_input = PlayerInput(self._keyboard, controller)
             if player_index == KEYBOARD_PLAYER_INDEX:
                 bind_to_keyboard(player_input)
-            if USE_ALTERNATE_CONTROLLER_LAYOUT:
-                set_alternate_controller_layout(player_input)
-            else:
-                set_default_controller_layout(player_input)
+            set_controller_layout(player_input, START_WITH_ALTERNATE_CONTROLLER_LAYOUT)
             player = Player(player_input)
 
             self.players.append(player)
@@ -82,3 +78,10 @@ class PlayerManager:
         """
         for player in self.players:
             player.input.update()
+            if player.input.debug_2.pressed or player.input.debug_2.released:
+                # xor
+                alternate = (
+                    player.input.debug_2.toggle
+                    != START_WITH_ALTERNATE_CONTROLLER_LAYOUT
+                )
+                set_controller_layout(player.input, alternate)

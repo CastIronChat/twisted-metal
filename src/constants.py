@@ -15,7 +15,7 @@ Also fixes known issue where, when pausing in debugger, update and draw each get
 called twice back-to-back instead of alternating once per.
 """
 
-USE_ALTERNATE_CONTROLLER_LAYOUT = False
+START_WITH_ALTERNATE_CONTROLLER_LAYOUT = False
 """
 Use alternate (Mario Kart-style?) controller layout where A/B are gas and brake,
 and triggers are primary/secondary fire.  At this early stage of development,
