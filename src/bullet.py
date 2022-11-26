@@ -18,6 +18,8 @@ def bullet_behavior(
             )
             if len(wall_sprites_collided_with_bullet) > 0:
                 player.projectile_list.remove(projectile)
+                # stop doing anything with this projectile
+                continue
             projectile.center_x += projectile.change_x * delta_time
             projectile.center_y += projectile.change_y * delta_time
             if (
