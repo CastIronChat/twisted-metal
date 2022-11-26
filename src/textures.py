@@ -50,6 +50,7 @@ UZI = kenney_sheet_1bit.get_texture(41, 9)
 RIFLE = kenney_sheet_1bit.get_texture(42, 9)
 ROCKET_LAUNCHER = kenney_sheet_1bit.get_texture(43, 9)
 AMMO_CASE = kenney_sheet_1bit.get_texture(43, 9)
+ROCKET = kenney_sheet_1bit.get_texture(33, 21)
 
 RED_CAR = load_texture("assets/vehicle/red-car-top-view.png")
 

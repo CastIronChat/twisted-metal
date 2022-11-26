@@ -1,8 +1,8 @@
 from typing import Tuple
-import arcade
 import math
-from textures import LASER_PISTOL, ROCKET_LAUNCHER, MACHINE_GUN
-from iron_math import add_vec2, rotate_vec2
+import arcade
+from textures import LASER_PISTOL, ROCKET_LAUNCHER, MACHINE_GUN, ROCKET
+from iron_math import add_vec, move_sprite_relative_to_parent, polar_to_cartesian
 from player_input import VirtualButton
 
 
@@ -15,16 +15,17 @@ class Weapon:
     car: arcade.Sprite
     time_since_shoot: float
     weapon_icon: arcade.texture
+    muzzle_transform: Tuple[float, float, float]
 
     def __init__(
         self,
         input_button: VirtualButton,
         car: arcade.Sprite,
-        weapon_sprite_offset: Tuple[float, float],
+        weapon_transform: Tuple[float, float, float],
     ):
         self.input_button = input_button
         self.car = car
-        self.weapon_sprite_offset = weapon_sprite_offset
+        self.weapon_transform = weapon_transform
         self.time_since_shoot = 100
         self.weapon_sprite = arcade.Sprite(texture=self.weapon_icon, scale=3)
         self.setup()
@@ -38,10 +39,8 @@ class Weapon:
         ...
 
     def update(self):
-        self.weapon_sprite.angle = self.car.angle
-        self.weapon_sprite.position = add_vec2(
-            self.car.position,
-            rotate_vec2(self.weapon_sprite_offset, self.car.radians),
+        move_sprite_relative_to_parent(
+            self.weapon_sprite, self.car, self.weapon_transform
         )
 
     def swap_out(self, beam_list: arcade.SpriteList):
@@ -64,10 +63,10 @@ class LaserBeam(Weapon):
     def setup(self):
         self.beam_range = 500
         self.beam_projection: SpriteForBeam = SpriteForBeam(self)
-
-        self.beam_projection.properties[
-            "yeah_its_a_hack_come_at_me_bro"
-        ] = self.weapon_sprite_offset
+        self.muzzle_transform = (20, 5, 0)
+        self.beam_projection.properties["yeah_its_a_hack_come_at_me_bro"] = add_vec(
+            self.weapon_transform, self.muzzle_transform[:2]
+        )
 
     def update(
         self,
@@ -101,6 +100,8 @@ class Rocket(Weapon):
     def setup(self):
         self.rocket_speed = 300
         self.fire_rate = 0.5
+        # the -45 degree angle in the offset corrects for rocket texture angled up 45 degrees
+        self.muzzle_transform = (30, 2, math.radians(-45))
 
     def update(
         self,
@@ -116,10 +117,12 @@ class Rocket(Weapon):
 
     def shoot(self, projectile_list: arcade.SpriteList):
         rocket: SpriteForRocket = SpriteForRocket(self)
-        rocket.position = self.weapon_sprite.position
-        rocket.change_x = self.rocket_speed * math.cos(self.car.radians)
-        rocket.change_y = self.rocket_speed * math.sin(self.car.radians)
-        rocket.angle = self.car.angle
+        move_sprite_relative_to_parent(
+            rocket, self.weapon_sprite, self.muzzle_transform
+        )
+        rocket.velocity = polar_to_cartesian(
+            self.rocket_speed, self.weapon_sprite.radians
+        )
         self.time_since_shoot = 0
         projectile_list.append(rocket)
 
@@ -136,6 +139,7 @@ class MachineGun(Weapon):
     def setup(self):
         self.bullet_speed = 500
         self.fire_rate = 10
+        self.muzzle_transform = (20, 7, 0)
 
     def update(
         self,
@@ -150,10 +154,12 @@ class MachineGun(Weapon):
 
     def shoot(self, projectile_list: arcade.SpriteList):
         bullet: SpriteForMachineGun = SpriteForMachineGun(self)
-        bullet.position = self.weapon_sprite.position
-        bullet.change_x = self.bullet_speed * math.cos(self.weapon_sprite.radians)
-        bullet.change_y = self.bullet_speed * math.sin(self.weapon_sprite.radians)
-        bullet.angle = self.weapon_sprite.angle
+        move_sprite_relative_to_parent(
+            bullet, self.weapon_sprite, self.muzzle_transform
+        )
+        bullet.velocity = polar_to_cartesian(
+            self.bullet_speed, self.weapon_sprite.radians
+        )
         self.time_since_shoot = 0
         projectile_list.append(bullet)
 
@@ -171,7 +177,7 @@ class SpriteForMachineGun(arcade.SpriteSolidColor):
         self.machine_gun = machine_gun
 
 
-class SpriteForRocket(arcade.SpriteSolidColor):
+class SpriteForRocket(arcade.Sprite):
     def __init__(self, rocket: Rocket):
-        super().__init__(30, 20, arcade.color.ORANGE)
+        super().__init__(texture=ROCKET, scale=2)
         self.rocket = rocket
