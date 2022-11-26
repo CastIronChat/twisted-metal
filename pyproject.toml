@@ -1,0 +1,4 @@
+[tool.isort]
+profile = "black"
+src_paths = ["src"]
+add_imports = ["from __future__ import annotations"]
