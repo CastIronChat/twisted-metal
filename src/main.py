@@ -1,4 +1,7 @@
+from __future__ import annotations
+
 from typing import List
+
 import arcade
 
 from arena.arena import Arena
@@ -12,10 +15,9 @@ from constants import (
     TICK_DURATION,
     USE_DEBUGGER_TIMING_FIXES,
 )
-from input_debug_hud import InputDebugHud
-
-from player_manager import PlayerManager
 from hud import Hud
+from input_debug_hud import InputDebugHud
+from player_manager import PlayerManager
 
 
 class MyGame(arcade.Window):

@@ -1,5 +1,7 @@
-from arcade import Sprite, SpriteSolidColor, color
+from __future__ import annotations
+
 import arcade
+from arcade import Sprite, SpriteSolidColor, color
 
 
 class Wall:

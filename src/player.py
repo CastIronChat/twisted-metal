@@ -1,9 +1,13 @@
-import arcade
+from __future__ import annotations
+
 import math
 from typing import List
+
+import arcade
+
 from player_input import PlayerInput
-from weapon import Weapon, LaserBeam, Rocket, MachineGun
 from textures import RED_CAR
+from weapon import LaserBeam, MachineGun, Rocket, Weapon
 
 
 class Player:

@@ -1,15 +1,13 @@
+from __future__ import annotations
+
 from typing import List
 
 from pyglet.input import ControllerManager
 from pyglet.window.key import KeyStateHandler
-from constants import START_WITH_ALTERNATE_CONTROLLER_LAYOUT
 
+from constants import START_WITH_ALTERNATE_CONTROLLER_LAYOUT
 from player import Player
-from player_input import (
-    PlayerInput,
-    bind_to_keyboard,
-    set_controller_layout,
-)
+from player_input import PlayerInput, bind_to_keyboard, set_controller_layout
 
 PLAYER_COUNT = 4
 KEYBOARD_PLAYER_INDEX = 0

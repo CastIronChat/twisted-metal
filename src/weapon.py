@@ -1,9 +1,13 @@
-from typing import Tuple
+from __future__ import annotations
+
 import math
+from typing import Tuple
+
 import arcade
-from textures import LASER_PISTOL, ROCKET_LAUNCHER, MACHINE_GUN, ROCKET
+
 from iron_math import add_vec, move_sprite_relative_to_parent, polar_to_cartesian
 from player_input import VirtualButton
+from textures import LASER_PISTOL, MACHINE_GUN, ROCKET, ROCKET_LAUNCHER
 
 
 class Weapon:

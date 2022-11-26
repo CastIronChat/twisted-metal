@@ -1,10 +1,15 @@
-import arcade
+from __future__ import annotations
+
 import math
+from typing import List, cast
+
+import arcade
+
+from arena.wall import SpriteForWall
 from constants import SCREEN_HEIGHT, SCREEN_WIDTH
 from iron_math import add_vec, rotate_vec
 from player_manager import PlayerManager
-from typing import List, cast
-from arena.wall import SpriteForWall
+
 
 # For naming purposes, a bullet can be anything that comes out of a weapon included beams, rockets, etc
 def bullet_behavior(

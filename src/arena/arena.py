@@ -1,5 +1,7 @@
-from typing import List, cast
+from __future__ import annotations
+
 from collections.abc import Sequence
+from typing import List, cast
 
 from arcade import SpriteList
 

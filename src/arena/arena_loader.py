@@ -1,13 +1,16 @@
+from __future__ import annotations
+
 import math
-import arcade
-from arena.arena import Arena
-from pytiled_parser import ObjectLayer
-from pytiled_parser.tiled_object import Rectangle
 from math import radians
 
+import arcade
+from pytiled_parser import ObjectLayer
+from pytiled_parser.tiled_object import Rectangle
+
+from arena.arena import Arena
 from arena.wall import Wall
 from constants import SCREEN_HEIGHT
-from iron_math import add_vec, scale_vec, rotate_vec
+from iron_math import add_vec, rotate_vec, scale_vec
 
 
 def load_arena_by_name(name: str) -> Arena:
