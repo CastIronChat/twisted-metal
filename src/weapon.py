@@ -1,7 +1,8 @@
 from typing import Tuple
+import math
 import arcade
 from textures import LASER_PISTOL, ROCKET_LAUNCHER, MACHINE_GUN, ROCKET
-from iron_math import add_vec, offset_sprite_from, polar_to_vec
+from iron_math import add_vec, move_sprite_relative_to_parent, polar_to_cartesian
 from player_input import VirtualButton
 
 
@@ -14,17 +15,17 @@ class Weapon:
     car: arcade.Sprite
     time_since_shoot: float
     weapon_icon: arcade.texture
-    muzzle_offset: Tuple[float, float, float]
+    muzzle_transform: Tuple[float, float, float]
 
     def __init__(
         self,
         input_button: VirtualButton,
         car: arcade.Sprite,
-        weapon_sprite_offset: Tuple[float, float, float],
+        weapon_transform: Tuple[float, float, float],
     ):
         self.input_button = input_button
         self.car = car
-        self.weapon_sprite_offset = weapon_sprite_offset
+        self.weapon_transform = weapon_transform
         self.time_since_shoot = 100
         self.weapon_sprite = arcade.Sprite(texture=self.weapon_icon, scale=3)
         self.setup()
@@ -38,7 +39,9 @@ class Weapon:
         ...
 
     def update(self):
-        offset_sprite_from(self.weapon_sprite, self.car, self.weapon_sprite_offset)
+        move_sprite_relative_to_parent(
+            self.weapon_sprite, self.car, self.weapon_transform
+        )
 
     def swap_out(self, beam_list: arcade.SpriteList):
         pass
@@ -60,9 +63,9 @@ class LaserBeam(Weapon):
     def setup(self):
         self.beam_range = 500
         self.beam_projection: SpriteForBeam = SpriteForBeam(self)
-        self.muzzle_offset = (20, 5, 0)
+        self.muzzle_transform = (20, 5, 0)
         self.beam_projection.properties["yeah_its_a_hack_come_at_me_bro"] = add_vec(
-            self.weapon_sprite_offset, self.muzzle_offset[:2]
+            self.weapon_transform, self.muzzle_transform[:2]
         )
 
     def update(
@@ -97,8 +100,8 @@ class Rocket(Weapon):
     def setup(self):
         self.rocket_speed = 300
         self.fire_rate = 0.5
-        #the -45 degree angle in the offset corrects for rocket texture angled up 45 degrees
-        self.muzzle_offset = (30, 2, -45)
+        # the -45 degree angle in the offset corrects for rocket texture angled up 45 degrees
+        self.muzzle_transform = (30, 2, math.radians(-45))
 
     def update(
         self,
@@ -114,8 +117,12 @@ class Rocket(Weapon):
 
     def shoot(self, projectile_list: arcade.SpriteList):
         rocket: SpriteForRocket = SpriteForRocket(self)
-        offset_sprite_from(rocket, self.weapon_sprite, self.muzzle_offset)
-        rocket.velocity = polar_to_vec(self.rocket_speed, self.weapon_sprite.radians) 
+        move_sprite_relative_to_parent(
+            rocket, self.weapon_sprite, self.muzzle_transform
+        )
+        rocket.velocity = polar_to_cartesian(
+            self.rocket_speed, self.weapon_sprite.radians
+        )
         self.time_since_shoot = 0
         projectile_list.append(rocket)
 
@@ -132,7 +139,7 @@ class MachineGun(Weapon):
     def setup(self):
         self.bullet_speed = 500
         self.fire_rate = 10
-        self.muzzle_offset = (20, 7, 0)
+        self.muzzle_transform = (20, 7, 0)
 
     def update(
         self,
@@ -147,8 +154,12 @@ class MachineGun(Weapon):
 
     def shoot(self, projectile_list: arcade.SpriteList):
         bullet: SpriteForMachineGun = SpriteForMachineGun(self)
-        offset_sprite_from(bullet, self.weapon_sprite, self.muzzle_offset)
-        bullet.velocity = polar_to_vec(self.bullet_speed, self.weapon_sprite.radians)
+        move_sprite_relative_to_parent(
+            bullet, self.weapon_sprite, self.muzzle_transform
+        )
+        bullet.velocity = polar_to_cartesian(
+            self.bullet_speed, self.weapon_sprite.radians
+        )
         self.time_since_shoot = 0
         projectile_list.append(bullet)
 

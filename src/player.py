@@ -14,8 +14,8 @@ class Player:
         self.input = input
         self.drive_speed = 200
         self.turn_speed = 100
-        self.primary_weapon_sprite_offset = (50, 20, 0)
-        self.secondary_weapon_sprite_offset = (50, -20, 0)
+        self.primary_weapon_transform = (50, 20, 0)
+        self.secondary_weapon_transform = (50, -20, 0)
         # Weapons
         self.projectile_list = arcade.SpriteList()
         self.beam_list = arcade.SpriteList()
@@ -80,7 +80,7 @@ class Player:
         self.primary_weapon = self.weapons_list[self.weapon_index](
             self.input.primary_fire_button,
             self.sprite,
-            self.primary_weapon_sprite_offset,
+            self.primary_weapon_transform,
         )
         self.weapon_index += 1
         if self.weapon_index >= len(self.weapons_list):
@@ -88,7 +88,7 @@ class Player:
         self.secondary_weapon = self.weapons_list[self.weapon_index](
             self.input.secondary_fire_button,
             self.sprite,
-            self.secondary_weapon_sprite_offset,
+            self.secondary_weapon_transform,
         )
 
     def draw(self):

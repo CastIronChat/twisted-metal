@@ -2,34 +2,88 @@ import math
 import arcade
 from typing import Tuple
 
+#
+# Note: all functions in this file should use positional-only parameters because
+# it's slightly faster.  The `, /` suffix at the end denotes this.
+# https://peps.python.org/pep-0570/#performance
+#
+# All functions accept and return radians, not degrees, unless otherwise specified.
+#
 
-def rotate_vec(point: Tuple[float, float], radians: float, /) -> float:
-    x, y = point
+
+def rotate_vec(vector: Tuple[float, float], radians: float, /):
+    """
+    Rotate a 2d vector about the origin.
+
+    vector = (x, y)
+
+    Returns (x, y)
+    """
+    x, y = vector
     s = math.sin(radians)
     c = math.cos(radians)
     return (c * x - s * y, s * x + c * y)
 
 
-def add_vec(point: Tuple[float, float], translation: Tuple[float, float], /) -> float:
-    return (point[0] + translation[0], point[1] + translation[1])
-
-
-def scale_vec(point: Tuple[float, float], factor: float, /) -> float:
-    return (point[0] * factor, point[1] * factor)
-
-
-def offset_sprite_from(
-    child: arcade.Sprite, parent: arcade.Sprite, offset: Tuple[float, float, float]
+def add_vec(
+    vector: Tuple[float, float],
+    translation: Tuple[
+        float,
+        float,
+    ],
+    /,
 ):
-    child.angle = parent.angle + offset[2]
-    child.position = add_vec(parent.position, rotate_vec(offset[:2], parent.radians))
+    return (vector[0] + translation[0], vector[1] + translation[1])
 
 
-def combine_transform(parent: arcade.Sprite, offset: Tuple[float, float, float]):
-    angle = parent.angle + offset[2]
-    position = add_vec(parent.position, rotate_vec(offset[:2], parent.radians))
+def scale_vec(vector: Tuple[float, float], factor: float, /):
+    """
+    Scale a 2d vector by a given factor.
+
+    vector = (x, y)
+    """
+    return (vector[0] * factor, vector[1] * factor)
+
+
+def move_sprite_relative_to_parent(
+    child: arcade.Sprite,
+    parent: arcade.Sprite,
+    transform: Tuple[float, float, float],
+    /,
+):
+    """
+    Move child to a new position and rotation, derived by applying the given transformation
+    to parent's position and rotation.
+
+    transform = (x, y, radians)
+    """
+    child.radians = parent.radians + transform[2]
+    child.position = add_vec(parent.position, rotate_vec(transform[:2], parent.radians))
+
+
+def get_transformed_location(
+    parent: arcade.Sprite, transform: Tuple[float, float, float], /
+):
+    """
+    Apply a geometric transformation to the position and rotation of `parent`, returning
+    the new position and rotation.
+    Does not move parent.
+
+    transform = (x, y, radians)
+
+    Returns (x, y, radians)
+    """
+    angle = parent.radians + transform[2]
+    position = add_vec(parent.position, rotate_vec(transform[:2], parent.radians))
     return (position[0], position[1], angle)
 
 
-def polar_to_vec(speed: float, radians: float):
-    return rotate_vec((speed, 0), radians)
+def polar_to_cartesian(magnitude: float, radians: float, /):
+    """
+    Convert polar coordinates to certesian. If you pass a negative magnitude, it
+    is equivalent to flipping the vector 180 degrees, making it point in the
+    opposite direction.
+
+    Returns (x, y)
+    """
+    return rotate_vec((magnitude, 0), radians)
