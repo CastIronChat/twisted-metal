@@ -76,7 +76,7 @@ class LaserBeam(Weapon):
         self.muzzle_transform = (20 + self.beam_range / 2, 5, 0)
         self.my_beam_sprite = None
 
-    def update(self, delta_time):
+    def update(self, delta_time: float):
         super().update()
         if self.input_button.pressed:
             self.shoot()
@@ -87,7 +87,7 @@ class LaserBeam(Weapon):
         beam_appearance = LinkedSpriteSolidColor[Beam](
             self.beam_range, 5, arcade.color.RED
         )
-        beam = Beam(beam_appearance, self.player.beam_spritelist, self)
+        beam = Beam(beam_appearance, self.player.beam_sprite_list, self)
         beam.dps = self.dps
         self.my_beam_sprite = beam.sprite
 
@@ -95,8 +95,8 @@ class LaserBeam(Weapon):
         self.remove_beam()
 
     def remove_beam(self):
-        if self.my_beam_sprite in self.player.beam_spritelist:
-            self.player.beam_spritelist.remove(self.my_beam_sprite)
+        if self.my_beam_sprite in self.player.beam_sprite_list:
+            self.player.beam_sprite_list.remove(self.my_beam_sprite)
 
 
 class RocketLauncher(Weapon):
@@ -116,7 +116,7 @@ class RocketLauncher(Weapon):
         # the -45 degree angle in the offset corrects for rocket texture angled up 45 degrees
         self.muzzle_transform = (30, 2, math.radians(-45))
 
-    def update(self, delta_time):
+    def update(self, delta_time: float):
         super().update()
         if self.input_button.pressed:
             if self.time_since_shoot > 1 / self.fire_rate:
@@ -125,7 +125,7 @@ class RocketLauncher(Weapon):
 
     def shoot(self):
         rocket_appearance = LinkedSprite[Projectile](texture=ROCKET, scale=2)
-        rocket = Projectile(rocket_appearance, self.player.projectile_spritelist)
+        rocket = Projectile(rocket_appearance, self.player.projectile_sprite_list)
         rocket.damage = self.damage
         move_sprite_relative_to_parent(
             rocket.sprite, self.weapon_sprite, self.muzzle_transform
@@ -160,7 +160,7 @@ class MachineGun(Weapon):
 
     def shoot(self):
         bullet_appearance = LinkedSpriteSolidColor[Projectile](10, 5, arcade.color.RED)
-        bullet = Projectile(bullet_appearance, self.player.projectile_spritelist)
+        bullet = Projectile(bullet_appearance, self.player.projectile_sprite_list)
         bullet.damage = self.damage
         move_sprite_relative_to_parent(
             bullet.sprite, self.weapon_sprite, self.muzzle_transform

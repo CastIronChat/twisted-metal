@@ -47,9 +47,9 @@ class PlayerManager:
 
     def setup(
         self,
-        projectile_spritelist: arcade.SpriteList,
-        beam_spritelist: arcade.SpriteList,
-        player_spritelist: arcade.SpriteList,
+        projectile_sprite_list: arcade.SpriteList,
+        beam_sprite_list: arcade.SpriteList,
+        player_sprite_list: arcade.SpriteList,
     ):
         if self._did_setup:
             raise Exception("Already setup; cannot setup twice")
@@ -73,8 +73,8 @@ class PlayerManager:
             if player_index == KEYBOARD_PLAYER_INDEX:
                 bind_to_keyboard(player_input)
             set_controller_layout(player_input, START_WITH_ALTERNATE_CONTROLLER_LAYOUT)
-            player = Player(player_input, projectile_spritelist, beam_spritelist)
-            player_spritelist.append(player.sprite)
+            player = Player(player_input, projectile_sprite_list, beam_sprite_list)
+            player_sprite_list.append(player.sprite)
             self.players.append(player)
 
     def update_inputs(self):

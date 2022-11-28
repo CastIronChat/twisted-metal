@@ -11,10 +11,9 @@ class Player:
     def __init__(
         self,
         input: PlayerInput,
-        projectile_spritelist: arcade.SpriteList,
-        beam_spritelist: arcade.SpriteList,
+        projectile_sprite_list: arcade.SpriteList,
+        beam_sprite_list: arcade.SpriteList,
     ):
-        # self.sprite: SpriteForPlayer = SpriteForPlayer(self)
         self.sprite = LinkedSprite[Player](texture=RED_CAR, scale=0.5)
         self.sprite.owner = self
         self.sprite.center_x = 256
@@ -25,8 +24,8 @@ class Player:
         self.primary_weapon_transform = (50, 20, 0)
         self.secondary_weapon_transform = (50, -20, 0)
         # Weapons
-        self.projectile_spritelist = projectile_spritelist
-        self.beam_spritelist = beam_spritelist
+        self.projectile_sprite_list = projectile_sprite_list
+        self.beam_sprite_list = beam_sprite_list
         self.weapons_list: List[Weapon] = [
             LaserBeam,
             RocketLauncher,
