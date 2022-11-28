@@ -8,8 +8,13 @@ from textures import RED_CAR
 
 
 class Player:
-    def __init__(self, input: PlayerInput):
-        #self.sprite: SpriteForPlayer = SpriteForPlayer(self)
+    def __init__(
+        self,
+        input: PlayerInput,
+        projectile_spritelist: arcade.SpriteList,
+        beam_spritelist: arcade.SpriteList,
+    ):
+        # self.sprite: SpriteForPlayer = SpriteForPlayer(self)
         self.sprite = LinkedSprite[Player](texture=RED_CAR, scale=0.5)
         self.sprite.owner = self
         self.sprite.center_x = 256
@@ -20,8 +25,8 @@ class Player:
         self.primary_weapon_transform = (50, 20, 0)
         self.secondary_weapon_transform = (50, -20, 0)
         # Weapons
-        self.projectile_list = arcade.SpriteList()
-        self.beam_list = arcade.SpriteList()
+        self.projectile_spritelist = projectile_spritelist
+        self.beam_spritelist = beam_spritelist
         self.weapons_list: List[Weapon] = [
             LaserBeam,
             RocketLauncher,
@@ -95,13 +100,5 @@ class Player:
         )
 
     def draw(self):
-        self.projectile_list.draw()
-        self.beam_list.draw()
         self.primary_weapon.draw()
         self.secondary_weapon.draw()
-
-
-# class SpriteForPlayer(arcade.Sprite):
-#     def __init__(self, player: Player):
-#         super().__init__(texture=RED_CAR, scale=0.5)
-#         self.player = player

@@ -1,4 +1,5 @@
 from typing import List
+import arcade
 
 from pyglet.input import ControllerManager
 from pyglet.window.key import KeyStateHandler
@@ -44,7 +45,12 @@ class PlayerManager:
         """
         return self._players
 
-    def setup(self):
+    def setup(
+        self,
+        projectile_spritelist: arcade.SpriteList,
+        beam_spritelist: arcade.SpriteList,
+        player_spritelist: arcade.SpriteList,
+    ):
         if self._did_setup:
             raise Exception("Already setup; cannot setup twice")
         self._did_setup = True
@@ -67,8 +73,8 @@ class PlayerManager:
             if player_index == KEYBOARD_PLAYER_INDEX:
                 bind_to_keyboard(player_input)
             set_controller_layout(player_input, START_WITH_ALTERNATE_CONTROLLER_LAYOUT)
-            player = Player(player_input)
-
+            player = Player(player_input, projectile_spritelist, beam_spritelist)
+            player_spritelist.append(player.sprite)
             self.players.append(player)
 
     def update_inputs(self):

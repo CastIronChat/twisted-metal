@@ -34,11 +34,13 @@ class MyGame(arcade.Window):
 
     def setup(self):
         self.all_sprites = arcade.SpriteList()
-
+        self.projectile_spritelist = arcade.SpriteList()
+        self.beam_spritelist = arcade.SpriteList()
+        self.player_spritelist = arcade.SpriteList()
         # Players
-        self.player_manager.setup()
-        for player in self.player_manager.players:
-            self.all_sprites.append(player.sprite)
+        self.player_manager.setup(
+            self.projectile_spritelist, self.beam_spritelist, self.player_spritelist
+        )
 
         # Debug UI for input handling
         self.input_debug_hud = InputDebugHud(
@@ -67,7 +69,13 @@ class MyGame(arcade.Window):
         self.player_manager.update_inputs()
         for player in self.player_manager.players:
             player.update(delta_time)
-        bullet_behavior(delta_time, self.player_manager, self.arena.wall_sprite_list)
+        bullet_behavior(
+            delta_time,
+            self.player_spritelist,
+            self.projectile_spritelist,
+            self.beam_spritelist,
+            self.arena.wall_sprite_list,
+        )
         self.hud.update()
 
     def on_draw(self):
@@ -78,6 +86,9 @@ class MyGame(arcade.Window):
         self.clear()
         self.arena.draw()
         self.all_sprites.draw()
+        self.projectile_spritelist.draw()
+        self.beam_spritelist.draw()
+        self.player_spritelist.draw()
         for player in self.player_manager.players:
             player.draw()
         self.input_debug_hud.draw()
