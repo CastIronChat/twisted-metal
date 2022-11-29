@@ -8,6 +8,7 @@ from linked_sprite import LinkedSprite, LinkedSpriteSolidColor
 from textures import LASER_PISTOL, ROCKET_LAUNCHER, MACHINE_GUN, ROCKET
 from iron_math import add_vec, move_sprite_relative_to_parent, polar_to_cartesian
 from player_input import VirtualButton
+from sprites import PresentationalSprite, InteractionalSprite
 
 # This allows a circular import only for the purposes of type hints
 # Weapon will never create and instance of Player
@@ -20,6 +21,7 @@ class Weapon:
     Slotted into player's car and behaves according to it's subclass weapon type
     """
 
+    weapon_sprite: PresentationalSprite
     input_button: VirtualButton
     player: Player
     time_since_shoot: float
@@ -36,7 +38,7 @@ class Weapon:
         self.player = player
         self.weapon_transform = weapon_transform
         self.time_since_shoot = 100
-        self.weapon_sprite = arcade.Sprite(texture=self.weapon_icon, scale=3)
+        self.weapon_sprite = PresentationalSprite(texture=self.weapon_icon, scale=3)
         self.setup()
 
     def setup(self):
@@ -49,7 +51,7 @@ class Weapon:
 
     def update(self):
         move_sprite_relative_to_parent(
-            self.weapon_sprite, self.player.sprite, self.weapon_transform
+            self.weapon_sprite.arcade_sprite, self.player.sprite, self.weapon_transform
         )
 
     def swap_out(self):
@@ -64,7 +66,7 @@ class LaserBeam(Weapon):
     stays on while button is pressed and moved with the ship
     """
 
-    my_beam_sprite: arcade.Sprite
+    my_beam_sprite: arcade.Sprite  # TODO: make this an InteractionalSprite
     beam_range: float
     dps: float
     # Is a class attribute, not instance attribute
@@ -128,7 +130,7 @@ class RocketLauncher(Weapon):
         rocket = Projectile(rocket_appearance, self.player.projectile_sprite_list)
         rocket.damage = self.damage
         move_sprite_relative_to_parent(
-            rocket.sprite, self.weapon_sprite, self.muzzle_transform
+            rocket.sprite, self.weapon_sprite.arcade_sprite, self.muzzle_transform
         )
         rocket.sprite.velocity = polar_to_cartesian(
             self.rocket_speed, self.weapon_sprite.radians
@@ -163,7 +165,7 @@ class MachineGun(Weapon):
         bullet = Projectile(bullet_appearance, self.player.projectile_sprite_list)
         bullet.damage = self.damage
         move_sprite_relative_to_parent(
-            bullet.sprite, self.weapon_sprite, self.muzzle_transform
+            bullet.sprite, self.weapon_sprite.arcade_sprite, self.muzzle_transform
         )
         bullet.sprite.velocity = polar_to_cartesian(
             self.bullet_speed, self.weapon_sprite.radians
