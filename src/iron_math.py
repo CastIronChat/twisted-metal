@@ -61,6 +61,20 @@ def move_sprite_relative_to_parent(
     child.position = add_vec(parent.position, rotate_vec(transform[:2], parent.radians))
 
 
+def move_sprite(
+    sprite: arcade.Sprite,
+    transform: Tuple[float, float, float],
+    /,
+):
+    """
+    Move sprite to a new position and rotation.
+
+    transform = (x, y, radians)
+    """
+    sprite.radians = transform[2]
+    sprite.position = transform[:2]
+
+
 def get_transformed_location(
     parent: arcade.Sprite, transform: Tuple[float, float, float], /
 ):
