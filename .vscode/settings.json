@@ -4,6 +4,9 @@
     // but this one seems as good as any other,
     // and VSCode supports it automatically.
     "python.formatting.provider": "black",
+    "python.languageServer": "Pylance",
+    "python.analysis.autoImportCompletions": true,
+    "python.analysis.diagnosticMode": "workspace",
     "[python]": {
         "editor.formatOnSave": true
     }

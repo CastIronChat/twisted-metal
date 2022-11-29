@@ -1,12 +1,12 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 from typing import Tuple
 import math
 from bullet import Projectile, Beam
 import arcade
 from linked_sprite import LinkedSprite, LinkedSpriteSolidColor
 from textures import LASER_PISTOL, ROCKET_LAUNCHER, MACHINE_GUN, ROCKET
-from iron_math import add_vec, move_sprite_relative_to_parent, polar_to_cartesian
+from iron_math import move_sprite_relative_to_parent, polar_to_cartesian
 from player_input import VirtualButton
 
 # This allows a circular import only for the purposes of type hints
@@ -23,7 +23,7 @@ class Weapon:
     input_button: VirtualButton
     player: Player
     time_since_shoot: float
-    weapon_icon: arcade.texture
+    weapon_icon: arcade.Texture
     muzzle_transform: Tuple[float, float, float]
 
     def __init__(
@@ -47,7 +47,7 @@ class Weapon:
         """
         ...
 
-    def update(self):
+    def update(self, delta_time: float):
         move_sprite_relative_to_parent(
             self.weapon_sprite, self.player.sprite, self.weapon_transform
         )
@@ -74,10 +74,10 @@ class LaserBeam(Weapon):
         self.beam_range = 500
         self.dps = 5
         self.muzzle_transform = (20 + self.beam_range / 2, 5, 0)
-        self.my_beam_sprite = None
+        self.my_beam_sprite = cast(arcade.Sprite, None)
 
     def update(self, delta_time: float):
-        super().update()
+        super().update(delta_time)
         if self.input_button.pressed:
             self.shoot()
         if self.input_button.released:
@@ -85,7 +85,7 @@ class LaserBeam(Weapon):
 
     def shoot(self):
         beam_appearance = LinkedSpriteSolidColor[Beam](
-            self.beam_range, 5, arcade.color.RED
+            int(self.beam_range), 5, arcade.color.RED
         )
         beam = Beam(beam_appearance, self.player.beam_sprite_list, self)
         beam.dps = self.dps
@@ -116,8 +116,8 @@ class RocketLauncher(Weapon):
         # the -45 degree angle in the offset corrects for rocket texture angled up 45 degrees
         self.muzzle_transform = (30, 2, math.radians(-45))
 
-    def update(self, delta_time: float):
-        super().update()
+    def update(self, delta_time):
+        super().update(delta_time)
         if self.input_button.pressed:
             if self.time_since_shoot > 1 / self.fire_rate:
                 self.shoot()
@@ -130,7 +130,7 @@ class RocketLauncher(Weapon):
         move_sprite_relative_to_parent(
             rocket.sprite, self.weapon_sprite, self.muzzle_transform
         )
-        rocket.sprite.velocity = polar_to_cartesian(
+        rocket.velocity = polar_to_cartesian(
             self.rocket_speed, self.weapon_sprite.radians
         )
         self.time_since_shoot = 0
@@ -152,20 +152,23 @@ class MachineGun(Weapon):
         self.damage = 10
         self.muzzle_transform = (20, 7, 0)
 
-    def update(self, delta_time: float):
-        super().update()
+    def update(self, delta_time):
+        super().update(delta_time)
         if self.input_button.value and self.time_since_shoot > 1 / self.fire_rate:
             self.shoot()
         self.time_since_shoot += delta_time
 
     def shoot(self):
-        bullet_appearance = LinkedSpriteSolidColor[Projectile](10, 5, arcade.color.RED)
+        bullet_appearance = cast(
+            LinkedSprite[Projectile],
+            LinkedSpriteSolidColor[Projectile](10, 5, arcade.color.RED),
+        )
         bullet = Projectile(bullet_appearance, self.player.projectile_sprite_list)
         bullet.damage = self.damage
         move_sprite_relative_to_parent(
             bullet.sprite, self.weapon_sprite, self.muzzle_transform
         )
-        bullet.sprite.velocity = polar_to_cartesian(
+        bullet.velocity = polar_to_cartesian(
             self.bullet_speed, self.weapon_sprite.radians
         )
         self.time_since_shoot = 0

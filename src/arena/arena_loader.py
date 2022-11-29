@@ -1,4 +1,3 @@
-import math
 import arcade
 from arena.arena import Arena
 from pytiled_parser import ObjectLayer

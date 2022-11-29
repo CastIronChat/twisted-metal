@@ -1,5 +1,4 @@
-from arcade import Sprite, SpriteSolidColor, color
-import arcade
+from arcade import SpriteSolidColor, color
 
 
 class Wall:

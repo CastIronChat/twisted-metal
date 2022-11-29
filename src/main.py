@@ -1,9 +1,9 @@
-from typing import List
+from typing import cast
 import arcade
+from pyglet.window.key import KeyStateHandler
 
 from arena.arena import Arena
 from arena.arena_loader import load_arena_by_name
-from arena.wall import SpriteForWall
 from bullet import bullet_behavior
 from constants import (
     SCREEN_HEIGHT,
@@ -20,16 +20,16 @@ from hud import Hud
 
 class MyGame(arcade.Window):
     # Declare class members; enables tab-completion
-    all_sprites: arcade.SpriteList = None
-    input_debug_hud: InputDebugHud = None
+    all_sprites: arcade.SpriteList
+    input_debug_hud: InputDebugHud
 
     def __init__(self, width: int, height: int, title: str):
         super().__init__(
             width, height, title, enable_polling=True, update_rate=TICK_DURATION
-        )
+        )  # type: ignore
         self.physics_engine = None
         arcade.set_background_color(arcade.color.AMAZON)
-        self.player_manager = PlayerManager(self.keyboard)
+        self.player_manager = PlayerManager(cast(KeyStateHandler, self.keyboard))
         self.arena: Arena
 
     def setup(self):
