@@ -12,7 +12,7 @@ from player_input import (
     set_controller_layout,
 )
 
-PLAYER_COUNT = 4
+PLAYER_COUNT = 2
 KEYBOARD_PLAYER_INDEX = 0
 KEYBOARD_PLAYER_ALSO_USES_A_CONTROLLER = True
 """

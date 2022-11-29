@@ -16,6 +16,7 @@ from input_debug_hud import InputDebugHud
 
 from player_manager import PlayerManager
 from hud import Hud
+from collision import projectile_hits_wall, projectile_hits_player
 
 
 class MyGame(arcade.Window):
@@ -76,6 +77,8 @@ class MyGame(arcade.Window):
             self.beam_spritelist,
             self.arena.wall_sprite_list,
         )
+        projectile_hits_wall(self.projectile_spritelist, self.arena.wall_sprite_list)
+        projectile_hits_player(self.projectile_spritelist, self.player_spritelist)
         self.hud.update()
 
     def on_draw(self):

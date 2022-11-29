@@ -9,10 +9,12 @@ from typing import List, cast
 from arena.wall import SpriteForWall
 from linked_sprite import LinkedSprite
 
+
 # This allows a circular import only for the purposes of type hints
 # Weapon will never create and instance of Player
 if TYPE_CHECKING:
     from weapon import Weapon
+    from player import Player
 
 
 class Projectile:
@@ -23,6 +25,19 @@ class Projectile:
         sprite.owner = self
         sprite_list.append(self.sprite)
         self.damage = 0
+    
+    def on_collision_with_wall(projectile, projectile_spritelist: arcade.SpriteList, walls_touching_projectile: arcade.SpriteList):
+        projectile_spritelist.remove(projectile.sprite)
+        
+    def on_collision_with_player(projectile, projectile_spritelist: arcade.SpriteList, players_touching_projectile: arcade.SpriteList):
+        for player in players_touching_projectile:
+            player: LinkedSprite[Player]
+            projectile: LinkedSprite[projectile]
+            player.owner.player_health -= projectile.damage
+        projectile_spritelist.remove(projectile.sprite)
+            
+        
+        
 
 
 class Beam:
@@ -45,15 +60,15 @@ def bullet_behavior(
     list_of_walls: arcade.SpriteList,
 ):
     for projectile_sprite in projectile_spritelist:
-        projectile_sprite: LinkedSprite[Projectile]
-        wall_sprites_collided_with_bullet = cast(
-            List[SpriteForWall],
-            arcade.check_for_collision_with_list(projectile_sprite, list_of_walls),
-        )
-        if len(wall_sprites_collided_with_bullet) > 0:
-            projectile_spritelist.remove(projectile_sprite)
-            # stop doing anything with this projectile
-            continue
+        # projectile_sprite: LinkedSprite[Projectile]
+        # wall_sprites_collided_with_bullet = cast(
+        #     List[SpriteForWall],
+        #     arcade.check_for_collision_with_list(projectile_sprite, list_of_walls),
+        # )
+        # if len(wall_sprites_collided_with_bullet) > 0:
+        #     projectile_spritelist.remove(projectile_sprite)
+        #     # stop doing anything with this projectile
+        #     continue
         projectile_sprite.center_x += projectile_sprite.change_x * delta_time
         projectile_sprite.center_y += projectile_sprite.change_y * delta_time
         if (
