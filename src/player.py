@@ -1,14 +1,21 @@
 import arcade
 import math
 from typing import List
+from linked_sprite import LinkedSprite
 from player_input import PlayerInput
-from weapon import Weapon, LaserBeam, Rocket, MachineGun
+from weapon import Weapon, LaserBeam, RocketLauncher, MachineGun
 from textures import RED_CAR
 
 
 class Player:
-    def __init__(self, input: PlayerInput):
-        self.sprite: SpriteForPlayer = SpriteForPlayer(self)
+    def __init__(
+        self,
+        input: PlayerInput,
+        projectile_sprite_list: arcade.SpriteList,
+        beam_sprite_list: arcade.SpriteList,
+    ):
+        self.sprite = LinkedSprite[Player](texture=RED_CAR, scale=0.5)
+        self.sprite.owner = self
         self.sprite.center_x = 256
         self.sprite.center_y = 256
         self.input = input
@@ -17,11 +24,11 @@ class Player:
         self.primary_weapon_transform = (50, 20, 0)
         self.secondary_weapon_transform = (50, -20, 0)
         # Weapons
-        self.projectile_list = arcade.SpriteList()
-        self.beam_list = arcade.SpriteList()
+        self.projectile_sprite_list = projectile_sprite_list
+        self.beam_sprite_list = beam_sprite_list
         self.weapons_list: List[Weapon] = [
             LaserBeam,
-            Rocket,
+            RocketLauncher,
             MachineGun,
         ]
         self.weapon_index = 0
@@ -62,8 +69,8 @@ class Player:
                 * delta_time
             )
 
-        self.primary_weapon.update(delta_time, self.projectile_list, self.beam_list)
-        self.secondary_weapon.update(delta_time, self.projectile_list, self.beam_list)
+        self.primary_weapon.update(delta_time)
+        self.secondary_weapon.update(delta_time)
         if self.input.swap_weapons_button.pressed:
             self._swap_weapons()
 
@@ -73,27 +80,29 @@ class Player:
         self._swap_in_weapons()
 
     def _swap_out_weapons(self):
-        self.primary_weapon.swap_out(self.beam_list)
-        self.secondary_weapon.swap_out(self.beam_list)
+        self.primary_weapon.swap_out()
+        self.secondary_weapon.swap_out()
 
     def _swap_in_weapons(self):
         self.primary_weapon = self.weapons_list[self.weapon_index](
+            self,
             self.input.primary_fire_button,
+
             self.sprite,
+
             self.primary_weapon_transform,
         )
         self.weapon_index += 1
         if self.weapon_index >= len(self.weapons_list):
             self.weapon_index = 0
         self.secondary_weapon = self.weapons_list[self.weapon_index](
+            self,
             self.input.secondary_fire_button,
             self.sprite,
             self.secondary_weapon_transform,
         )
 
     def draw(self):
-        self.projectile_list.draw()
-        self.beam_list.draw()
         self.primary_weapon.draw()
         self.secondary_weapon.draw()
 
@@ -102,3 +111,4 @@ class SpriteForPlayer(arcade.Sprite):
     def __init__(self, player: Player):
         super().__init__(texture=RED_CAR, scale=0.5)
         self.player = player
+
