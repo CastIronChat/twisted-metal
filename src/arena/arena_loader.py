@@ -7,7 +7,7 @@ from math import radians
 
 from arena.wall import Wall
 from constants import SCREEN_HEIGHT
-from iron_math import add_vec2, scale_vec2, rotate_vec2
+from iron_math import add_vec, scale_vec, rotate_vec
 
 
 def load_arena_by_name(name: str) -> Arena:
@@ -33,9 +33,9 @@ def load_arena_by_name(name: str) -> Arena:
                 y_offset - object.coordinates.y,
             )
             rotation = radians(-object.rotation)
-            center_offset = scale_vec2((object.size.width, -object.size.height), 0.5)
-            rotated_center_offset = rotate_vec2(center_offset, rotation)
-            center = add_vec2(rotated_center_offset, converted_position)
+            center_offset = scale_vec((object.size.width, -object.size.height), 0.5)
+            rotated_center_offset = rotate_vec(center_offset, rotation)
+            center = add_vec(rotated_center_offset, converted_position)
 
             wall = Wall(
                 int(center[0]),
