@@ -21,7 +21,7 @@ class MyGame(arcade.Window):
     # Declare class members; enables tab-completion
     all_sprites: arcade.SpriteList = None
     input_debug_hud: InputDebugHud = None
-    sprite_lists = SpriteLists
+    sprite_lists: SpriteLists
 
     def __init__(self, width, height, title):
         super().__init__(
@@ -39,7 +39,7 @@ class MyGame(arcade.Window):
 
         # Arena
         self.arena = load_arena_by_name("default")
-        self.arena.init_for_drawing()
+        self.arena.init_for_drawing(self.sprite_lists)
 
         # Players
         self.player_manager.setup(
@@ -56,8 +56,6 @@ class MyGame(arcade.Window):
         self.hud = Hud(self.player_manager.players)
         for sprite in self.hud.hud_sprite_list:
             self.all_sprites.append(sprite)
-
-        self.sprite_lists.wall_sprite_list = self.arena.wall_sprite_list
 
     def on_update(self, delta_time):
         # Arcade engine has a quirk where, in the debugger, it calls `on_update` twice back-to-back,
@@ -85,7 +83,6 @@ class MyGame(arcade.Window):
 
         # clear screen
         self.clear()
-        self.arena.draw()
         self.all_sprites.draw()
         self.sprite_lists.draw()
         for player in self.player_manager.players:

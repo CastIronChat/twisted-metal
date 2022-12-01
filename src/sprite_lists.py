@@ -1,27 +1,24 @@
 import arcade
 
 
-
 class SpriteLists:
     """
     Structure that contains SpriteLists
     """
 
-    player_sprite_list: arcade.SpriteList
-    projectile_sprite_list: arcade.SpriteList
-    beam_sprite_list: arcade.SpriteList
-    wall_sprite_list: arcade.SpriteList
+    players: arcade.SpriteList
+    projectiles: arcade.SpriteList
+    beams: arcade.SpriteList
+    walls: arcade.SpriteList
 
     def __init__(self):
-        self.player_sprite_list = arcade.SpriteList()
-        self.projectile_sprite_list = arcade.SpriteList()
-        self.beam_sprite_list = arcade.SpriteList()
-        self.wall_sprite_list = arcade.SpriteList()
+        self.players = arcade.SpriteList()
+        self.projectiles = arcade.SpriteList()
+        self.beams = arcade.SpriteList()
+        self.walls = arcade.SpriteList()
 
     def draw(self):
-        self.player_sprite_list.draw()
-        self.projectile_sprite_list.draw()
-        self.beam_sprite_list.draw()
-
-
-
+        self.players.draw()
+        self.projectiles.draw()
+        self.beams.draw()
+        self.walls.draw()

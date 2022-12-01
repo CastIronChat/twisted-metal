@@ -78,7 +78,7 @@ class PlayerManager:
             player = Player(player_input, sprite_lists)
             spawn_point = arena.initial_spawn_points[player_index]
             move_sprite(player.sprite, spawn_point.transform)
-            sprite_lists.player_sprite_list.append(player.sprite)
+            sprite_lists.players.append(player.sprite)
             self.players.append(player)
 
     def update_inputs(self):
