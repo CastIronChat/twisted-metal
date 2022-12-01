@@ -3,7 +3,6 @@ import arcade
 
 from arena.arena import Arena
 from arena.arena_loader import load_arena_by_name
-from arena.wall import SpriteForWall
 from bullet import bullet_behavior
 from constants import (
     SCREEN_HEIGHT,
@@ -36,8 +35,17 @@ class MyGame(arcade.Window):
 
     def setup(self):
         self.all_sprites = arcade.SpriteList()
+        self.projectile_sprite_list = arcade.SpriteList()
+
+        # Arena
+        self.arena = load_arena_by_name("default")
+        self.arena.init_for_drawing()
+
         # Players
-        self.player_manager.setup(self.sprite_lists)
+        self.player_manager.setup(
+            self.sprite_lists,
+            self.arena,
+        )
 
         # Debug UI for input handling
         self.input_debug_hud = InputDebugHud(
@@ -49,8 +57,6 @@ class MyGame(arcade.Window):
         for sprite in self.hud.hud_sprite_list:
             self.all_sprites.append(sprite)
 
-        self.arena = load_arena_by_name("default")
-        self.arena.init_for_drawing()
         self.sprite_lists.wall_sprite_list = self.arena.wall_sprite_list
 
     def on_update(self, delta_time):
