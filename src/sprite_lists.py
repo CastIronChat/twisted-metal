@@ -18,7 +18,7 @@ class SpriteLists:
         self.walls = arcade.SpriteList()
 
     def draw(self):
+        self.walls.draw()
         self.players.draw()
         self.projectiles.draw()
         self.beams.draw()
-        self.walls.draw()
