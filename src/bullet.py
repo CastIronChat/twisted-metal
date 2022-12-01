@@ -1,12 +1,13 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 import arcade
+import math
+from arena.wall import Wall
 from constants import SCREEN_HEIGHT, SCREEN_WIDTH
 from iron_math import move_sprite_relative_to_parent
 
 from typing import List, cast
-from arena.wall import SpriteForWall
-from linked_sprite import AnyLinkedSprite, LinkedSprite
+from linked_sprite import LinkedSprite
 
 # This allows a circular import only for the purposes of type hints
 # Weapon will never create and instance of Player
@@ -28,7 +29,7 @@ class Projectile:
 class Beam:
     def __init__(
         self,
-        sprite: AnyLinkedSprite[Beam],
+        sprite: LinkedSprite[Beam],
         sprite_list: arcade.SpriteList,
         weapon: Weapon,
     ):
@@ -50,7 +51,7 @@ def bullet_behavior(
     for _projectile_sprite in projectile_sprite_list:
         projectile_sprite = cast(LinkedSprite[Projectile], _projectile_sprite)
         wall_sprites_collided_with_bullet = cast(
-            List[SpriteForWall],
+            List[LinkedSprite[Wall]],
             arcade.check_for_collision_with_list(projectile_sprite, list_of_walls),
         )
         if len(wall_sprites_collided_with_bullet) > 0:

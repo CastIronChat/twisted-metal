@@ -24,6 +24,29 @@
                 "wangcolor",
                 "wangset"
             ]
+        },
+        {
+            "color": "#ffa0a0a4",
+            "id": 2,
+            "members": [
+                {
+                    "name": "initial_spawn_for_player",
+                    "type": "string",
+                    "value": ""
+                }
+            ],
+            "name": "SpawnPoint",
+            "type": "class",
+            "useAs": [
+                "property",
+                "map",
+                "layer",
+                "object",
+                "tile",
+                "tileset",
+                "wangcolor",
+                "wangset"
+            ]
         }
     ]
 }

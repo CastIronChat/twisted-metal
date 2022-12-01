@@ -2,6 +2,7 @@ from typing import List
 from collections.abc import Sequence
 
 from arcade import SpriteList
+from arena.spawn_point import SpawnPoint
 
 from arena.wall import Wall
 
@@ -10,6 +11,8 @@ class Arena:
     def __init__(self) -> None:
         self._walls: List[Wall] = []
         self._sprite_list: SpriteList
+        self._spawn_points: List[SpawnPoint] = []
+        self._initial_spawn_points: List[SpawnPoint] = [None, None, None, None]
 
     @property
     def walls(self) -> Sequence[Wall]:
@@ -18,6 +21,14 @@ class Arena:
     @property
     def wall_sprite_list(self) -> SpriteList:
         return self._sprite_list
+
+    @property
+    def spawn_points(self) -> Sequence[SpawnPoint]:
+        return self._spawn_points
+
+    @property
+    def initial_spawn_points(self) -> Sequence[SpawnPoint]:
+        return self._initial_spawn_points
 
     def init_for_drawing(self):
         """

@@ -1,14 +1,17 @@
-from arcade import SpriteSolidColor, color
+from typing import Tuple
+from arcade import color
+from iron_math import move_sprite
+
+from linked_sprite import LinkedSprite, LinkedSpriteSolidColor
 
 
 class Wall:
-    def __init__(self, x: int, y: int, width: int, height: int, angle=0.0) -> None:
-        self._x = x
-        self._y = y
-        self._width = width
-        self._height = height
-        self._angle = angle
-        self._sprite: SpriteForWall
+    def __init__(
+        self, transform: Tuple[float, float, float], size: Tuple[float, float]
+    ) -> None:
+        self._transform = transform
+        self._size = size
+        self._sprite: LinkedSprite[Wall]
         self.init_for_drawing()
 
     @property
@@ -21,12 +24,9 @@ class Wall:
         representation
         """
 
-        self._sprite = SpriteForWall(self._width, self._height, color.BLACK)
-        self._sprite.wall = self
+        self._sprite = LinkedSpriteSolidColor[Wall](
+            int(self._size[0]), int(self._size[1]), color.BLACK
+        )
+        self._sprite.owner = self
 
-        self._sprite.set_position(self._x, self._y)
-        self._sprite.radians = self._angle
-
-
-class SpriteForWall(SpriteSolidColor):
-    wall: Wall
+        move_sprite(self._sprite, self._transform)
