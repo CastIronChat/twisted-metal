@@ -3,7 +3,6 @@ import arcade
 
 from arena.arena import Arena
 from arena.arena_loader import load_arena_by_name
-from arena.wall import SpriteForWall
 from bullet import bullet_behavior
 from constants import (
     SCREEN_HEIGHT,
@@ -37,9 +36,17 @@ class MyGame(arcade.Window):
         self.projectile_sprite_list = arcade.SpriteList()
         self.beam_sprite_list = arcade.SpriteList()
         self.player_sprite_list = arcade.SpriteList()
+
+        # Arena
+        self.arena = load_arena_by_name("default")
+        self.arena.init_for_drawing()
+
         # Players
         self.player_manager.setup(
-            self.projectile_sprite_list, self.beam_sprite_list, self.player_sprite_list
+            self.projectile_sprite_list,
+            self.beam_sprite_list,
+            self.player_sprite_list,
+            self.arena,
         )
 
         # Debug UI for input handling
@@ -51,9 +58,6 @@ class MyGame(arcade.Window):
         self.hud = Hud(self.player_manager.players)
         for sprite in self.hud.hud_sprite_list:
             self.all_sprites.append(sprite)
-
-        self.arena = load_arena_by_name("default")
-        self.arena.init_for_drawing()
 
     def on_update(self, delta_time):
         # Arcade engine has a quirk where, in the debugger, it calls `on_update` twice back-to-back,

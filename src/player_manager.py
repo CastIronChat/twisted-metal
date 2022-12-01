@@ -3,7 +3,9 @@ import arcade
 
 from pyglet.input import ControllerManager
 from pyglet.window.key import KeyStateHandler
+from arena.arena import Arena
 from constants import START_WITH_ALTERNATE_CONTROLLER_LAYOUT
+from iron_math import move_sprite
 
 from player import Player
 from player_input import (
@@ -50,6 +52,7 @@ class PlayerManager:
         projectile_sprite_list: arcade.SpriteList,
         beam_sprite_list: arcade.SpriteList,
         player_sprite_list: arcade.SpriteList,
+        arena: Arena,
     ):
         if self._did_setup:
             raise Exception("Already setup; cannot setup twice")
@@ -74,6 +77,8 @@ class PlayerManager:
                 bind_to_keyboard(player_input)
             set_controller_layout(player_input, START_WITH_ALTERNATE_CONTROLLER_LAYOUT)
             player = Player(player_input, projectile_sprite_list, beam_sprite_list)
+            spawn_point = arena.initial_spawn_points[player_index]
+            move_sprite(player.sprite, spawn_point.transform)
             player_sprite_list.append(player.sprite)
             self.players.append(player)
 

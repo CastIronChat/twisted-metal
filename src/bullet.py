@@ -2,11 +2,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 import arcade
 import math
+from arena.wall import Wall
 from constants import SCREEN_HEIGHT, SCREEN_WIDTH
 from iron_math import add_vec, rotate_vec, move_sprite_relative_to_parent
 
 from typing import List, cast
-from arena.wall import SpriteForWall
 from linked_sprite import LinkedSprite
 
 # This allows a circular import only for the purposes of type hints
@@ -47,7 +47,7 @@ def bullet_behavior(
     for projectile_sprite in projectile_sprite_list:
         projectile_sprite: LinkedSprite[Projectile]
         wall_sprites_collided_with_bullet = cast(
-            List[SpriteForWall],
+            List[LinkedSprite[Wall]],
             arcade.check_for_collision_with_list(projectile_sprite, list_of_walls),
         )
         if len(wall_sprites_collided_with_bullet) > 0:

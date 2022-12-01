@@ -1,33 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="25" height="19" tilewidth="32" tileheight="32" infinite="0" nextlayerid="3" nextobjectid="12">
- <layer id="1" name="tiles" width="25" height="19">
-  <data encoding="csv">
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-</data>
- </layer>
+<map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="25" height="19" tilewidth="32" tileheight="32" infinite="0" nextlayerid="3" nextobjectid="25">
+ <tileset firstgid="1" source="tiled_objects.tsx"/>
  <objectgroup id="2" name="objects">
   <object id="1" name="top" class="Wall" x="0" y="0" width="800" height="32"/>
   <object id="2" name="left" class="Wall" x="0" y="0" width="32" height="600"/>
   <object id="3" name="obstacle" class="Wall" x="284.628" y="227.89" width="267.863" height="37.4674" rotation="20"/>
   <object id="4" name="bottom" class="Wall" x="0" y="576" width="800" height="32"/>
   <object id="7" name="right" class="Wall" x="768" y="0" width="32" height="600"/>
+  <object id="17" class="SpawnPoint" gid="1" x="112.833" y="142.167" width="50" height="30">
+   <properties>
+    <property name="initial_spawn_for_player" value="3"/>
+   </properties>
+  </object>
+  <object id="18" class="SpawnPoint" gid="1" x="374.5" y="144.333" width="50" height="30"/>
+  <object id="19" class="SpawnPoint" gid="1" x="604" y="156.333" width="50" height="30">
+   <properties>
+    <property name="initial_spawn_for_player" value="2"/>
+   </properties>
+  </object>
+  <object id="20" class="SpawnPoint" gid="1" x="663" y="438.833" width="50" height="30" rotation="180">
+   <properties>
+    <property name="initial_spawn_for_player" value="1"/>
+   </properties>
+  </object>
+  <object id="21" class="SpawnPoint" gid="1" x="113.5" y="468.5" width="50" height="30">
+   <properties>
+    <property name="initial_spawn_for_player" value="0"/>
+   </properties>
+  </object>
+  <object id="22" template="tiled_templates/spawn_point.tx" class="SpawnPoint" x="417" y="441.833" rotation="180"/>
  </objectgroup>
 </map>
