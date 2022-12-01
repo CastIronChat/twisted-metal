@@ -23,7 +23,7 @@ class MyGame(arcade.Window):
     input_debug_hud: InputDebugHud = None
     sprite_lists: SpriteLists
 
-    def __init__(self, width, height, title):
+    def __init__(self, width: int, height: int, title: str):
         super().__init__(
             width, height, title, enable_polling=True, update_rate=TICK_DURATION
         )
@@ -65,7 +65,7 @@ class MyGame(arcade.Window):
         if not USE_DEBUGGER_TIMING_FIXES:
             self.our_update(delta_time)
 
-    def our_update(self, delta_time):
+    def our_update(self, delta_time: float):
         # Pretty sure this does animation updates, in case any of the sprites
         # Have animations
         self.player_manager.update_inputs()
