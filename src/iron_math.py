@@ -45,6 +45,37 @@ def scale_vec(vector: Tuple[float, float], factor: float, /):
     return (vector[0] * factor, vector[1] * factor)
 
 
+def vec_magnitude(vector: Tuple[float, float], /):
+    x, y = vector
+    return math.sqrt(x * x + y * y)
+
+
+def normalize_vec(vector: Tuple[float, float], /):
+    x, y = vector
+    mag = vec_magnitude(vector)
+    if mag == 0:
+        return (0, 0)
+    return (x / mag, y / mag)
+
+
+def vec_dot_product(vector: Tuple[float, float], vector2: Tuple[float, float], /):
+    x, y = vector
+    x2, y2 = vector2
+    return x * x2 + y * y2
+
+
+def project_vec(vector: Tuple[float, float], axis: Tuple[float, float], /):
+    axis_normalized = normalize_vec(axis)
+    return scale_vec(axis_normalized, vec_dot_product(axis_normalized, vector))
+
+
+# Faster projection, when you know the axis vector is already normalized (already has magnitude equal to one)
+def project_vec_onto_unit(
+    vector: Tuple[float, float], axis_normalized: Tuple[float, float], /
+):
+    return scale_vec(axis_normalized, vec_dot_product(axis_normalized, vector))
+
+
 def move_sprite_relative_to_parent(
     child: arcade.Sprite,
     parent: arcade.Sprite,

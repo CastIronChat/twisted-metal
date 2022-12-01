@@ -21,3 +21,11 @@ Use alternate (Mario Kart-style?) controller layout where A/B are gas and brake,
 and triggers are primary/secondary fire.  At this early stage of development,
 this flag is meant for experimentation.
 """
+
+PLAYER_COUNT = 4
+KEYBOARD_PLAYER_INDEX = 0
+KEYBOARD_PLAYER_ALSO_USES_A_CONTROLLER = True
+"""
+If false, keyboard player will be controlled by keyboard, *not* a controller.
+Useful if you want to debug two players and you only have one controller.
+"""
