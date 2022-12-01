@@ -5,6 +5,7 @@ from pyglet.input import ControllerManager
 from pyglet.window.key import KeyStateHandler
 from constants import START_WITH_ALTERNATE_CONTROLLER_LAYOUT
 
+from sprite_lists import SpriteLists
 from player import Player
 from player_input import (
     PlayerInput,
@@ -47,9 +48,7 @@ class PlayerManager:
 
     def setup(
         self,
-        projectile_sprite_list: arcade.SpriteList,
-        beam_sprite_list: arcade.SpriteList,
-        player_sprite_list: arcade.SpriteList,
+        sprite_lists: SpriteLists,
     ):
         if self._did_setup:
             raise Exception("Already setup; cannot setup twice")
@@ -73,8 +72,8 @@ class PlayerManager:
             if player_index == KEYBOARD_PLAYER_INDEX:
                 bind_to_keyboard(player_input)
             set_controller_layout(player_input, START_WITH_ALTERNATE_CONTROLLER_LAYOUT)
-            player = Player(player_input, projectile_sprite_list, beam_sprite_list)
-            player_sprite_list.append(player.sprite)
+            player = Player(player_input, sprite_lists)
+            sprite_lists.player_sprite_list.append(player.sprite)
             self.players.append(player)
 
     def update_inputs(self):

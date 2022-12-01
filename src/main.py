@@ -13,7 +13,7 @@ from constants import (
     USE_DEBUGGER_TIMING_FIXES,
 )
 from input_debug_hud import InputDebugHud
-
+from sprite_lists import SpriteLists
 from player_manager import PlayerManager
 from hud import Hud
 
@@ -22,6 +22,7 @@ class MyGame(arcade.Window):
     # Declare class members; enables tab-completion
     all_sprites: arcade.SpriteList = None
     input_debug_hud: InputDebugHud = None
+    sprite_lists = SpriteLists
 
     def __init__(self, width, height, title):
         super().__init__(
@@ -30,17 +31,13 @@ class MyGame(arcade.Window):
         self.physics_engine = None
         arcade.set_background_color(arcade.color.AMAZON)
         self.player_manager = PlayerManager(self.keyboard)
+        self.sprite_lists = SpriteLists()
         self.arena: Arena
 
     def setup(self):
         self.all_sprites = arcade.SpriteList()
-        self.projectile_sprite_list = arcade.SpriteList()
-        self.beam_sprite_list = arcade.SpriteList()
-        self.player_sprite_list = arcade.SpriteList()
         # Players
-        self.player_manager.setup(
-            self.projectile_sprite_list, self.beam_sprite_list, self.player_sprite_list
-        )
+        self.player_manager.setup(self.sprite_lists)
 
         # Debug UI for input handling
         self.input_debug_hud = InputDebugHud(
@@ -54,6 +51,7 @@ class MyGame(arcade.Window):
 
         self.arena = load_arena_by_name("default")
         self.arena.init_for_drawing()
+        self.sprite_lists.wall_sprite_list = self.arena.wall_sprite_list
 
     def on_update(self, delta_time):
         # Arcade engine has a quirk where, in the debugger, it calls `on_update` twice back-to-back,
@@ -71,10 +69,7 @@ class MyGame(arcade.Window):
             player.update(delta_time)
         bullet_behavior(
             delta_time,
-            self.player_sprite_list,
-            self.projectile_sprite_list,
-            self.beam_sprite_list,
-            self.arena.wall_sprite_list,
+            self.sprite_lists,
         )
         self.hud.update()
 
@@ -86,9 +81,7 @@ class MyGame(arcade.Window):
         self.clear()
         self.arena.draw()
         self.all_sprites.draw()
-        self.projectile_sprite_list.draw()
-        self.beam_sprite_list.draw()
-        self.player_sprite_list.draw()
+        self.sprite_lists.draw()
         for player in self.player_manager.players:
             player.draw()
         self.input_debug_hud.draw()
