@@ -1,6 +1,0 @@
-[tool.pyright]
-include = ["src"]
-reportGeneralTypeIssues = true
-reportUnknownParameterType = true
-reportIncompatibleMethodOverride = true
-reportUnusedImport = true

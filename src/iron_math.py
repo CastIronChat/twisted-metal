@@ -1,6 +1,6 @@
 import math
 import arcade
-from typing import List, Tuple
+from typing import Tuple
 
 #
 # Note: all functions in this file should use positional-only parameters because
@@ -26,7 +26,7 @@ def rotate_vec(vector: Tuple[float, float], radians: float, /):
 
 
 def add_vec(
-    vector: Tuple[float, float] | List[float],
+    vector: Tuple[float, float],
     translation: Tuple[
         float,
         float,

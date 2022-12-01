@@ -12,15 +12,7 @@ class Arena:
         self._walls: List[Wall] = []
         self._sprite_list: SpriteList
         self._spawn_points: List[SpawnPoint] = []
-        self._initial_spawn_points = cast(
-            List[SpawnPoint],
-            [
-                None,
-                None,
-                None,
-                None,
-            ],
-        )
+        self._initial_spawn_points: List[SpawnPoint] = [None, None, None, None]
 
     @property
     def walls(self) -> Sequence[Wall]:

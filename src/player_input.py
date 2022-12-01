@@ -16,7 +16,7 @@ from pyglet.window.key import KeyStateHandler
 
 
 class PlayerInput:
-    def __init__(self, keys: KeyStateHandler, controller: Optional[Controller]) -> None:
+    def __init__(self, keys: KeyStateHandler, controller: Controller) -> None:
         self.layout_name = ""
         "Name of current control scheme, for diagnostic purposes"
 
@@ -56,17 +56,17 @@ class PlayerInput:
 
 
 class VirtualAxis:
-    _keys: KeyStateHandler
-    _controller: Optional[Controller]
+    _keys: KeyStateHandler = None
+    _controller: Controller = None
 
-    def __init__(self, keys: KeyStateHandler, controller: Optional[Controller]):
+    def __init__(self, keys: KeyStateHandler, controller: Controller):
         self._keys = keys
         self._controller = controller
 
         self.key_negative: Optional[int] = None
         self.key_positive: Optional[int] = None
-        self.button_positive: Optional[str] = None
-        self.button_negative: Optional[str] = None
+        self.button_positive: Optional[int] = None
+        self.button_negative: Optional[int] = None
         self.axis: Optional[str] = None
 
     @property
@@ -102,7 +102,7 @@ class VirtualAxis:
 
 
 class VirtualButton:
-    def __init__(self, keys: KeyStateHandler, controller: Optional[Controller]):
+    def __init__(self, keys: KeyStateHandler, controller: Controller):
         self._keys = keys
         self._controller = controller
         self.key: Optional[int] = None

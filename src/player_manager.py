@@ -1,7 +1,7 @@
-from typing import List, cast
+from typing import List
 import arcade
 
-from pyglet.input import ControllerManager, Controller
+from pyglet.input import ControllerManager
 from pyglet.window.key import KeyStateHandler
 from arena.arena import Arena
 from constants import START_WITH_ALTERNATE_CONTROLLER_LAYOUT
@@ -59,7 +59,7 @@ class PlayerManager:
         self._did_setup = True
 
         _controller_manager = ControllerManager()
-        controllers = cast(List[Controller], _controller_manager.get_controllers())
+        controllers = _controller_manager.get_controllers()
 
         for player_index in range(0, PLAYER_COUNT):
             controller = None

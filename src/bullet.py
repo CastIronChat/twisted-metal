@@ -4,7 +4,7 @@ import arcade
 import math
 from arena.wall import Wall
 from constants import SCREEN_HEIGHT, SCREEN_WIDTH
-from iron_math import move_sprite_relative_to_parent
+from iron_math import add_vec, rotate_vec, move_sprite_relative_to_parent
 
 from typing import List, cast
 from linked_sprite import LinkedSprite
@@ -22,21 +22,17 @@ class Projectile:
         self.sprite = sprite
         sprite.owner = self
         sprite_list.append(self.sprite)
-        self.damage = 0.0
-        self.velocity = (0.0, 0.0)
+        self.damage = 0
 
 
 class Beam:
     def __init__(
-        self,
-        sprite: LinkedSprite[Beam],
-        sprite_list: arcade.SpriteList,
-        weapon: Weapon,
+        self, sprite: LinkedSprite[Beam], sprite_list: arcade.SpriteList, weapon: Weapon
     ):
         self.sprite = sprite
         sprite.owner = self
         sprite_list.append(self.sprite)
-        self.dps = 0.0
+        self.dps = 0
         self.weapon = weapon
 
 
@@ -48,8 +44,8 @@ def bullet_behavior(
     beam_sprite_list: arcade.SpriteList,
     list_of_walls: arcade.SpriteList,
 ):
-    for _projectile_sprite in projectile_sprite_list:
-        projectile_sprite = cast(LinkedSprite[Projectile], _projectile_sprite)
+    for projectile_sprite in projectile_sprite_list:
+        projectile_sprite: LinkedSprite[Projectile]
         wall_sprites_collided_with_bullet = cast(
             List[LinkedSprite[Wall]],
             arcade.check_for_collision_with_list(projectile_sprite, list_of_walls),
@@ -67,8 +63,8 @@ def bullet_behavior(
             or projectile_sprite.center_y > SCREEN_HEIGHT
         ):
             projectile_sprite_list.remove(projectile_sprite)
-    for _beam_sprite in beam_sprite_list:
-        beam_sprite = cast(LinkedSprite[Beam], _beam_sprite)
+    for beam_sprite in beam_sprite_list:
+        beam_sprite: LinkedSprite[Beam]
         move_sprite_relative_to_parent(
             beam_sprite,
             beam_sprite.owner.weapon.weapon_sprite,

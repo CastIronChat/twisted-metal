@@ -1,4 +1,3 @@
-from typing import List
 import arcade
 
 from player import Player
@@ -9,7 +8,7 @@ from textures import PLAYER_AVATARS
 class Hud:
 
     # generates Player Huds and stores each instance in player_huds.
-    def __init__(self, player_list: List[Player]):
+    def __init__(self, player_list: list[Player]):
 
         self.player_hud_startx: int = 100
         self.player_hud_starty: int = 575

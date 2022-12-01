@@ -1,6 +1,6 @@
-from typing import List, Type
 import arcade
 import math
+from typing import List
 from linked_sprite import LinkedSprite
 from player_input import PlayerInput
 from weapon import Weapon, LaserBeam, RocketLauncher, MachineGun
@@ -26,7 +26,7 @@ class Player:
         # Weapons
         self.projectile_sprite_list = projectile_sprite_list
         self.beam_sprite_list = beam_sprite_list
-        self.weapons_list: List[Type[Weapon]] = [
+        self.weapons_list: List[Weapon] = [
             LaserBeam,
             RocketLauncher,
             MachineGun,
