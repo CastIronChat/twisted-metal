@@ -11,6 +11,11 @@ from sprite_lists import SpriteLists
 
 
 class Projectile:
+    """
+    A projectile can be anything that is created by a weapon included beams, rockets, etc.
+    It stores the characteristics of the projectile and is responible the associated sprite
+    """
+
     sprite: LinkedSprite[Projectile]
     sprite_lists: SpriteLists
     damage: float
@@ -67,8 +72,6 @@ class Projectile:
         self.sprite_lists.projectiles.remove(self.sprite)
         self.exists = False
 
-
-# For naming purposes, a bullet can be anything that comes out of a weapon included beams, rockets, etc
 def projectile_behavior(
     delta_time: float,
     sprite_lists: SpriteLists,
