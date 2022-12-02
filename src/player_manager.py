@@ -5,7 +5,7 @@ from pyglet.input import ControllerManager
 from pyglet.window.key import KeyStateHandler
 from arena.arena import Arena
 from constants import START_WITH_ALTERNATE_CONTROLLER_LAYOUT
-from iron_math import move_sprite
+from iron_math import set_sprite_location
 
 from sprite_lists import SpriteLists
 from player import Player
@@ -77,7 +77,7 @@ class PlayerManager:
             set_controller_layout(player_input, START_WITH_ALTERNATE_CONTROLLER_LAYOUT)
             player = Player(player_input, sprite_lists)
             spawn_point = arena.initial_spawn_points[player_index]
-            move_sprite(player.sprite, spawn_point.transform)
+            set_sprite_location(player.sprite, spawn_point.transform)
             sprite_lists.players.append(player.sprite)
             self.players.append(player)
 

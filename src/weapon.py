@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 from typing import Tuple
 import math
-from bullet import Projectile, Beam
+from bullet import Projectile
 import arcade
 from sprite_lists import SpriteLists
 from linked_sprite import LinkedSprite, LinkedSpriteSolidColor
@@ -74,7 +74,7 @@ class LaserBeam(Weapon):
     weapon_icon = LASER_PISTOL
 
     def setup(self):
-        self.beam_range = 500
+        self.beam_range = 400
         self.dps = 5
         self.muzzle_transform = (20 + self.beam_range / 2, 5, 0)
         self.my_beam_sprite = None
@@ -85,21 +85,27 @@ class LaserBeam(Weapon):
             self.shoot()
         if self.input_button.released:
             self.remove_beam()
+        if self.my_beam_sprite in self.sprite_lists.projectiles:
+            move_sprite_relative_to_parent(
+            self.my_beam_sprite,
+            self.weapon_sprite,
+            self.muzzle_transform,
+        )
 
     def shoot(self):
-        beam_appearance = LinkedSpriteSolidColor[Beam](
+        beam_appearance = LinkedSpriteSolidColor[Projectile](
             self.beam_range, 5, arcade.color.RED
         )
-        beam = Beam(beam_appearance, self.sprite_lists, self)
-        beam.dps = self.dps
+        beam = Projectile(beam_appearance, self.sprite_lists, 0, 0, self.dps)
+        beam.set_beam()
         self.my_beam_sprite = beam.sprite
 
     def swap_out(self):
         self.remove_beam()
 
     def remove_beam(self):
-        if self.my_beam_sprite in self.sprite_lists.beams:
-            self.sprite_lists.beams.remove(self.my_beam_sprite)
+        if self.my_beam_sprite in self.sprite_lists.projectiles:
+            self.sprite_lists.projectiles.remove(self.my_beam_sprite)
 
 
 class RocketLauncher(Weapon):
@@ -108,14 +114,14 @@ class RocketLauncher(Weapon):
     """
 
     rocket_speed: float
+    rocket_damage: float
     fire_rate: float
-    damage: float
     weapon_icon = ROCKET_LAUNCHER
 
     def setup(self):
         self.rocket_speed = 300
+        self.rocket_damage = 80
         self.fire_rate = 0.5
-        self.damage = 80
         # the -45 degree angle in the offset corrects for rocket texture angled up 45 degrees
         self.muzzle_transform = (30, 2, math.radians(-45))
 
@@ -128,8 +134,7 @@ class RocketLauncher(Weapon):
 
     def shoot(self):
         rocket_appearance = LinkedSprite[Projectile](texture=ROCKET, scale=2)
-        rocket = Projectile(rocket_appearance, self.sprite_lists)
-        rocket.damage = self.damage
+        rocket = Projectile(rocket_appearance, self.sprite_lists, self.rocket_speed, self.weapon_sprite.radians, self.rocket_damage)
         move_sprite_relative_to_parent(
             rocket.sprite, self.weapon_sprite, self.muzzle_transform
         )
@@ -145,14 +150,14 @@ class MachineGun(Weapon):
     """
 
     bullet_speed: float
+    bullet_damage: float
     fire_rate: float
-    damage: float
     weapon_icon = MACHINE_GUN
 
     def setup(self):
         self.bullet_speed = 500
+        self.bullet_damage = 10
         self.fire_rate = 10
-        self.damage = 10
         self.muzzle_transform = (20, 7, 0)
 
     def update(self, delta_time: float):
@@ -163,8 +168,7 @@ class MachineGun(Weapon):
 
     def shoot(self):
         bullet_appearance = LinkedSpriteSolidColor[Projectile](10, 5, arcade.color.RED)
-        bullet = Projectile(bullet_appearance, self.sprite_lists)
-        bullet.damage = self.damage
+        bullet = Projectile(bullet_appearance, self.sprite_lists, self.bullet_speed, self.weapon_sprite.radians, self.bullet_damage)
         move_sprite_relative_to_parent(
             bullet.sprite, self.weapon_sprite, self.muzzle_transform
         )

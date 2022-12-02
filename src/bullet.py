@@ -4,37 +4,42 @@ import arcade
 import math
 from arena.wall import Wall
 from constants import SCREEN_HEIGHT, SCREEN_WIDTH
-from iron_math import add_vec, rotate_vec, move_sprite_relative_to_parent
+from iron_math import move_sprite_relative_to_parent, move_sprite_polar
 
 from typing import List, cast
 from linked_sprite import LinkedSprite
 from sprite_lists import SpriteLists
 
-# This allows a circular import only for the purposes of type hints
-# Weapon will never create and instance of Player
-if TYPE_CHECKING:
-    from weapon import Weapon
-
 
 class Projectile:
+    sprite: LinkedSprite[Projectile]
+    sprite_lists: SpriteLists
+    damage: float
+    speed: float
+    radians: float
+    sprite_rotation_offset: float
+    beam: bool
+    explodes: bool
+
     def __init__(
-        self, sprite: LinkedSprite[Projectile], sprite_lists: SpriteLists
+        self, sprite: LinkedSprite[Projectile], sprite_lists: SpriteLists, speed: float, radians: float, damage: float
     ):
         self.sprite = sprite
         sprite.owner = self
-        sprite_lists.projectiles.append(self.sprite)
-        self.damage = 0
+        self.sprite_lists = sprite_lists
+        self.speed = speed
+        self.radians = radians
+        self.damage = damage
+        self.beam = False
+        self.explodes = False
+        self.sprite_rotation_offset = 0
+        self.sprite_lists.projectiles.append(self.sprite)
 
+    def update(self, delta_time: float):
+        move_sprite_polar(self.sprite, self.speed * delta_time, self.radians)
 
-class Beam:
-    def __init__(
-        self, sprite: LinkedSprite[Beam], sprite_lists: SpriteLists, weapon: Weapon
-    ):
-        self.sprite = sprite
-        sprite.owner = self
-        sprite_lists.beams.append(self.sprite)
-        self.dps = 0
-        self.weapon = weapon
+    def set_beam(self):
+        self.beam = True
 
 
 # For naming purposes, a bullet can be anything that comes out of a weapon included beams, rockets, etc
@@ -44,6 +49,10 @@ def bullet_behavior(
 ):
     for projectile_sprite in sprite_lists.projectiles:
         projectile_sprite: LinkedSprite[Projectile]
+        # If beam, skip the current projectile collision code that deletes projectiles that hit walls
+        if projectile_sprite.owner.beam:
+            continue
+        projectile_sprite.owner.update(delta_time)
         wall_sprites_collided_with_bullet = cast(
             List[LinkedSprite[Wall]],
             arcade.check_for_collision_with_list(projectile_sprite, sprite_lists.walls),
@@ -52,8 +61,6 @@ def bullet_behavior(
             sprite_lists.projectiles.remove(projectile_sprite)
             # stop doing anything with this projectile
             continue
-        projectile_sprite.center_x += projectile_sprite.change_x * delta_time
-        projectile_sprite.center_y += projectile_sprite.change_y * delta_time
         if (
             projectile_sprite.center_x < 0
             or projectile_sprite.center_x > SCREEN_WIDTH
@@ -61,10 +68,4 @@ def bullet_behavior(
             or projectile_sprite.center_y > SCREEN_HEIGHT
         ):
             sprite_lists.projectiles.remove(projectile_sprite)
-    for beam_sprite in sprite_lists.beams:
-        beam_sprite: LinkedSprite[Beam]
-        move_sprite_relative_to_parent(
-            beam_sprite,
-            beam_sprite.owner.weapon.weapon_sprite,
-            beam_sprite.owner.weapon.muzzle_transform,
-        )
+        
