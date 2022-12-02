@@ -5,6 +5,9 @@
     // and VSCode supports it automatically.
     "python.formatting.provider": "black",
     "[python]": {
-        "editor.formatOnSave": true
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": true
+        }
     }
 }

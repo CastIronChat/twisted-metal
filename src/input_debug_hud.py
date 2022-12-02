@@ -1,7 +1,11 @@
+from __future__ import annotations
+
 from typing import List
-from player_input import PlayerInput
+
 import arcade
 from arcade import Text
+
+from player_input import PlayerInput
 
 
 class InputDebugHud:

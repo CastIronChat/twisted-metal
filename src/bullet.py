@@ -1,12 +1,13 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
-import arcade
+
 import math
+from typing import TYPE_CHECKING, List, cast
+
+import arcade
+
 from arena.wall import Wall
 from constants import SCREEN_HEIGHT, SCREEN_WIDTH
 from iron_math import move_sprite_relative_to_parent, move_sprite_polar
-
-from typing import List, cast
 from linked_sprite import LinkedSprite
 from sprite_lists import SpriteLists
 

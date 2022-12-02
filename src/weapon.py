@@ -1,6 +1,5 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
-from typing import Tuple
+from typing import TYPE_CHECKING, Tuple
 import math
 from bullet import Projectile
 import arcade
@@ -9,6 +8,8 @@ from linked_sprite import LinkedSprite, LinkedSpriteSolidColor
 from textures import LASER_PISTOL, ROCKET_LAUNCHER, MACHINE_GUN, ROCKET
 from iron_math import move_sprite_relative_to_parent, polar_to_cartesian
 from player_input import VirtualButton
+from sprite_lists import SpriteLists
+from textures import LASER_PISTOL, MACHINE_GUN, ROCKET, ROCKET_LAUNCHER
 
 # This allows a circular import only for the purposes of type hints
 # Weapon will never create and instance of Player

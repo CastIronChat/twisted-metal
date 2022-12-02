@@ -2,3 +2,4 @@
 arcade
 mypy
 black
+isort

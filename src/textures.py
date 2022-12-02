@@ -1,6 +1,9 @@
-from arcade import load_spritesheet, load_texture
-from typing import Union, Optional
+from __future__ import annotations
+
 from pathlib import Path
+from typing import Optional, Union
+
+from arcade import load_spritesheet, load_texture
 
 
 class SpriteSheet:

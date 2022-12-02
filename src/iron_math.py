@@ -1,6 +1,9 @@
+from __future__ import annotations
+
 import math
-import arcade
 from typing import Tuple
+
+import arcade
 
 #
 # Note: all functions in this file should use positional-only parameters because

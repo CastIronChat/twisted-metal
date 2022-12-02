@@ -1,11 +1,16 @@
-import arcade
+from __future__ import annotations
+
 import math
 from typing import List
+
+import arcade
+
 from linked_sprite import LinkedSprite
 from sprite_lists import SpriteLists
 from player_input import PlayerInput
-from weapon import Weapon, LaserBeam, RocketLauncher, MachineGun
+from sprite_lists import SpriteLists
 from textures import RED_CAR
+from weapon import LaserBeam, MachineGun, RocketLauncher, Weapon
 
 
 class Player:
