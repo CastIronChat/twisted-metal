@@ -1,12 +1,13 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
-import arcade
+
 import math
+from typing import TYPE_CHECKING, List, cast
+
+import arcade
+
 from arena.wall import Wall
 from constants import SCREEN_HEIGHT, SCREEN_WIDTH
-from iron_math import add_vec, rotate_vec, move_sprite_relative_to_parent
-
-from typing import List, cast
+from iron_math import add_vec, move_sprite_relative_to_parent, rotate_vec
 from linked_sprite import LinkedSprite
 from sprite_lists import SpriteLists
 
@@ -17,9 +18,7 @@ if TYPE_CHECKING:
 
 
 class Projectile:
-    def __init__(
-        self, sprite: LinkedSprite[Projectile], sprite_lists: SpriteLists
-    ):
+    def __init__(self, sprite: LinkedSprite[Projectile], sprite_lists: SpriteLists):
         self.sprite = sprite
         sprite.owner = self
         sprite_lists.projectiles.append(self.sprite)

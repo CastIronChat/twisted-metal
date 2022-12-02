@@ -1,9 +1,11 @@
-from typing import List, cast
+from __future__ import annotations
+
 from collections.abc import Sequence
+from typing import List, cast
 
 from arcade import SpriteList
-from arena.spawn_point import SpawnPoint
 
+from arena.spawn_point import SpawnPoint
 from arena.wall import Wall
 from sprite_lists import SpriteLists
 
@@ -33,4 +35,3 @@ class Arena:
         for wall in self.walls:
             wall.init_for_drawing()
             sprite_lists.walls.append(wall.sprite)
-

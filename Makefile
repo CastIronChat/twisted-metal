@@ -6,6 +6,7 @@ formatSources = "src"
 # Reformat all code
 .PHONY: fmt
 fmt:
+	python -m isort .
 	python -m black $(formatSources)
 
 check: lint
@@ -13,4 +14,5 @@ check: lint
 # Check code formatting
 .PHONY: lint
 lint:
-	python.exe -m black --check $(formatSources)
+	python -m isort --check .
+	python -m black --check $(formatSources)
