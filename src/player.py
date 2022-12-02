@@ -1,29 +1,33 @@
-import arcade
+from __future__ import annotations
+
+import math
 from typing import List
+
+import arcade
+
 from driving.drifty_car import DriftyCar
 from linked_sprite import LinkedSprite
 from player_input import PlayerInput
-from weapon import Weapon, LaserBeam, RocketLauncher, MachineGun
+from sprite_lists import SpriteLists
 from textures import RED_CAR
+from weapon import LaserBeam, MachineGun, RocketLauncher, Weapon
 
 
 class Player:
     def __init__(
         self,
         input: PlayerInput,
-        projectile_sprite_list: arcade.SpriteList,
-        beam_sprite_list: arcade.SpriteList,
+        sprite_lists: SpriteLists,
     ):
         self.sprite = LinkedSprite[Player](texture=RED_CAR, scale=0.2)
         self.sprite.owner = self
         self.sprite.center_x = 256
         self.sprite.center_y = 256
         self.input = input
+        self.sprite_lists = sprite_lists
         self.primary_weapon_transform = (15, 5, 0)
         self.secondary_weapon_transform = (15, -5, 0)
         # Weapons
-        self.projectile_sprite_list = projectile_sprite_list
-        self.beam_sprite_list = beam_sprite_list
         self.weapons_list: List[Weapon] = [
             LaserBeam,
             RocketLauncher,

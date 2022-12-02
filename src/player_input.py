@@ -9,7 +9,9 @@ hardcoded gamepad IDs, etc.
 """
 
 from __future__ import annotations
+
 from typing import Optional
+
 import arcade
 from pyglet.input import Controller
 from pyglet.window.key import KeyStateHandler

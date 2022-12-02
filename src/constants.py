@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import os
 
 SCREEN_WIDTH = 800
