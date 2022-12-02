@@ -4,6 +4,7 @@ from typing import List
 
 import arcade
 from arcade import Text
+from constants import DRAW_INPUT_DEBUG_HUD
 
 from player_input import PlayerInput
 
@@ -55,5 +56,6 @@ class InputDebugHud:
         return "\n".join(lines)
 
     def draw(self):
-        self.__text.text = self.get_readout()
-        self.__text.draw()
+        if DRAW_INPUT_DEBUG_HUD:
+            self.__text.text = self.get_readout()
+            self.__text.draw()

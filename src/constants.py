@@ -31,3 +31,8 @@ KEYBOARD_PLAYER_ALSO_USES_A_CONTROLLER = True
 If false, keyboard player will be controlled by keyboard, *not* a controller.
 Useful if you want to debug two players and you only have one controller.
 """
+
+DRAW_INPUT_DEBUG_HUD = True
+"""
+Draw a text overlay listing the name and value of all controller inputs.
+"""
