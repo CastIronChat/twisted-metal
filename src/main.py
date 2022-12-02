@@ -1,12 +1,8 @@
 from __future__ import annotations
-
-from typing import List
-
 import arcade
 
 from arena.arena import Arena
 from arena.arena_loader import load_arena_by_name
-from bullet import bullet_behavior
 from constants import (
     SCREEN_HEIGHT,
     SCREEN_TITLE,
@@ -17,6 +13,7 @@ from constants import (
 from hud import Hud
 from input_debug_hud import InputDebugHud
 from player_manager import PlayerManager
+from projectile import projectile_behavior
 from sprite_lists import SpriteLists
 
 
@@ -74,7 +71,7 @@ class MyGame(arcade.Window):
         self.player_manager.update_inputs()
         for player in self.player_manager.players:
             player.update(delta_time)
-        bullet_behavior(
+        projectile_behavior(
             delta_time,
             self.sprite_lists,
         )
@@ -86,8 +83,8 @@ class MyGame(arcade.Window):
 
         # clear screen
         self.clear()
-        self.all_sprites.draw()
         self.sprite_lists.draw()
+        self.all_sprites.draw()
         for player in self.player_manager.players:
             player.draw()
         self.input_debug_hud.draw()

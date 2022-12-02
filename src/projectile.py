@@ -1,13 +1,11 @@
 from __future__ import annotations
 
-import math
-from typing import TYPE_CHECKING, List, cast
+from typing import List, Tuple, cast
 
 import arcade
-
 from arena.wall import Wall
 from constants import SCREEN_HEIGHT, SCREEN_WIDTH
-from iron_math import move_sprite_relative_to_parent, move_sprite_polar
+from iron_math import move_sprite_polar, set_sprite_location
 from linked_sprite import LinkedSprite
 from sprite_lists import SpriteLists
 
@@ -19,11 +17,18 @@ class Projectile:
     speed: float
     radians: float
     sprite_rotation_offset: float
+    exists: bool
     beam: bool
+    beam_range: float
     explodes: bool
 
     def __init__(
-        self, sprite: LinkedSprite[Projectile], sprite_lists: SpriteLists, speed: float, radians: float, damage: float
+        self,
+        sprite: LinkedSprite[Projectile],
+        sprite_lists: SpriteLists,
+        speed: float,
+        radians: float,
+        damage: float,
     ):
         self.sprite = sprite
         sprite.owner = self
@@ -32,19 +37,39 @@ class Projectile:
         self.radians = radians
         self.damage = damage
         self.beam = False
+        self.beam_range = 0
         self.explodes = False
         self.sprite_rotation_offset = 0
-        self.sprite_lists.projectiles.append(self.sprite)
+        self.append_sprite()
 
     def update(self, delta_time: float):
         move_sprite_polar(self.sprite, self.speed * delta_time, self.radians)
 
-    def set_beam(self):
+    def set_location(self, location: Tuple[float, float, float]):
+        set_sprite_location(self.sprite, location)
+        self.sprite.radians += self.sprite_rotation_offset
+
+    def set_beam(self, range: float):
         self.beam = True
+        self.beam_range = range
+
+    def set_sprite_rotation_offset(self, radians: float):
+        self.sprite_rotation_offset = radians
+
+    def set_explodes(self):
+        self.explodes = True
+    
+    def append_sprite(self):
+        self.sprite_lists.projectiles.append(self.sprite)
+        self.exists = True
+
+    def remove_sprite(self):
+        self.sprite_lists.projectiles.remove(self.sprite)
+        self.exists = False
 
 
 # For naming purposes, a bullet can be anything that comes out of a weapon included beams, rockets, etc
-def bullet_behavior(
+def projectile_behavior(
     delta_time: float,
     sprite_lists: SpriteLists,
 ):
@@ -69,4 +94,3 @@ def bullet_behavior(
             or projectile_sprite.center_y > SCREEN_HEIGHT
         ):
             sprite_lists.projectiles.remove(projectile_sprite)
-        
