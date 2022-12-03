@@ -9,7 +9,7 @@ from player import Player
 
 def projectile_hits_wall(projectile_spritelist, wall_spritelist):
     for projectile in projectile_spritelist:
-
+        projectile: LinkedSprite[Projectile]
         walls_touching_projectile = arcade.check_for_collision_with_list(
             projectile, wall_spritelist
         )
@@ -22,13 +22,12 @@ def projectile_hits_wall(projectile_spritelist, wall_spritelist):
 
 def projectile_hits_player(projectile_spritelist, player_spritelist):
     for projectile in projectile_spritelist:
-
+        projectile: LinkedSprite[Projectile]
         players_touching_projectile = arcade.check_for_collision_with_list(
             projectile, player_spritelist
         )
 
         if len(players_touching_projectile) > 0:
-            projectile: LinkedSprite
             print(projectile.left)
             projectile.owner.on_collision_with_player(
                 projectile_spritelist, players_touching_projectile
@@ -51,10 +50,3 @@ def player_hits_wall(player_spritelist, wall_spritelist):
                 player.left = walls_touching_players[0].left - player.width
             if abs(walls_touching_players[0].right - player.left) < collision_tolerance:
                 player.right = walls_touching_players[0].right + player.width
-
-            # if player.owner.x_shift > 0:
-            #     player.left = players_touching_walls[0].left - player.width
-            # elif player.owner.x_shift < 0:
-            #     player.right = players_touching_walls[0].right + player.width
-            # elif player.owner.y_shift > 0:
-            #     player.top = players_touching_walls[0].top - player.height
