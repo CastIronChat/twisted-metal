@@ -28,7 +28,6 @@ def projectile_hits_player(projectile_spritelist, player_spritelist):
         )
 
         if len(players_touching_projectile) > 0:
-            print(projectile.left)
             projectile.owner.on_collision_with_player(
                 projectile_spritelist, players_touching_projectile
             )
