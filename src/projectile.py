@@ -12,7 +12,7 @@ from sprite_lists import SpriteLists
 
 class Projectile:
     """
-    A projectile can be anything that is created by a weapon included beams, rockets, etc.
+    A projectile can be anything that is created by a weapon or another projectile included beams, rockets, etc.
     It stores the characteristics of the projectile and is responible the associated sprite
     """
 

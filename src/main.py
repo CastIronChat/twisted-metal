@@ -13,7 +13,7 @@ from constants import (
 from hud import Hud
 from input_debug_hud import InputDebugHud
 from player_manager import PlayerManager
-from bullet import projectile_behavior
+from projectile import projectile_behavior
 from sprite_lists import SpriteLists
 
 
