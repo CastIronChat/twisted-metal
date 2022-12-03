@@ -135,3 +135,43 @@ def polar_to_cartesian(magnitude: float, radians: float, /):
     Returns (x, y)
     """
     return rotate_vec((magnitude, 0), radians)
+
+
+def clamp(value: float, min: float, max: float):
+    if max < min:
+        raise Exception("max must be >= to min")
+    if value > max:
+        return max
+    if value < min:
+        return min
+    return value
+
+
+# TODO think about lerp functions; check if this function duplicates or should be accompanied by a lerp function
+def rescale_value_between(
+    value: float,
+    from_min: float,
+    from_max: float,
+    to_min: float = 0,
+    to_max: float = 1,
+    /,
+):
+    """
+    Lerp a value between two extremes described like this:
+
+        When foo is 10, bar should be 20
+        When foo is 80, bar should be 100
+        Smoothly transition between.
+
+    This function accepts the values: foo, 10, 80, 20, 100
+    It returns: bar
+
+    Another way to think about it:
+
+    Imagine a line between two points: (from_min, to_min) and (from_max, to_max)
+    Return the Y position on that line at the X position of `value`
+    """
+    x = value - from_min
+    rise = to_max - to_min
+    run = from_max - from_min
+    return to_min + x * rise / run
