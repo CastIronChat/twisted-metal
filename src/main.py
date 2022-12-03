@@ -18,6 +18,7 @@ from hud import Hud
 from input_debug_hud import InputDebugHud
 from player_manager import PlayerManager
 from sprite_lists import SpriteLists
+from collision import projectile_hits_player, projectile_hits_wall, player_hits_wall
 
 
 class MyGame(arcade.Window):
@@ -78,6 +79,9 @@ class MyGame(arcade.Window):
             delta_time,
             self.sprite_lists,
         )
+        projectile_hits_wall(self.sprite_lists.projectiles, self.sprite_lists.walls)
+        projectile_hits_player(self.sprite_lists.projectiles, self.sprite_lists.players)
+        player_hits_wall(self.sprite_lists.players, self.sprite_lists.walls)
         self.hud.update()
 
     def on_draw(self):
@@ -86,11 +90,11 @@ class MyGame(arcade.Window):
 
         # clear screen
         self.clear()
-        self.all_sprites.draw()
         self.sprite_lists.draw()
         for player in self.player_manager.players:
             player.draw()
         self.input_debug_hud.draw()
+        self.all_sprites.draw()
 
 
 def main():
