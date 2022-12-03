@@ -15,6 +15,7 @@ from sprite_lists import SpriteLists
 # Weapon will never create and instance of Player
 if TYPE_CHECKING:
     from weapon import Weapon
+    from player import Player
 
 
 class Projectile:
@@ -23,6 +24,16 @@ class Projectile:
         sprite.owner = self
         sprite_lists.projectiles.append(self.sprite)
         self.damage = 0
+
+    def on_collision_with_wall(projectile, projectile_spritelist: arcade.SpriteList, walls_touching_projectile: arcade.SpriteList):
+        projectile_spritelist.remove(projectile.sprite)
+        
+    def on_collision_with_player(projectile, projectile_spritelist: arcade.SpriteList, players_touching_projectile: arcade.SpriteList):
+        for player in players_touching_projectile:
+            player: LinkedSprite[Player]
+            projectile: LinkedSprite[projectile]
+            player.owner.player_health -= projectile.damage
+        projectile_spritelist.remove(projectile.sprite)
 
 
 class Beam:
@@ -43,14 +54,6 @@ def bullet_behavior(
 ):
     for projectile_sprite in sprite_lists.projectiles:
         projectile_sprite: LinkedSprite[Projectile]
-        wall_sprites_collided_with_bullet = cast(
-            List[LinkedSprite[Wall]],
-            arcade.check_for_collision_with_list(projectile_sprite, sprite_lists.walls),
-        )
-        if len(wall_sprites_collided_with_bullet) > 0:
-            sprite_lists.projectiles.remove(projectile_sprite)
-            # stop doing anything with this projectile
-            continue
         projectile_sprite.center_x += projectile_sprite.change_x * delta_time
         projectile_sprite.center_y += projectile_sprite.change_y * delta_time
         if (
