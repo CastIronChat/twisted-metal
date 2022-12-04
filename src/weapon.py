@@ -8,7 +8,7 @@ import arcade
 from iron_math import get_transformed_location, move_sprite_relative_to_parent
 from linked_sprite import LinkedSprite, LinkedSpriteSolidColor
 from player_input import VirtualButton
-from bullet import Beam, Projectile
+from projectile import Beam, Projectile
 from sprite_lists import SpriteLists
 from textures import LASER_PISTOL, MACHINE_GUN, ROCKET, ROCKET_LAUNCHER
 

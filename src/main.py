@@ -16,7 +16,7 @@ from global_input import GlobalInput, bind_global_inputs_to_keyboard
 from hud import Hud
 from input_debug_hud import InputDebugHud
 from player_manager import PlayerManager
-from bullet import update_projectiles
+from projectile import update_projectiles
 from sprite_lists import SpriteLists
 
 
@@ -90,7 +90,6 @@ class MyGame(arcade.Window):
         # clear screen
         self.clear()
         self.sprite_lists.draw()
-        self.all_sprites.draw()
         for player in self.player_manager.players:
             player.draw()
         self.input_debug_hud.draw()
