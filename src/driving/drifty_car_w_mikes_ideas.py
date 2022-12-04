@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
 from constants import SCREEN_HEIGHT, SCREEN_WIDTH
 from curve import Curve
 from driving.drive_mode import DriveMode
@@ -16,20 +14,6 @@ from iron_math import (
     vec_magnitude,
 )
 
-if TYPE_CHECKING:
-    from player import Player
-
-
-def drifty_car(player: Player):
-    return DriftyCar(player)
-
-
-def mike_drifty_car(player: Player):
-    drive_mode = DriftyCar(player)
-    drive_mode.forward_acceleration = Curve([(0.1, 500), (0.8, 3000)])
-    # drive_mode.acceleration_curve = Curve([(0, 1500)])
-    # drive_mode.acceleration_curve = Curve([(0.1, 3000), (0.9, 1000)])
-
 
 class DriftyCar(DriveMode):
     """
@@ -42,17 +26,16 @@ class DriftyCar(DriveMode):
         # TODO
         self._sprite = self.player.sprite
 
-        # Single point on the curve means it's a flat line: all Y values
-        # are the same
-        self.forward_acceleration = Curve([(0.0, 1500)])
+        self.forward_acceleration = Curve([(0.1, 500), (0.8, 3000)])
+        # self.forward_acceleration = Curve([(0, 1500)])
+        # self.forward_acceleration = Curve([(0.1, 3000), (0.9, 1000)])
         """
         Effectively, torque of the engine driving forward.
         Since there is no brake, this is also braking power when driving in reverse and attempting to slow down.
         """
-        self.reverse_acceleration = Curve([(0.0, 1500)])
-        self.reverse_power = 1500
+        self.reverse_acceleration = 1500
         """
-        Opposite of forward_acceleration
+        Opposite of accelerate_power
         """
         self.max_engine_speed = 500
         """
@@ -104,14 +87,17 @@ class DriftyCar(DriveMode):
         max_forward_acceleration = self.forward_acceleration.sample(
             forward_speed_percentage_of_max
         )
-        # TODO implement similar logic for reverse acceleration
+        reverse_acceleration_percent = clamp(forward_speed, -self.max_engine_speed, 0)
         forward_acceleration = scale_vec(
             heading,
             self.input.accelerate_axis.value * max_forward_acceleration,
         )
         reverse_acceleration = scale_vec(
-            heading, -self.input.brake_axis.value * self.reverse_power
+            heading, -self.input.brake_axis.value * self.reverse_acceleration
         )
+        if drifting:
+            forward_acceleration = (0, 0)
+            reverse_acceleration = (0, 0)
         if forward_speed > self.max_engine_speed:
             forward_acceleration = (0, 0)
         if forward_speed < -self.max_engine_speed:
