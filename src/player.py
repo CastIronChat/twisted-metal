@@ -110,3 +110,8 @@ class Player:
     def draw(self):
         self.primary_weapon.draw()
         self.secondary_weapon.draw()
+    
+    def take_damage(self, damage: float):
+        self.player_health -= damage
+        if self.player_health < 0:
+            self.player_health = 0

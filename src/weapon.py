@@ -109,9 +109,7 @@ class LaserBeam(Weapon):
 
     def aim_beam(self):
         if self.beam.exists:
-            self.beam.set_location(
-                get_transformed_location(self.weapon_sprite, self.muzzle_transform)
-            )
+            self.beam.location = get_transformed_location(self.weapon_sprite, self.muzzle_transform)
 
 
 class RocketLauncher(Weapon):
@@ -147,10 +145,8 @@ class RocketLauncher(Weapon):
             self.rocket_damage,
         )
         # ROCKET texture appears at 45 degree angle. Sprite_rotation_offset compensates for this
-        rocket.set_sprite_rotation_offset(math.radians(-45))
-        rocket.set_location(
-            get_transformed_location(self.weapon_sprite, self.muzzle_transform)
-        )
+        rocket.sprite_rotation_offset = (math.radians(-45))
+        rocket.location = get_transformed_location(self.weapon_sprite, self.muzzle_transform)
         rocket.set_explodes()
         self.time_since_shoot = 0
 
@@ -186,7 +182,5 @@ class MachineGun(Weapon):
             self.weapon_sprite.radians,
             self.bullet_damage,
         )
-        bullet.set_location(
-            get_transformed_location(self.weapon_sprite, self.muzzle_transform)
-        )
+        bullet.location = get_transformed_location(self.weapon_sprite, self.muzzle_transform)
         self.time_since_shoot = 0

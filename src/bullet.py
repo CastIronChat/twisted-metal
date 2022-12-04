@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, List, Tuple, cast
 import arcade
 from arena.wall import Wall
 from constants import SCREEN_HEIGHT, SCREEN_WIDTH
-from iron_math import move_sprite_polar, set_sprite_location
+from iron_math import move_sprite_polar, set_sprite_location, sprite_in_bounds
 from linked_sprite import LinkedSprite
 from sprite_lists import SpriteLists
 
@@ -55,26 +55,23 @@ class Projectile:
     def update(self, delta_time: float):
         move_sprite_polar(self.sprite, self.speed * delta_time, self.radians)
         #check if the projectile left the screen
-        if (
-            self.sprite.center_x < 0
-            or self.sprite.center_x > SCREEN_WIDTH
-            or self.sprite.center_y < 0
-            or self.sprite.center_y > SCREEN_HEIGHT
-        ):
+        if not sprite_in_bounds(self.sprite):
             if not self.beam:
                 self.remove_sprite()
 
-    def set_location(self, location: Tuple[float, float, float]):
+    @property
+    def location(self) -> Tuple[float, float, float]:
+        return (self.sprite.center_x, self.sprite.center_y, self.sprite.radians)
+
+    @location.setter
+    def location(self, location: Tuple[float, float, float]):
         set_sprite_location(self.sprite, location)
         self.sprite.radians += self.sprite_rotation_offset
 
     def set_beam(self, range: float):
         self.beam = True
         self.beam_range = range
-
-    def set_sprite_rotation_offset(self, radians: float):
-        self.sprite_rotation_offset = radians
-
+    
     def set_explodes(self):
         self.explodes = True
     
@@ -94,9 +91,9 @@ class Projectile:
         for player in players_touching_projectile:
             player: LinkedSprite[Player]
             if self.beam:
-                player.owner.player_health -= self.damage * delta_time
+                player.owner.take_damage(self.damage * delta_time)
             else:
-                player.owner.player_health -= self.damage
+                player.owner.take_damage(self.damage)
         if not self.beam: 
             self.remove_sprite()
 
