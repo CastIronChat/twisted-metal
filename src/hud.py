@@ -4,14 +4,16 @@ import arcade
 
 from player import Player
 from playerhud import PlayerHud
+from sprite_lists import SpriteLists
 from textures import PLAYER_AVATARS
 
 
 class Hud:
 
     # generates Player Huds and stores each instance in player_huds.
-    def __init__(self, player_list: list[Player]):
+    def __init__(self, player_list: list[Player], sprite_lists: SpriteLists):
 
+        self.sprite_lists = sprite_lists
         self.player_hud_startx: int = 100
         self.player_hud_starty: int = 575
         self.hud_sprite_list: list = []
@@ -33,9 +35,9 @@ class Hud:
             )
             self.player_huds.append(player_hud)
 
-            self.hud_sprite_list.append(player_hud.background_sprite)
-            self.hud_sprite_list.append(player_hud.health_sprite)
-            self.hud_sprite_list.append(player_hud.player_hud_avatar)
+            self.sprite_lists.huds.append(player_hud.background_sprite)
+            self.sprite_lists.huds.append(player_hud.health_sprite)
+            self.sprite_lists.huds.append(player_hud.player_hud_avatar)
 
             self.player_hud_startx += 150
             self.player_number_tracker += 1
