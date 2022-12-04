@@ -77,7 +77,7 @@ class LaserBeam(Weapon):
 
     def setup(self):
         self.beam_range = 400
-        self.dps = 5
+        self.dps = 20
         self.muzzle_transform = (20 + self.beam_range / 2, 5, 0)
         self.create_beam()
 

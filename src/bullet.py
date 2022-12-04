@@ -54,6 +54,15 @@ class Projectile:
 
     def update(self, delta_time: float):
         move_sprite_polar(self.sprite, self.speed * delta_time, self.radians)
+        #check if the projectile left the screen
+        if (
+            self.sprite.center_x < 0
+            or self.sprite.center_x > SCREEN_WIDTH
+            or self.sprite.center_y < 0
+            or self.sprite.center_y > SCREEN_HEIGHT
+        ):
+            if not self.beam:
+                self.remove_sprite()
 
     def set_location(self, location: Tuple[float, float, float]):
         set_sprite_location(self.sprite, location)
@@ -77,30 +86,27 @@ class Projectile:
         self.sprite_lists.projectiles.remove(self.sprite)
         self.exists = False
 
-    def on_collision_with_wall(projectile, projectile_spritelist: arcade.SpriteList, walls_touching_projectile: arcade.SpriteList):
-            projectile_spritelist.remove(projectile.sprite)
+    def on_collision_with_wall(self, walls_touching_projectile: arcade.SpriteList):
+        if not self.beam:    
+            self.remove_sprite()
         
-    def on_collision_with_player(projectile, projectile_spritelist: arcade.SpriteList, players_touching_projectile: arcade.SpriteList):
+    def on_collision_with_player(self, delta_time, players_touching_projectile: arcade.SpriteList):
         for player in players_touching_projectile:
             player: LinkedSprite[Player]
-            projectile: LinkedSprite[projectile]
-            player.owner.player_health -= projectile.damage
-        projectile_spritelist.remove(projectile.sprite)
+            if self.beam:
+                player.owner.player_health -= self.damage * delta_time
+            else:
+                player.owner.player_health -= self.damage
+        if not self.beam: 
+            self.remove_sprite()
 
 
 
-def projectile_behavior(
+def update_projectiles(
     delta_time: float,
     sprite_lists: SpriteLists,
 ):
     for projectile_sprite in sprite_lists.projectiles:
         projectile_sprite: LinkedSprite[Projectile]
-        # If beam, skip the current projectile collision code that deletes projectiles that hit walls
         projectile_sprite.owner.update(delta_time)
-        if (
-            projectile_sprite.center_x < 0
-            or projectile_sprite.center_x > SCREEN_WIDTH
-            or projectile_sprite.center_y < 0
-            or projectile_sprite.center_y > SCREEN_HEIGHT
-        ):
-            sprite_lists.projectiles.remove(projectile_sprite)
+        

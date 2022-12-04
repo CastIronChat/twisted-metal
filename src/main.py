@@ -14,7 +14,7 @@ from constants import (
 from hud import Hud
 from input_debug_hud import InputDebugHud
 from player_manager import PlayerManager
-from bullet import projectile_behavior
+from bullet import update_projectiles
 from sprite_lists import SpriteLists
 
 
@@ -72,12 +72,12 @@ class MyGame(arcade.Window):
         self.player_manager.update_inputs()
         for player in self.player_manager.players:
             player.update(delta_time)
-        projectile_behavior(
+        update_projectiles(
             delta_time,
             self.sprite_lists,
         )
         projectile_hits_wall(self.sprite_lists)
-        projectile_hits_player(self.sprite_lists)
+        projectile_hits_player(delta_time, self.sprite_lists)
         self.hud.update()
 
     def on_draw(self):
