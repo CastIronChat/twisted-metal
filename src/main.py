@@ -1,12 +1,8 @@
 from __future__ import annotations
-
-from typing import List
-
 import arcade
 
 from arena.arena import Arena
 from arena.arena_loader import load_arena_by_name
-from bullet import bullet_behavior
 from collision import projectile_hits_player, projectile_hits_wall
 from constants import (
     SCREEN_HEIGHT,
@@ -20,6 +16,7 @@ from global_input import GlobalInput, bind_global_inputs_to_keyboard
 from hud import Hud
 from input_debug_hud import InputDebugHud
 from player_manager import PlayerManager
+from bullet import update_projectiles
 from sprite_lists import SpriteLists
 
 
@@ -78,12 +75,12 @@ class MyGame(arcade.Window):
         self.player_manager.update_inputs()
         for player in self.player_manager.players:
             player.update(delta_time)
-        bullet_behavior(
+        update_projectiles(
             delta_time,
             self.sprite_lists,
         )
         projectile_hits_wall(self.sprite_lists)
-        projectile_hits_player(self.sprite_lists)
+        projectile_hits_player(delta_time, self.sprite_lists)
         self.hud.update()
 
     def on_draw(self):
@@ -93,6 +90,7 @@ class MyGame(arcade.Window):
         # clear screen
         self.clear()
         self.sprite_lists.draw()
+        self.all_sprites.draw()
         for player in self.player_manager.players:
             player.draw()
         self.input_debug_hud.draw()
