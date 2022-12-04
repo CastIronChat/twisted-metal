@@ -23,3 +23,8 @@ Use alternate (Mario Kart-style?) controller layout where A/B are gas and brake,
 and triggers are primary/secondary fire.  At this early stage of development,
 this flag is meant for experimentation.
 """
+
+START_FULLSCREEN = False
+"""
+Start the game in fullscreen mode.  Can also be toggled with F11 on keyboard.
+"""

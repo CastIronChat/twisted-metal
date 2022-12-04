@@ -11,6 +11,8 @@ from constants import (
     TICK_DURATION,
     USE_DEBUGGER_TIMING_FIXES,
 )
+from fullscreen import FullscreenController
+from global_input import GlobalInput, bind_global_inputs_to_keyboard
 from hud import Hud
 from input_debug_hud import InputDebugHud
 from player_manager import PlayerManager
@@ -31,8 +33,11 @@ class MyGame(arcade.Window):
         self.physics_engine = None
         arcade.set_background_color(arcade.color.AMAZON)
         self.player_manager = PlayerManager(self.keyboard)
+        self.global_input = GlobalInput(self.keyboard, None)
+        bind_global_inputs_to_keyboard(self.global_input)
         self.sprite_lists = SpriteLists()
         self.arena: Arena
+        self.fullscreen_controller = FullscreenController(self, self.global_input)
 
     def setup(self):
         self.all_sprites = arcade.SpriteList()
@@ -69,6 +74,8 @@ class MyGame(arcade.Window):
     def our_update(self, delta_time: float):
         # Pretty sure this does animation updates, in case any of the sprites
         # Have animations
+        self.global_input.update()
+        self.fullscreen_controller.update()
         self.player_manager.update_inputs()
         for player in self.player_manager.players:
             player.update(delta_time)
