@@ -8,7 +8,7 @@ import arcade
 from iron_math import get_transformed_location, move_sprite_relative_to_parent
 from linked_sprite import LinkedSprite, LinkedSpriteSolidColor
 from player_input import VirtualButton
-from bullet import Projectile
+from bullet import Beam, Projectile
 from sprite_lists import SpriteLists
 from textures import LASER_PISTOL, MACHINE_GUN, ROCKET, ROCKET_LAUNCHER
 
@@ -103,9 +103,7 @@ class LaserBeam(Weapon):
         beam_appearance = LinkedSpriteSolidColor[Projectile](
             self.beam_range, 5, arcade.color.RED
         )
-        self.beam = Projectile(beam_appearance, self.sprite_lists, 0, 0, self.dps)
-        self.beam.set_beam(self.beam_range)
-        self.beam.remove_sprite()
+        self.beam = Beam(beam_appearance, self.sprite_lists, 0, 0, self.dps)
 
     def aim_beam(self):
         if self.beam.exists:
@@ -147,7 +145,7 @@ class RocketLauncher(Weapon):
         # ROCKET texture appears at 45 degree angle. Sprite_rotation_offset compensates for this
         rocket.sprite_rotation_offset = (math.radians(-45))
         rocket.location = get_transformed_location(self.weapon_sprite, self.muzzle_transform)
-        rocket.set_explodes()
+        rocket.explodes = True
         self.time_since_shoot = 0
 
 
