@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, List, Tuple, cast
-
+import math
 import arcade
-from iron_math import move_sprite_polar, set_sprite_location, sprite_in_bounds
+from iron_math import add_vec, move_sprite_polar, set_sprite_location, sprite_in_bounds
 from linked_sprite import LinkedSprite
 from sprite_lists import SpriteLists
 
@@ -86,16 +86,28 @@ class Projectile:
 
 class Beam(Projectile):
 
-    beam_range: float
+    range: float
+    muzzle_location: Tuple[float, float, float]
 
     def setup(self):
-        self.beam_range = self.sprite.width
+        self.range = self.sprite.width
+        self.muzzle_location = (0,0,0)
 
     def update(self, delta_time: float):
-        pass
+        self.sprite.width = self.range
+        self.update_beam_location()
+
+    def update_beam_location(self):
+        set_sprite_location(self.sprite, self.muzzle_location)
+        move_sprite_polar(self.sprite, self.sprite.width/2, self.sprite.radians)
 
     def on_collision_with_wall(self, walls_touching_projectile: arcade.SpriteList):
-        pass
+        for wall in walls_touching_projectile:
+            new_length: float = 0
+            test_sprite = arcade.SpriteCircle(1)
+            self.sprite.width = new_length
+            self.update_beam_location()
+            print (new_length)
 
     def on_collision_with_player(self, delta_time, players_touching_projectile: arcade.SpriteList):
         for player in players_touching_projectile:

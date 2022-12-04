@@ -69,7 +69,7 @@ class LaserBeam(Weapon):
     stays on while button is pressed and moved with the ship
     """
 
-    beam: Projectile
+    beam: Beam
     beam_range: float
     dps: float
     # Is a class attribute, not instance attribute
@@ -78,7 +78,7 @@ class LaserBeam(Weapon):
     def setup(self):
         self.beam_range = 400
         self.dps = 20
-        self.muzzle_transform = (20 + self.beam_range / 2, 5, 0)
+        self.muzzle_transform = (20, 5, 0)
         self.create_beam()
 
     def update(self, delta_time: float):
@@ -107,7 +107,7 @@ class LaserBeam(Weapon):
 
     def aim_beam(self):
         if self.beam.exists:
-            self.beam.location = get_transformed_location(self.weapon_sprite, self.muzzle_transform)
+            self.beam.muzzle_location = get_transformed_location(self.weapon_sprite, self.muzzle_transform)
 
 
 class RocketLauncher(Weapon):
