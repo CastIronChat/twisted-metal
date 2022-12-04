@@ -147,7 +147,7 @@ class RocketLauncher(Weapon):
         # ROCKET texture appears at 45 degree angle. Sprite_rotation_offset compensates for this
         rocket.sprite_rotation_offset = (math.radians(-45))
         rocket.location = get_transformed_location(self.weapon_sprite, self.muzzle_transform)
-        rocket.set_explodes()
+        rocket.explodes = True
         self.time_since_shoot = 0
 
 

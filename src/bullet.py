@@ -72,9 +72,6 @@ class Projectile:
         self.beam = True
         self.beam_range = range
     
-    def set_explodes(self):
-        self.explodes = True
-    
     def append_sprite(self):
         self.sprite_lists.projectiles.append(self.sprite)
         self.exists = True
