@@ -26,6 +26,9 @@ class Projectile:
     radians: float
     sprite_rotation_offset: float
     exists: bool
+    """
+    Projectile is visible and can be collided with.  Used for long-lived projectile objects that are repeatedly added to/removed from the world over time, such as laser beams.
+    """
     
     explodes: bool
 
@@ -59,7 +62,7 @@ class Projectile:
 
     @property
     def location(self) -> Tuple[float, float, float]:
-        return (self.sprite.center_x, self.sprite.center_y, self.sprite.radians)
+        return (self.sprite.center_x, self.sprite.center_y, self.sprite.radians - self.sprite_rotation_offset)
 
     @location.setter
     def location(self, location: Tuple[float, float, float]):
@@ -77,7 +80,7 @@ class Projectile:
     def on_collision_with_wall(self, walls_touching_projectile: arcade.SpriteList): 
         self.remove_sprite()
         
-    def on_collision_with_player(self, delta_time, players_touching_projectile: arcade.SpriteList):
+    def on_collision_with_player(self, delta_time: float, players_touching_projectile: list[LinkedSprite[Player]]):
         for player in players_touching_projectile:
             player: LinkedSprite[Player]
             player.owner.take_damage(self.damage)
@@ -97,7 +100,7 @@ class Beam(Projectile):
     def on_collision_with_wall(self, walls_touching_projectile: arcade.SpriteList):
         pass
 
-    def on_collision_with_player(self, delta_time, players_touching_projectile: arcade.SpriteList):
+    def on_collision_with_player(self, delta_time: float, players_touching_projectile: list[LinkedSprite[Player]]):
         for player in players_touching_projectile:
             player: LinkedSprite[Player]
             player.owner.take_damage(self.damage * delta_time)
