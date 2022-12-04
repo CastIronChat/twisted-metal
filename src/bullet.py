@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import List, Tuple, cast
+from typing import TYPE_CHECKING, List, Tuple, cast
 
 import arcade
 from arena.wall import Wall
@@ -8,6 +8,11 @@ from constants import SCREEN_HEIGHT, SCREEN_WIDTH
 from iron_math import move_sprite_polar, set_sprite_location
 from linked_sprite import LinkedSprite
 from sprite_lists import SpriteLists
+
+# This allows a circular import only for the purposes of type hints
+# Weapon will never create and instance of Player
+if TYPE_CHECKING:
+    from player import Player
 
 
 class Projectile:
@@ -72,6 +77,18 @@ class Projectile:
         self.sprite_lists.projectiles.remove(self.sprite)
         self.exists = False
 
+    def on_collision_with_wall(projectile, projectile_spritelist: arcade.SpriteList, walls_touching_projectile: arcade.SpriteList):
+            projectile_spritelist.remove(projectile.sprite)
+        
+    def on_collision_with_player(projectile, projectile_spritelist: arcade.SpriteList, players_touching_projectile: arcade.SpriteList):
+        for player in players_touching_projectile:
+            player: LinkedSprite[Player]
+            projectile: LinkedSprite[projectile]
+            player.owner.player_health -= projectile.damage
+        projectile_spritelist.remove(projectile.sprite)
+
+
+
 def projectile_behavior(
     delta_time: float,
     sprite_lists: SpriteLists,
@@ -79,17 +96,7 @@ def projectile_behavior(
     for projectile_sprite in sprite_lists.projectiles:
         projectile_sprite: LinkedSprite[Projectile]
         # If beam, skip the current projectile collision code that deletes projectiles that hit walls
-        if projectile_sprite.owner.beam:
-            continue
         projectile_sprite.owner.update(delta_time)
-        wall_sprites_collided_with_bullet = cast(
-            List[LinkedSprite[Wall]],
-            arcade.check_for_collision_with_list(projectile_sprite, sprite_lists.walls),
-        )
-        if len(wall_sprites_collided_with_bullet) > 0:
-            sprite_lists.projectiles.remove(projectile_sprite)
-            # stop doing anything with this projectile
-            continue
         if (
             projectile_sprite.center_x < 0
             or projectile_sprite.center_x > SCREEN_WIDTH

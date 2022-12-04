@@ -42,22 +42,27 @@ class Player:
         self.secondary_weapon_sprite: arcade.Sprite
         self._swap_in_weapons()
         self.player_health = 100
+        self.x_shift = float
+        self.y_shift = float
 
     def update(self, delta_time: float):
         if self.input.accelerate_axis.value > 0:
             self.sprite.angle -= self.turn_speed * delta_time * self.input.x_axis.value
-            self.sprite.center_x += (
+            self.x_shift = (
                 self.drive_speed
                 * self.input.accelerate_axis.value
                 * math.cos(self.sprite.radians)
                 * delta_time
             )
-            self.sprite.center_y += (
+            self.sprite.center_x += self.x_shift
+
+            self.y_shift= (
                 self.drive_speed
                 * self.input.accelerate_axis.value
                 * math.sin(self.sprite.radians)
                 * delta_time
             )
+            self.sprite.center_y += self.y_shift
         if self.input.brake_axis.value > 0:
             self.sprite.angle += self.turn_speed * delta_time * self.input.x_axis.value
             self.sprite.center_x -= (

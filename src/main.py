@@ -3,6 +3,7 @@ import arcade
 
 from arena.arena import Arena
 from arena.arena_loader import load_arena_by_name
+from collision import projectile_hits_player, projectile_hits_wall
 from constants import (
     SCREEN_HEIGHT,
     SCREEN_TITLE,
@@ -75,6 +76,8 @@ class MyGame(arcade.Window):
             delta_time,
             self.sprite_lists,
         )
+        projectile_hits_wall(self.sprite_lists)
+        projectile_hits_player(self.sprite_lists)
         self.hud.update()
 
     def on_draw(self):
@@ -88,6 +91,7 @@ class MyGame(arcade.Window):
         for player in self.player_manager.players:
             player.draw()
         self.input_debug_hud.draw()
+        self.all_sprites.draw()
 
 
 def main():
