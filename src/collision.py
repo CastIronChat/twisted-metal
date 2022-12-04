@@ -1,6 +1,6 @@
 from __future__ import annotations
 import arcade
-from bullet import Projectile
+from projectile import Projectile
 from linked_sprite import LinkedSprite
 from sprite_lists import SpriteLists
 
