@@ -48,8 +48,14 @@ class Projectile:
         self.speed = 0
         self.angle_of_motion = 0
 
-    def setup(self, muzzle_location : Tuple[float, float, float], speed: float,
-        angle_of_motion: float, sprite_rotation_offet:float = 0, explodes: bool = False):
+    def setup(
+        self,
+        muzzle_location: Tuple[float, float, float],
+        speed: float,
+        angle_of_motion: float,
+        sprite_rotation_offet: float = 0,
+        explodes: bool = False,
+    ):
         self.muzzle_location = muzzle_location
         self.speed = speed
         self.angle_of_motion = angle_of_motion
@@ -97,13 +103,13 @@ class Beam(Projectile):
 
     beam_range: float
 
-    def setup(self, beam_range:float, explodes: bool = False):
+    def setup(self, beam_range: float, explodes: bool = False):
         self.beam_range = beam_range
         self.explodes = explodes
 
     def update(self, delta_time: float):
         set_sprite_location(self.sprite, self.muzzle_location)
-        move_sprite_polar(self.sprite, self.sprite.width/2, self.muzzle_location[2])
+        move_sprite_polar(self.sprite, self.sprite.width / 2, self.muzzle_location[2])
 
     def on_collision_with_wall(self, walls_touching_projectile: arcade.SpriteList):
         pass
