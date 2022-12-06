@@ -22,9 +22,10 @@ class Projectile:
 
     sprite: LinkedSprite[Projectile]
     sprite_lists: SpriteLists
+    muzzle_location: Tuple[float, float, float]
     damage: float
     speed: float
-    radians: float
+    angle_of_motion: float
     sprite_rotation_offset: float
     exists: bool
     """
@@ -37,26 +38,29 @@ class Projectile:
         self,
         sprite: LinkedSprite[Projectile],
         sprite_lists: SpriteLists,
-        speed: float,
-        radians: float,
         damage: float,
     ):
         self.sprite = sprite
         sprite.owner = self
         self.sprite_lists = sprite_lists
-        self.speed = speed
-        self.radians = radians
         self.damage = damage
-        self.explodes = False
         self.exists = False
-        self.sprite_rotation_offset = 0
-        self.setup()
+        self.speed = 0
+        self.angle_of_motion = 0
 
-    def setup(self):
+    def setup(self, muzzle_location : Tuple[float, float, float], speed: float,
+        angle_of_motion: float, sprite_rotation_offet:float = 0, explodes: bool = False):
+        self.muzzle_location = muzzle_location
+        self.speed = speed
+        self.angle_of_motion = angle_of_motion
+        self.sprite_rotation_offset = sprite_rotation_offet
+        self.explodes = explodes
+        set_sprite_location(self.sprite, muzzle_location)
+        self.sprite.radians += self.sprite_rotation_offset
         self.append_sprite()
 
     def update(self, delta_time: float):
-        move_sprite_polar(self.sprite, self.speed * delta_time, self.radians)
+        move_sprite_polar(self.sprite, self.speed * delta_time, self.angle_of_motion)
         # check if the projectile left the screen
         if not sprite_in_bounds(self.sprite):
             self.remove_sprite()
@@ -68,11 +72,6 @@ class Projectile:
             self.sprite.center_y,
             self.sprite.radians - self.sprite_rotation_offset,
         )
-
-    @location.setter
-    def location(self, location: Tuple[float, float, float]):
-        set_sprite_location(self.sprite, location)
-        self.sprite.radians += self.sprite_rotation_offset
 
     def append_sprite(self):
         self.sprite_lists.projectiles.append(self.sprite)
@@ -98,11 +97,13 @@ class Beam(Projectile):
 
     beam_range: float
 
-    def setup(self):
-        self.beam_range = self.sprite.width
+    def setup(self, beam_range:float, explodes: bool = False):
+        self.beam_range = beam_range
+        self.explodes = explodes
 
     def update(self, delta_time: float):
-        pass
+        set_sprite_location(self.sprite, self.muzzle_location)
+        move_sprite_polar(self.sprite, self.sprite.width/2, self.muzzle_location[2])
 
     def on_collision_with_wall(self, walls_touching_projectile: arcade.SpriteList):
         pass

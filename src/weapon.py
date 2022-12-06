@@ -78,7 +78,7 @@ class LaserBeam(Weapon):
     def setup(self):
         self.beam_range = 400
         self.dps = 20
-        self.muzzle_transform = (20 + self.beam_range / 2, 5, 0)
+        self.muzzle_transform = (20, 5, 0)
         self.create_beam()
 
     def update(self, delta_time: float):
@@ -103,11 +103,14 @@ class LaserBeam(Weapon):
         beam_appearance = LinkedSpriteSolidColor[Projectile](
             self.beam_range, 5, arcade.color.RED
         )
-        self.beam = Beam(beam_appearance, self.sprite_lists, 0, 0, self.dps)
+        self.beam = Beam(beam_appearance, self.sprite_lists, self.dps)
+        self.beam.setup(self.beam_range)
 
     def aim_beam(self):
         if self.beam.exists:
-            self.beam.location = get_transformed_location(self.weapon_sprite, self.muzzle_transform)
+            self.beam.muzzle_location = get_transformed_location(
+                self.weapon_sprite, self.muzzle_transform
+            )
 
 
 class RocketLauncher(Weapon):
@@ -138,14 +141,16 @@ class RocketLauncher(Weapon):
         rocket = Projectile(
             rocket_appearance,
             self.sprite_lists,
-            self.rocket_speed,
-            self.weapon_sprite.radians,
             self.rocket_damage,
         )
         # ROCKET texture appears at 45 degree angle. Sprite_rotation_offset compensates for this
-        rocket.sprite_rotation_offset = (math.radians(-45))
-        rocket.location = get_transformed_location(self.weapon_sprite, self.muzzle_transform)
-        rocket.explodes = True
+        rocket.setup(
+            get_transformed_location(self.weapon_sprite, self.muzzle_transform),
+            self.rocket_speed,
+            self.weapon_sprite.radians,
+            sprite_rotation_offet=math.radians(-45),
+            explodes=True,
+        )
         self.time_since_shoot = 0
 
 
@@ -176,9 +181,11 @@ class MachineGun(Weapon):
         bullet = Projectile(
             bullet_appearance,
             self.sprite_lists,
-            self.bullet_speed,
-            self.weapon_sprite.radians,
             self.bullet_damage,
         )
-        bullet.location = get_transformed_location(self.weapon_sprite, self.muzzle_transform)
+        bullet.setup(
+            get_transformed_location(self.weapon_sprite, self.muzzle_transform),
+            self.bullet_speed,
+            self.weapon_sprite.radians,
+        )
         self.time_since_shoot = 0
