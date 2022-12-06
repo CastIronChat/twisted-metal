@@ -1,9 +1,10 @@
 from __future__ import annotations
+
 import arcade
 
 from arena.arena import Arena
 from arena.arena_loader import load_arena_by_name
-from collision import projectile_hits_player, projectile_hits_wall
+from collision import player_hits_wall, projectile_hits_player, projectile_hits_wall
 from constants import (
     SCREEN_HEIGHT,
     SCREEN_TITLE,
@@ -81,6 +82,7 @@ class MyGame(arcade.Window):
         )
         projectile_hits_wall(self.sprite_lists)
         projectile_hits_player(delta_time, self.sprite_lists)
+        player_hits_wall(self.sprite_lists)
         self.hud.update()
 
     def on_draw(self):
