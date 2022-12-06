@@ -42,7 +42,17 @@ def player_hits_wall(sprite_lists: SpriteLists):
         )
         if len(walls_touching_players) > 0:
             walls_probably_touching = walls_touching_players[0]
-            r = 0
+
+            """
+            stores a diagonal from center of our player and compares
+            to a side of our wall, determines if intersecting based off
+            of "if (t1 >= 0.0 and t1 < 1.0 and t2 >= 0.0 and t2 < 1.0f)"
+            Referenced https://www.youtube.com/watch?v=7Ik2vowGcU0
+
+            Did not include detection, but included collision behavior
+            which functions off of t sub 1 derived in line intersection detection
+             """
+
             for corner in player_sprite.owner.list_of_corners:
                 line_r1s = player_sprite.owner.location
                 line_r1e = corner
