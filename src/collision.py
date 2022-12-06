@@ -46,11 +46,11 @@ def player_hits_wall(sprite_lists: SpriteLists):
             """
             stores a diagonal from center of our player and compares
             to a side of our wall, determines if intersecting based off
-            of "if (t1 >= 0.0 and t1 < 1.0 and t2 >= 0.0 and t2 < 1.0f)"
+            of "if (t1 >= 0.0 and t1 < 1.0 and t2 >= 0.0 and t2 < 1.0)"
             Referenced https://www.youtube.com/watch?v=7Ik2vowGcU0
 
-            Did not include detection, but included collision behavior
-            which functions off of t sub 1 derived in line intersection detection
+            included collision detection to get the behavior,
+            which functions off of (1 - t1) derived in line intersection detection
              """
 
             for corner in player_sprite.owner.list_of_corners:
@@ -74,6 +74,10 @@ def player_hits_wall(sprite_lists: SpriteLists):
                         (line_r1s[1] - line_r1e[1]) * (line_r1s[0] - line_r2s[0])
                         + (line_r1e[0] - line_r1s[0]) * (line_r1s[1] - line_r2s[1])
                     ) / h
-
-                    player_sprite.center_x += (1.0 - t1) * (line_r1e[0] - line_r1s[0])
-                    player_sprite.center_y += (1.0 - t1) * (line_r1e[1] - line_r1s[1])
+                    if t1 >= 0.0 and t1 < 1.0 and t2 >= 0.0 and t2 < 1.0:
+                        player_sprite.center_x += (1.0 - t1) * (
+                            line_r1e[0] - line_r1s[0]
+                        )
+                        player_sprite.center_y += (1.0 - t1) * (
+                            line_r1e[1] - line_r1s[1]
+                        )
