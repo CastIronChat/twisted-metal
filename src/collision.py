@@ -26,22 +26,23 @@ def projectile_hits_player(delta_time, sprite_lists: SpriteLists):
         players_touching_projectile = arcade.check_for_collision_with_list(
             projectile_sprite, sprite_lists.players
         )
-
+        print(projectile_sprite.get_adjusted_hit_box())
         if len(players_touching_projectile) > 0:
             projectile_sprite.owner.on_collision_with_player(
                 delta_time, players_touching_projectile
             )
 
 
+
 def player_hits_wall(sprite_lists: SpriteLists):
     for player_sprite in sprite_lists.players:
         player_sprite: LinkedSprite[Player]
-        walls_probably_touching: LinkedSprite[Wall]
-        walls_touching_players = arcade.check_for_collision_with_list(
+        lines_probably_touching: LinkedSprite[Wall]
+        walls_touching_player = arcade.check_for_collision_with_list(
             player_sprite, sprite_lists.walls
         )
-        if len(walls_touching_players) > 0:
-            walls_probably_touching = walls_touching_players[0]
+        if len(walls_touching_player) > 0:
+            lines_probably_touching = walls_touching_player[0]
 
             """
             stores a diagonal from center of our player and compares
@@ -53,15 +54,20 @@ def player_hits_wall(sprite_lists: SpriteLists):
             which functions off of (1 - t1) derived in line intersection detection
              """
 
-            for corner in player_sprite.owner.list_of_corners:
+            for corner in player_sprite.get_adjusted_hit_box():
                 line_r1s = player_sprite.owner.location
                 line_r1e = corner
                 i = 0
-                for sides in walls_probably_touching.owner.list_of_corners:
-                    line_r2s = walls_probably_touching.owner.list_of_corners[i]
-                    line_r2e = walls_probably_touching.owner.list_of_corners[
-                        (i + 1) % len(sides)
+                for side in lines_probably_touching.get_adjusted_hit_box():
+                    line_r2s = side
+                    line_r2e = lines_probably_touching.get_adjusted_hit_box()[
+                        (i + 1) % len(lines_probably_touching.get_adjusted_hit_box())
                     ]
+                    i += 1
+                    print(line_r1e)
+                    print(line_r1e)
+                    print(line_r2s)
+                    print(line_r2e)
 
                     h = (line_r2e[0] - line_r2s[0]) * (line_r1s[1] - line_r1e[1]) - (
                         line_r1s[0] - line_r1e[0]

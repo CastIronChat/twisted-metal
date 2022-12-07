@@ -43,16 +43,6 @@ class Player:
         self.player_health = 100
         self.x_shift = float
         self.y_shift = float
-        self.upper_left: tuple = (self.sprite.left, self.sprite.top)
-        self.upper_right: tuple = (self.sprite.right, self.sprite.top)
-        self.bottom_left: tuple = (self.sprite.left, self.sprite.bottom)
-        self.bottom_right: tuple = (self.sprite.right, self.sprite.bottom)
-        self.list_of_corners: list[tuple] = (
-            self.upper_right,
-            self.upper_right,
-            self.bottom_right,
-            self.bottom_left,
-        )
         self.location: tuple = (self.sprite.center_x, self.sprite.center_y)
 
     def update(self, delta_time: float):
