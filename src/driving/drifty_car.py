@@ -9,7 +9,6 @@ from iron_math import (
     add_vec,
     clamp,
     project_vec,
-    rescale_value_between,
     rotate_vec,
     scale_vec,
     vec_dot_product,
@@ -50,26 +49,24 @@ class DriftyCar(DriveMode):
         Since there is no brake, this is also braking power when driving in reverse and attempting to slow down.
         """
         self.reverse_acceleration = Curve([(0.0, 1500)])
-        self.reverse_power = 1500
+        self.braking_acceleration = Curve([(0.0, 0), (0.1, 1500)])
         """
-        Opposite of forward_acceleration
+        Acceleration force applied in opposition to car's forward speed whenever
+        neither gas nor brake are held.
         """
         self.max_engine_speed = 500
         """
         Engine is only strong enough to push car up to this speed.  It may be pushed higher by external forces,
         but engine RPMs max out at this speed.
         """
-        self.base_turning_radius = 90
+        self.turning_radius_from_velocity = Curve([(0.0, 50.0), (600.0, 150.0)])
         """
-        Steering speed is calculated from a turning radius which is roughly described as:
-            base_turning_radius + speed * turning_radius_to_velocity_ratio
+        Steering speed is calculated from a turning radius which is derived from velocity.
         This allows turning radius to increase as the car speeds up.
         We use absolute speed in *any* direction so that the car continues to spin at an intuitive rate
         even as you e.g. do a 720, drifting past enemies, shooting in all directions.  This is fun but
         not realistic.
         """
-        self.turning_radius_to_velocity_ratio = 0.1
-        "see `base_turning_radius`"
         self.kinetic_friction = -10
         """
         Kinetic friction for wheels to resist lateral sliding.
@@ -90,6 +87,9 @@ class DriftyCar(DriveMode):
         # Holding both gas and reverse means you're in "drift mode"
         drifting = (
             self.input.accelerate_axis.value > 0 and self.input.brake_axis.value > 0
+        )
+        braking = (
+            self.input.accelerate_axis.value == 0 and self.input.brake_axis.value == 0
         )
 
         # Break down the car's current heading and velocity in a variety of ways
@@ -137,6 +137,16 @@ class DriftyCar(DriveMode):
                 -self.input.brake_axis.value * max_reverse_acceleration,
             )
 
+        # Compute automatic braking force applied when neither gas nor reverse
+        # is pressed
+        if braking and not drifting:
+            braking_power = self.braking_acceleration.sample(abs(forward_speed))
+            if forward_speed > 0:
+                braking_power = -braking_power
+            braking_acceleration = scale_vec(heading, braking_power)
+        else:
+            braking_acceleration = (0.0, 0.0)
+
         # Compute friction of the wheels resisting the car sliding laterally
         if drifting:
             chosen_friction = 0
@@ -149,6 +159,7 @@ class DriftyCar(DriveMode):
         # Sum up net accelerations
         acceleration = add_vec(forward_acceleration, reverse_acceleration)
         acceleration = add_vec(acceleration, lateral_friction_acceleration)
+        acceleration = add_vec(acceleration, braking_acceleration)
 
         # apply delta-time-d acceleration to velocity
         new_velocity = add_vec(self.velocity, scale_vec(acceleration, delta_time))
@@ -162,21 +173,22 @@ class DriftyCar(DriveMode):
         # Pac-man style screen wrapping
         new_position = (new_position[0] % SCREEN_WIDTH, new_position[1] % SCREEN_HEIGHT)
 
-        self._sprite.position = new_position
-
         # Compute maximum rate of angular acceleration, if player is holding
         # control stick fully to one side.
         # This math starts by choosing a turning radius which depends on the car's absolute speed.
         # Then it derives angular speed from there.
-        max_angular_speed = absolute_speed / (
-            self.base_turning_radius
-            + absolute_speed * self.turning_radius_to_velocity_ratio
+        max_angular_speed = absolute_speed / self.turning_radius_from_velocity.sample(
+            absolute_speed
         )
 
-        # Apply rotation
+        # Compute rotation
         sign = -1
         if forward_speed < 0 and not drifting:
             sign = 1
-        self._sprite.radians += (
+        angular_velocity = (
             max_angular_speed * sign * delta_time * self.input.x_axis.value
         )
+
+        # Apply movement to the sprite
+        self._sprite.position = new_position
+        self._sprite.radians += angular_velocity
