@@ -32,6 +32,11 @@ If false, keyboard player will be controlled by keyboard, *not* a controller.
 Useful if you want to debug two players and you only have one controller.
 """
 
+DRAW_DRIVE_MODE_DEBUG_HUD = True
+"""
+Draw a text overlay with the name of each player's current driving mode.
+"""
+
 DRAW_INPUT_DEBUG_HUD = False
 """
 Draw a text overlay listing the name and value of all controller inputs.

@@ -1,6 +1,6 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
 
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from player import Player
@@ -14,6 +14,7 @@ class DriveMode:
     def __init__(self, player: Player):
         self.player = player
         self.input = self.player.input
+        self.name = "unnamed"
         self.setup()
 
     def setup(self):

@@ -57,6 +57,10 @@ class Player:
         if self.input.swap_weapons_button.pressed:
             self._swap_weapons()
 
+    @property
+    def drive_mode(self):
+        return self.drive_modes[self.drive_mode_index]
+
     def _swap_drive_mode(self):
         self.drive_mode_index += 1
         if self.drive_mode_index >= len(self.drive_modes):
