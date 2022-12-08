@@ -85,62 +85,68 @@ class DriftyCar(DriveMode):
         """
 
     def update(self, delta_time: float):
+        prev_velocity = self.velocity
+
+        # Holding both gas and reverse means you're in "drift mode"
         drifting = (
             self.input.accelerate_axis.value > 0 and self.input.brake_axis.value > 0
         )
-        prev_velocity = self.velocity
+
+        # Break down the car's current heading and velocity in a variety of ways
+        # We use these values later
         heading = rotate_vec((1, 0), self._sprite.radians)
         "Unit vector pointing in front of the car's hood, independent of velocity"
-        abs_speed = vec_magnitude(prev_velocity)
+        absolute_speed = vec_magnitude(prev_velocity)
         forward_velocity = project_vec(prev_velocity, heading)
         forward_speed = vec_dot_product(forward_velocity, heading)
         "Can be negative if moving backwards; this is important"
         lateral_velocity = add_vec(prev_velocity, scale_vec(forward_velocity, -1))
-        forward_speed_percentage_of_max = rescale_value_between(
-            clamp(forward_speed, 0, self.max_engine_speed),
-            0,
-            self.max_engine_speed,
+        absolute_lateral_speed = vec_magnitude(lateral_velocity)
+
+        forward_speed_percentage_of_max = (
+            clamp(forward_speed, -self.max_engine_speed, self.max_engine_speed)
+            / self.max_engine_speed
         )
-        max_forward_acceleration = self.forward_acceleration.sample(
-            forward_speed_percentage_of_max
-        )
-        # TODO implement similar logic for reverse acceleration
-        forward_acceleration = scale_vec(
-            heading,
-            self.input.accelerate_axis.value * max_forward_acceleration,
-        )
-        reverse_acceleration = scale_vec(
-            heading, -self.input.brake_axis.value * self.reverse_power
-        )
+        """
+        Car's speed along the heading axis.  Negative means it is drifting
+        backwards. Excludes any lateral movement of the car.
+        """
+
+        # Compute how much the wheels are pushing the car forward due to throttle
         if forward_speed > self.max_engine_speed:
             forward_acceleration = (0, 0)
+        else:
+            # Maximum acceleration power, iff the player is fully holding the accelerate axis
+            max_forward_acceleration = self.forward_acceleration.sample(
+                forward_speed_percentage_of_max
+            )
+            forward_acceleration = scale_vec(
+                heading,
+                self.input.accelerate_axis.value * max_forward_acceleration,
+            )
+
+        # Compute how much the wheels are pushing the car backward due to throttle
         if forward_speed < -self.max_engine_speed:
             reverse_acceleration = (0, 0)
-        lateral_mag = vec_magnitude(lateral_velocity)
-        chosen_friction = self.static_friction
-        if lateral_mag > self.lateral_velocity_kinetic_friction_threshold:
-            chosen_friction = self.kinetic_friction
+        else:
+            max_reverse_acceleration = self.reverse_acceleration.sample(
+                -forward_speed_percentage_of_max
+            )
+            reverse_acceleration = scale_vec(
+                heading,
+                -self.input.brake_axis.value * max_reverse_acceleration,
+            )
+
+        # Compute friction of the wheels resisting the car sliding laterally
         if drifting:
             chosen_friction = 0
+        elif absolute_lateral_speed > self.lateral_velocity_kinetic_friction_threshold:
+            chosen_friction = self.kinetic_friction
+        else:
+            chosen_friction = self.static_friction
         lateral_friction_acceleration = scale_vec(lateral_velocity, chosen_friction)
 
-        # Idea: compute the amount of lateral acceleration introduced by this
-        # frame's rotation.
-        # This approximates centrifugal force.
-        #
-        # We use this to compute friction and apply an opposing acceleration.
-        # (this is a centripetal force IRL, but we don't mention mass in this code)
-        #
-        # If opposing acceleration equals introduced lateral acceleration, then
-        # they cancel out and car continues to drive straight ahead, but at its
-        # new heading.
-        #
-        # If opposing acceleration cannot fully counteract existing or
-        # introduced lateral acceleration, then the car starts drifting.
-        #
-        # Presence of lateral velocity will cause this logic to switch from
-        # static to kinetic friction on future frames, which will cause a drift.
-
+        # Sum up net accelerations
         acceleration = add_vec(forward_acceleration, reverse_acceleration)
         acceleration = add_vec(acceleration, lateral_friction_acceleration)
 
@@ -153,16 +159,21 @@ class DriftyCar(DriveMode):
             self._sprite.position, scale_vec(new_velocity, delta_time)
         )
 
-        # Pac-man style wrapping
+        # Pac-man style screen wrapping
         new_position = (new_position[0] % SCREEN_WIDTH, new_position[1] % SCREEN_HEIGHT)
 
         self._sprite.position = new_position
 
-        # Computed based on turning radius
-        max_angular_speed = abs_speed / (
-            self.base_turning_radius + abs_speed * self.turning_radius_to_velocity_ratio
+        # Compute maximum rate of angular acceleration, if player is holding
+        # control stick fully to one side.
+        # This math starts by choosing a turning radius which depends on the car's absolute speed.
+        # Then it derives angular speed from there.
+        max_angular_speed = absolute_speed / (
+            self.base_turning_radius
+            + absolute_speed * self.turning_radius_to_velocity_ratio
         )
 
+        # Apply rotation
         sign = -1
         if forward_speed < 0 and not drifting:
             sign = 1
