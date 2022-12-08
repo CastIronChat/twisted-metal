@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 from typing import Tuple
+
 from arcade import color
+
 from iron_math import set_sprite_location
 from linked_sprite import LinkedSprite, LinkedSpriteSolidColor
 

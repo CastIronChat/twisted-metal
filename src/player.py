@@ -6,7 +6,6 @@ from typing import List
 import arcade
 
 from linked_sprite import LinkedSprite
-from sprite_lists import SpriteLists
 from player_input import PlayerInput
 from sprite_lists import SpriteLists
 from textures import RED_CAR
@@ -56,7 +55,7 @@ class Player:
             )
             self.sprite.center_x += self.x_shift
 
-            self.y_shift= (
+            self.y_shift = (
                 self.drive_speed
                 * self.input.accelerate_axis.value
                 * math.sin(self.sprite.radians)
@@ -110,7 +109,7 @@ class Player:
     def draw(self):
         self.primary_weapon.draw()
         self.secondary_weapon.draw()
-    
+
     def take_damage(self, damage: float):
         self.player_health -= damage
         if self.player_health < 0:
