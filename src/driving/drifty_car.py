@@ -28,6 +28,7 @@ def mike_drifty_car(player: Player):
     drive_mode.forward_acceleration = Curve([(0.1, 500), (0.8, 3000)])
     # drive_mode.acceleration_curve = Curve([(0, 1500)])
     # drive_mode.acceleration_curve = Curve([(0.1, 3000), (0.9, 1000)])
+    drive_mode.reverse_acceleration = drive_mode.forward_acceleration
     return drive_mode
 
 
