@@ -36,3 +36,8 @@ DRAW_INPUT_DEBUG_HUD = False
 """
 Draw a text overlay listing the name and value of all controller inputs.
 """
+
+START_FULLSCREEN = False
+"""
+Start the game in fullscreen mode.  Can also be toggled with F11 on keyboard.
+"""

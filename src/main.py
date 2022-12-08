@@ -1,12 +1,10 @@
 from __future__ import annotations
 
-from typing import List
-
 import arcade
 
 from arena.arena import Arena
 from arena.arena_loader import load_arena_by_name
-from bullet import bullet_behavior
+from collision import player_hits_wall, projectile_hits_player, projectile_hits_wall
 from constants import (
     SCREEN_HEIGHT,
     SCREEN_TITLE,
@@ -14,15 +12,17 @@ from constants import (
     TICK_DURATION,
     USE_DEBUGGER_TIMING_FIXES,
 )
+from fullscreen import FullscreenController
+from global_input import GlobalInput, bind_global_inputs_to_keyboard
 from hud import Hud
 from input_debug_hud import InputDebugHud
 from player_manager import PlayerManager
+from projectile import update_projectiles
 from sprite_lists import SpriteLists
 
 
 class MyGame(arcade.Window):
     # Declare class members; enables tab-completion
-    all_sprites: arcade.SpriteList = None
     input_debug_hud: InputDebugHud = None
     sprite_lists: SpriteLists
 
@@ -33,11 +33,13 @@ class MyGame(arcade.Window):
         self.physics_engine = None
         arcade.set_background_color(arcade.color.AMAZON)
         self.player_manager = PlayerManager(self.keyboard)
+        self.global_input = GlobalInput(self.keyboard, None)
+        bind_global_inputs_to_keyboard(self.global_input)
         self.sprite_lists = SpriteLists()
         self.arena: Arena
+        self.fullscreen_controller = FullscreenController(self, self.global_input)
 
     def setup(self):
-        self.all_sprites = arcade.SpriteList()
         self.projectile_sprite_list = arcade.SpriteList()
 
         # Arena
@@ -56,9 +58,7 @@ class MyGame(arcade.Window):
         )
 
         # Player Huds
-        self.hud = Hud(self.player_manager.players)
-        for sprite in self.hud.hud_sprite_list:
-            self.all_sprites.append(sprite)
+        self.hud = Hud(self.player_manager.players, self.sprite_lists)
 
     def on_update(self, delta_time):
         # Arcade engine has a quirk where, in the debugger, it calls `on_update` twice back-to-back,
@@ -71,13 +71,18 @@ class MyGame(arcade.Window):
     def our_update(self, delta_time: float):
         # Pretty sure this does animation updates, in case any of the sprites
         # Have animations
+        self.global_input.update()
+        self.fullscreen_controller.update()
         self.player_manager.update_inputs()
         for player in self.player_manager.players:
             player.update(delta_time)
-        bullet_behavior(
+        update_projectiles(
             delta_time,
             self.sprite_lists,
         )
+        projectile_hits_wall(self.sprite_lists)
+        projectile_hits_player(delta_time, self.sprite_lists)
+        player_hits_wall(self.sprite_lists)
         self.hud.update()
 
     def on_draw(self):
@@ -86,7 +91,6 @@ class MyGame(arcade.Window):
 
         # clear screen
         self.clear()
-        self.all_sprites.draw()
         self.sprite_lists.draw()
         for player in self.player_manager.players:
             player.draw()

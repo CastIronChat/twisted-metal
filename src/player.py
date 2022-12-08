@@ -40,7 +40,9 @@ class Player:
         self.secondary_weapon_sprite: arcade.Sprite
         self._swap_in_weapons()
         self.player_health = 100
-
+        self.x_shift = float
+        self.y_shift = float
+        self.location: tuple = (self.sprite.center_x, self.sprite.center_y)
         self.drive_mode_index = 0
         self.drive_modes = [DriftyCar(self)]
 
@@ -86,3 +88,8 @@ class Player:
     def draw(self):
         self.primary_weapon.draw()
         self.secondary_weapon.draw()
+
+    def take_damage(self, damage: float):
+        self.player_health -= damage
+        if self.player_health < 0:
+            self.player_health = 0
