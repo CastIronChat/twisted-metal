@@ -43,6 +43,7 @@ class Player:
         self.x_shift = float
         self.y_shift = float
         self.location: tuple = (self.sprite.center_x, self.sprite.center_y)
+
         self.drive_mode_index = 0
         self.drive_modes = [DriftyCar(self)]
 
