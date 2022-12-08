@@ -10,9 +10,10 @@ from player_input import PlayerInput
 from sprite_lists import SpriteLists
 from textures import RED_CAR
 from weapon import LaserBeam, MachineGun, RocketLauncher, Weapon
-
+from movement_controls import MovementControls
 
 class Player:
+    
     def __init__(
         self,
         input: PlayerInput,
@@ -44,40 +45,11 @@ class Player:
         self.x_shift = float
         self.y_shift = float
         self.location: tuple = (self.sprite.center_x, self.sprite.center_y)
+        self.vehicle = MovementControls(LinkedSprite[Player](texture=RED_CAR, scale=0.45))
 
     def update(self, delta_time: float):
-        if self.input.accelerate_axis.value > 0:
-            self.sprite.angle -= self.turn_speed * delta_time * self.input.x_axis.value
-            self.x_shift = (
-                self.drive_speed
-                * self.input.accelerate_axis.value
-                * math.cos(self.sprite.radians)
-                * delta_time
-            )
-            self.sprite.center_x += self.x_shift
-
-            self.y_shift = (
-                self.drive_speed
-                * self.input.accelerate_axis.value
-                * math.sin(self.sprite.radians)
-                * delta_time
-            )
-            self.sprite.center_y += self.y_shift
-        if self.input.brake_axis.value > 0:
-            self.sprite.angle += self.turn_speed * delta_time * self.input.x_axis.value
-            self.sprite.center_x -= (
-                self.drive_speed
-                * self.input.brake_axis.value
-                * math.cos(self.sprite.radians)
-                * delta_time
-            )
-            self.sprite.center_y -= (
-                self.drive_speed
-                * self.input.brake_axis.value
-                * math.sin(self.sprite.radians)
-                * delta_time
-            )
-
+        self.vehicle.drive_input(delta_time,self.input,self.sprite,self.sprite_lists.walls)
+        self.vehicle.move(self.sprite,self.sprite_lists.walls)
         self.primary_weapon.update(delta_time)
         self.secondary_weapon.update(delta_time)
         if self.input.swap_weapons_button.pressed:
