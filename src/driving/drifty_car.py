@@ -20,11 +20,14 @@ if TYPE_CHECKING:
 
 
 def drifty_car(player: Player):
-    return DriftyCar(player)
+    drive_mode = DriftyCar(player)
+    drive_mode.name = "drifty_car"
+    return drive_mode
 
 
 def mike_drifty_car(player: Player):
     drive_mode = DriftyCar(player)
+    drive_mode.name = "mike_drifty_car"
     drive_mode.forward_acceleration = Curve([(0.1, 500), (0.8, 3000)])
     # drive_mode.acceleration_curve = Curve([(0, 1500)])
     # drive_mode.acceleration_curve = Curve([(0.1, 3000), (0.9, 1000)])
@@ -50,7 +53,9 @@ class DriftyCar(DriveMode):
         Effectively, torque of the engine driving forward.
         Since there is no brake, this is also braking power when driving in reverse and attempting to slow down.
         """
+        self.forward_drifting_acceleration = Curve([(0.0, 500)])
         self.reverse_acceleration = Curve([(0.0, 1500)])
+        self.reverse_drifting_acceleration = Curve([(0.0, 0)])
         self.braking_acceleration = Curve([(0.0, 0), (0.1, 1500)])
         """
         Acceleration force applied in opposition to car's forward speed whenever
@@ -94,19 +99,22 @@ class DriftyCar(DriveMode):
             self.input.accelerate_axis.value == 0 and self.input.brake_axis.value == 0
         )
 
-        # Break down the car's current heading and velocity in a variety of ways
-        # We use these values later
-        heading = rotate_vec((1, 0), self._sprite.radians)
-        "Unit vector pointing in front of the car's hood, independent of velocity"
+        # Break down the car's current heading and velocity in a variety of ways.
+        # We use these values later.
+        facing = rotate_vec((1, 0), self._sprite.radians)
+        """
+        Unit vector pointing in front of the car's hood, independent of velocity
+        which might be in a totally different direction
+        """
         absolute_speed = vec_magnitude(prev_velocity)
-        forward_velocity = project_vec(prev_velocity, heading)
-        forward_speed = vec_dot_product(forward_velocity, heading)
+        facing_velocity = project_vec(prev_velocity, facing)
+        facing_speed = vec_dot_product(facing_velocity, facing)
         "Can be negative if moving backwards; this is important"
-        lateral_velocity = add_vec(prev_velocity, scale_vec(forward_velocity, -1))
+        lateral_velocity = add_vec(prev_velocity, scale_vec(facing_velocity, -1))
         absolute_lateral_speed = vec_magnitude(lateral_velocity)
 
-        forward_speed_percentage_of_max = (
-            clamp(forward_speed, -self.max_engine_speed, self.max_engine_speed)
+        facing_speed_percentage_of_max = (
+            clamp(facing_speed, -self.max_engine_speed, self.max_engine_speed)
             / self.max_engine_speed
         )
         """
@@ -115,37 +123,48 @@ class DriftyCar(DriveMode):
         """
 
         # Compute how much the wheels are pushing the car forward due to throttle
-        if forward_speed > self.max_engine_speed:
+        if facing_speed > self.max_engine_speed:
             forward_acceleration = (0, 0)
         else:
+            # Sample a different curve when in "drift mode"
+            acceleration_curve = (
+                self.forward_drifting_acceleration
+                if drifting
+                else self.forward_acceleration
+            )
             # Maximum acceleration power, iff the player is fully holding the accelerate axis
             max_forward_acceleration = self.forward_acceleration.sample(
-                forward_speed_percentage_of_max
+                facing_speed_percentage_of_max
             )
             forward_acceleration = scale_vec(
-                heading,
+                facing,
                 self.input.accelerate_axis.value * max_forward_acceleration,
             )
 
         # Compute how much the wheels are pushing the car backward due to throttle
-        if forward_speed < -self.max_engine_speed:
+        if facing_speed < -self.max_engine_speed:
             reverse_acceleration = (0, 0)
         else:
-            max_reverse_acceleration = self.reverse_acceleration.sample(
-                -forward_speed_percentage_of_max
+            acceleration_curve = (
+                self.reverse_drifting_acceleration
+                if drifting
+                else self.reverse_acceleration
+            )
+            max_reverse_acceleration = acceleration_curve.sample(
+                -facing_speed_percentage_of_max
             )
             reverse_acceleration = scale_vec(
-                heading,
+                facing,
                 -self.input.brake_axis.value * max_reverse_acceleration,
             )
 
         # Compute automatic braking force applied when neither gas nor reverse
         # is pressed
         if braking and not drifting:
-            braking_power = self.braking_acceleration.sample(abs(forward_speed))
-            if forward_speed > 0:
+            braking_power = self.braking_acceleration.sample(abs(facing_speed))
+            if facing_speed > 0:
                 braking_power = -braking_power
-            braking_acceleration = scale_vec(heading, braking_power)
+            braking_acceleration = scale_vec(facing, braking_power)
         else:
             braking_acceleration = (0.0, 0.0)
 
@@ -185,7 +204,7 @@ class DriftyCar(DriveMode):
 
         # Compute rotation
         sign = -1
-        if forward_speed < 0 and not drifting:
+        if facing_speed < 0 and not drifting:
             sign = 1
         angular_velocity = (
             max_angular_speed * sign * delta_time * self.input.x_axis.value
