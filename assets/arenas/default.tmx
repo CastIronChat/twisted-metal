@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="25" height="19" tilewidth="32" tileheight="32" infinite="0" nextlayerid="3" nextobjectid="25">
+<map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="25" height="19" tilewidth="32" tileheight="32" infinite="0" nextlayerid="3" nextobjectid="31">
  <tileset firstgid="1" source="tiled_objects.tsx"/>
  <objectgroup id="2" name="objects">
   <object id="1" name="top" class="Wall" x="0" y="0" width="800" height="32"/>
@@ -29,5 +29,41 @@
    </properties>
   </object>
   <object id="22" template="tiled_templates/spawn_point.tx" class="SpawnPoint" x="417" y="441.833" rotation="180"/>
+  <object id="25" class="PatrolWaypoint" x="668.667" y="322">
+   <properties>
+    <property name="next" type="object" value="26"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="26" class="PatrolWaypoint" x="542.667" y="200">
+   <properties>
+    <property name="next" type="object" value="27"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="27" class="PatrolWaypoint" x="220.667" y="142">
+   <properties>
+    <property name="next" type="object" value="28"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="28" class="PatrolWaypoint" x="170.667" y="330">
+   <properties>
+    <property name="next" type="object" value="29"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="29" class="PatrolWaypoint" x="365.333" y="393.333">
+   <properties>
+    <property name="next" type="object" value="30"/>
+   </properties>
+   <point/>
+  </object>
+  <object id="30" class="PatrolWaypoint" x="486.667" y="513.333">
+   <properties>
+    <property name="next" type="object" value="25"/>
+   </properties>
+   <point/>
+  </object>
  </objectgroup>
 </map>

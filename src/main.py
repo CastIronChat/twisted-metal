@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 import arcade
 
 from arena.arena import Arena
@@ -56,6 +57,7 @@ class MyGame(arcade.Window):
 
         # Player Huds
         self.hud = Hud(self.player_manager.players, self.sprite_lists)
+        self.patrol_timer = 0.0
 
     def on_update(self, delta_time):
         # Arcade engine has a quirk where, in the debugger, it calls `on_update` twice back-to-back,
@@ -79,6 +81,12 @@ class MyGame(arcade.Window):
         )
         projectile_hits_wall(self.sprite_lists)
         projectile_hits_player(delta_time, self.sprite_lists)
+        self.patrol_timer += delta_time
+        if self.patrol_timer >= self.arena._patrol_loop.max_time:
+            self.patrol_timer = self.arena._patrol_loop.min_time
+        self.player_manager.players[1].sprite.position = self.arena._patrol_loop.sample(
+            self.patrol_timer
+        )
         self.hud.update()
 
     def on_draw(self):
