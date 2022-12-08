@@ -5,10 +5,10 @@ from typing import TYPE_CHECKING, Tuple
 
 import arcade
 
-from bullet import Beam, Projectile
-from iron_math import move_sprite_relative_to_parent, polar_to_cartesian
+from iron_math import get_transformed_location, move_sprite_relative_to_parent
 from linked_sprite import LinkedSprite, LinkedSpriteSolidColor
 from player_input import VirtualButton
+from projectile import Beam, Projectile
 from sprite_lists import SpriteLists
 from textures import LASER_PISTOL, MACHINE_GUN, ROCKET, ROCKET_LAUNCHER
 
@@ -69,17 +69,17 @@ class LaserBeam(Weapon):
     stays on while button is pressed and moved with the ship
     """
 
-    my_beam_sprite: arcade.Sprite
+    beam: Projectile
     beam_range: float
     dps: float
     # Is a class attribute, not instance attribute
     weapon_icon = LASER_PISTOL
 
     def setup(self):
-        self.beam_range = 500
-        self.dps = 5
-        self.muzzle_transform = (20 + self.beam_range / 2, 5, 0)
-        self.my_beam_sprite = None
+        self.beam_range = 400
+        self.dps = 20
+        self.muzzle_transform = (20, 5, 0)
+        self.create_beam()
 
     def update(self, delta_time: float):
         super().update()
@@ -87,21 +87,30 @@ class LaserBeam(Weapon):
             self.shoot()
         if self.input_button.released:
             self.remove_beam()
+        self.aim_beam()
 
     def shoot(self):
-        beam_appearance = LinkedSpriteSolidColor[Beam](
-            self.beam_range, 5, arcade.color.RED
-        )
-        beam = Beam(beam_appearance, self.sprite_lists, self)
-        beam.dps = self.dps
-        self.my_beam_sprite = beam.sprite
+        self.beam.append_sprite()
 
     def swap_out(self):
         self.remove_beam()
 
     def remove_beam(self):
-        if self.my_beam_sprite in self.sprite_lists.beams:
-            self.sprite_lists.beams.remove(self.my_beam_sprite)
+        if self.beam.exists:
+            self.beam.remove_sprite()
+
+    def create_beam(self):
+        beam_appearance = LinkedSpriteSolidColor[Projectile](
+            self.beam_range, 5, arcade.color.RED
+        )
+        self.beam = Beam(beam_appearance, self.sprite_lists, self.dps)
+        self.beam.setup(self.beam_range)
+
+    def aim_beam(self):
+        if self.beam.exists:
+            self.beam.muzzle_location = get_transformed_location(
+                self.weapon_sprite, self.muzzle_transform
+            )
 
 
 class RocketLauncher(Weapon):
@@ -110,16 +119,15 @@ class RocketLauncher(Weapon):
     """
 
     rocket_speed: float
+    rocket_damage: float
     fire_rate: float
-    damage: float
     weapon_icon = ROCKET_LAUNCHER
 
     def setup(self):
         self.rocket_speed = 300
+        self.rocket_damage = 80
         self.fire_rate = 0.5
-        self.damage = 80
-        # the -45 degree angle in the offset corrects for rocket texture angled up 45 degrees
-        self.muzzle_transform = (30, 2, math.radians(-45))
+        self.muzzle_transform = (30, 2, 0)
 
     def update(self, delta_time: float):
         super().update()
@@ -130,13 +138,18 @@ class RocketLauncher(Weapon):
 
     def shoot(self):
         rocket_appearance = LinkedSprite[Projectile](texture=ROCKET, scale=2)
-        rocket = Projectile(rocket_appearance, self.sprite_lists)
-        rocket.damage = self.damage
-        move_sprite_relative_to_parent(
-            rocket.sprite, self.weapon_sprite, self.muzzle_transform
+        rocket = Projectile(
+            rocket_appearance,
+            self.sprite_lists,
+            self.rocket_damage,
         )
-        rocket.sprite.velocity = polar_to_cartesian(
-            self.rocket_speed, self.weapon_sprite.radians
+        # ROCKET texture appears at 45 degree angle. Sprite_rotation_offset compensates for this
+        rocket.setup(
+            get_transformed_location(self.weapon_sprite, self.muzzle_transform),
+            self.rocket_speed,
+            self.weapon_sprite.radians,
+            sprite_rotation_offet=math.radians(-45),
+            explodes=True,
         )
         self.time_since_shoot = 0
 
@@ -147,14 +160,14 @@ class MachineGun(Weapon):
     """
 
     bullet_speed: float
+    bullet_damage: float
     fire_rate: float
-    damage: float
     weapon_icon = MACHINE_GUN
 
     def setup(self):
         self.bullet_speed = 500
+        self.bullet_damage = 10
         self.fire_rate = 10
-        self.damage = 10
         self.muzzle_transform = (20, 7, 0)
 
     def update(self, delta_time: float):
@@ -165,12 +178,14 @@ class MachineGun(Weapon):
 
     def shoot(self):
         bullet_appearance = LinkedSpriteSolidColor[Projectile](10, 5, arcade.color.RED)
-        bullet = Projectile(bullet_appearance, self.sprite_lists)
-        bullet.damage = self.damage
-        move_sprite_relative_to_parent(
-            bullet.sprite, self.weapon_sprite, self.muzzle_transform
+        bullet = Projectile(
+            bullet_appearance,
+            self.sprite_lists,
+            self.bullet_damage,
         )
-        bullet.sprite.velocity = polar_to_cartesian(
-            self.bullet_speed, self.weapon_sprite.radians
+        bullet.setup(
+            get_transformed_location(self.weapon_sprite, self.muzzle_transform),
+            self.bullet_speed,
+            self.weapon_sprite.radians,
         )
         self.time_since_shoot = 0

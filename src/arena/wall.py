@@ -1,10 +1,8 @@
 from __future__ import annotations
 
 from typing import Tuple
-
 from arcade import color
-
-from iron_math import move_sprite
+from iron_math import set_sprite_location
 from linked_sprite import LinkedSprite, LinkedSpriteSolidColor
 
 
@@ -32,4 +30,4 @@ class Wall:
         )
         self._sprite.owner = self
 
-        move_sprite(self._sprite, self._transform)
+        set_sprite_location(self._sprite, self._transform)

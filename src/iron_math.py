@@ -5,6 +5,8 @@ from typing import Tuple
 
 import arcade
 
+from constants import SCREEN_HEIGHT, SCREEN_WIDTH
+
 #
 # Note: all functions in this file should use positional-only parameters because
 # it's slightly faster.  The `, /` suffix at the end denotes this.
@@ -95,18 +97,25 @@ def move_sprite_relative_to_parent(
     child.position = add_vec(parent.position, rotate_vec(transform[:2], parent.radians))
 
 
-def move_sprite(
+def set_sprite_location(
     sprite: arcade.Sprite,
-    transform: Tuple[float, float, float],
+    location: Tuple[float, float, float],
     /,
 ):
     """
-    Move sprite to a new position and rotation.
+    Set sprite's position and rotation.
 
-    transform = (x, y, radians)
+    location = (x, y, radians)
     """
-    sprite.radians = transform[2]
-    sprite.position = transform[:2]
+    sprite.radians = location[2]
+    sprite.position = location[:2]
+
+
+def move_sprite_polar(sprite: arcade.Sprite, distance: float, angle: float, /):
+    """
+    move sprite from current location given a distance and angle
+    """
+    sprite.position = add_vec(sprite.position, polar_to_cartesian(distance, angle))
 
 
 def get_transformed_location(
@@ -175,3 +184,18 @@ def rescale_value_between(
     rise = to_max - to_min
     run = from_max - from_min
     return to_min + x * rise / run
+
+
+def sprite_in_bounds(sprite: arcade.Sprite, /) -> bool:
+    """
+    Checks if a sprite is within the screen limits and return a bool
+    """
+    if (
+        sprite.center_x < 0
+        or sprite.center_x > SCREEN_WIDTH
+        or sprite.center_y < 0
+        or sprite.center_y > SCREEN_HEIGHT
+    ):
+        return False
+    else:
+        return True
