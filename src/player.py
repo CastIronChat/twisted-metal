@@ -5,7 +5,7 @@ from typing import List
 
 import arcade
 
-from driving.drifty_car import drifty_car, mike_drifty_car
+from driving.create_drive_modes import create_drive_modes
 from linked_sprite import LinkedSprite
 from player_input import PlayerInput
 from sprite_lists import SpriteLists
@@ -44,7 +44,7 @@ class Player:
         self.y_shift = float
 
         self.drive_mode_index = 0
-        self.drive_modes = [drifty_car(self), mike_drifty_car(self)]
+        self.drive_modes = create_drive_modes(self)
 
     def update(self, delta_time: float):
         if self.input.debug_3.pressed:

@@ -25,6 +25,20 @@ def drifty_car(player: Player):
     return drive_mode
 
 
+def scaled_down_drifty_car(player: Player):
+    drive_mode = DriftyCar(player)
+    drive_mode.name = "scaled_down_drifty_car"
+    drive_mode.forward_drifting_acceleration = Curve([(0.0, 1000)])
+    drive_mode.braking_acceleration = Curve([(0.0, 0), (0.1, 500)])
+    drive_mode.max_engine_speed = 300
+    drive_mode.turning_radius_from_velocity = Curve(
+        [(0.0, 30.0), (30.0, 50), (300.0, 100.0)]
+    )
+    drive_mode.kinetic_friction = -5
+    drive_mode.static_friction = -5
+    return drive_mode
+
+
 def mike_drifty_car(player: Player):
     drive_mode = DriftyCar(player)
     drive_mode.name = "mike_drifty_car"
