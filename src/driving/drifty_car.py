@@ -70,7 +70,7 @@ class DriftyCar(DriveMode):
         self.forward_drifting_acceleration = Curve([(0.0, 500)])
         self.reverse_acceleration = Curve([(0.0, 1500)])
         self.reverse_drifting_acceleration = Curve([(0.0, 0)])
-        self.braking_acceleration = Curve([(0.0, 0), (0.1, 1500)])
+        self.braking_acceleration = Curve([(0.0, 1500)])
         """
         Acceleration force applied in opposition to car's forward speed whenever
         neither gas nor brake are held.
@@ -172,6 +172,11 @@ class DriftyCar(DriveMode):
         # is pressed
         if braking and not drifting:
             braking_power = self.braking_acceleration.sample(abs(facing_speed))
+            # Prevent braking friction from overshooting and causing the car to move in the
+            # opposite direction
+            # We must factor delta-time because we're clamping based on the net change in
+            # acceleration applied this frame, which is delta-time-d later.
+            braking_power = clamp(braking_power, 0, abs(facing_speed) / delta_time)
             if facing_speed > 0:
                 braking_power = -braking_power
             braking_acceleration = scale_vec(facing, braking_power)
