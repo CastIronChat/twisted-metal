@@ -127,15 +127,13 @@ class DriftyCar(DriveMode):
             forward_acceleration = (0, 0)
         else:
             # Sample a different curve when in "drift mode"
-            acceleration_curve = (
+            curve = (
                 self.forward_drifting_acceleration
                 if drifting
                 else self.forward_acceleration
             )
             # Maximum acceleration power, iff the player is fully holding the accelerate axis
-            max_forward_acceleration = self.forward_acceleration.sample(
-                facing_speed_percentage_of_max
-            )
+            max_forward_acceleration = curve.sample(facing_speed_percentage_of_max)
             forward_acceleration = scale_vec(
                 facing,
                 self.input.accelerate_axis.value * max_forward_acceleration,
@@ -145,14 +143,12 @@ class DriftyCar(DriveMode):
         if facing_speed < -self.max_engine_speed:
             reverse_acceleration = (0, 0)
         else:
-            acceleration_curve = (
+            curve = (
                 self.reverse_drifting_acceleration
                 if drifting
                 else self.reverse_acceleration
             )
-            max_reverse_acceleration = acceleration_curve.sample(
-                -facing_speed_percentage_of_max
-            )
+            max_reverse_acceleration = curve.sample(-facing_speed_percentage_of_max)
             reverse_acceleration = scale_vec(
                 facing,
                 -self.input.brake_axis.value * max_reverse_acceleration,
