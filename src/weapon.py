@@ -41,7 +41,7 @@ class Weapon:
         self.sprite_lists = player.sprite_lists
         self.weapon_transform = weapon_transform
         self.time_since_shoot = 100
-        self.weapon_sprite = arcade.Sprite(texture=self.weapon_icon, scale=3)
+        self.weapon_sprite = arcade.Sprite(texture=self.weapon_icon, scale=1)
         self.setup()
 
     def setup(self):
