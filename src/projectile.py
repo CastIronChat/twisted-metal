@@ -108,9 +108,13 @@ class Projectile:
 
 
 class Beam(Projectile):
+    """
+    A Beam is a special type of Projectile that continues to be controlled by the weapon after it is created.
+    When it collides with something, it shortens to stop at whatever it is colliding with
+    """
 
     beam_range: float
-
+    
     def setup(self, beam_range: float, explodes: bool = False):
         self.beam_range = beam_range
         self.explodes = explodes

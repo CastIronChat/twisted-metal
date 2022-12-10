@@ -27,8 +27,8 @@ class Player:
         self.sprite.center_y = 256
         self.input = input
         self.sprite_lists = sprite_lists
-        self.primary_weapon_transform = (15, 10, 0)
-        self.secondary_weapon_transform = (15, -10, 0)
+        self.primary_weapon_transform = (16, 10, 0)
+        self.secondary_weapon_transform = (16, -10, 0)
         # Weapons
         self.weapons_list: List[Weapon] = [
             LaserBeam,
