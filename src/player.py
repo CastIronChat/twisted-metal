@@ -5,7 +5,9 @@ from typing import List
 
 import arcade
 
+from constants import SCREEN_HEIGHT, SCREEN_WIDTH
 from driving.create_drive_modes import create_drive_modes
+from iron_math import get_sprite_location, set_sprite_location
 from linked_sprite import LinkedSprite
 from player_input import PlayerInput
 from sprite_lists import SpriteLists
@@ -45,12 +47,25 @@ class Player:
 
         self.drive_mode_index = 0
         self.drive_modes = create_drive_modes(self)
+        self.velocity = (0.0, 0.0)
+        "Translational velocity -- (x,y) tuple -- measured in pixels per second"
 
     def update(self, delta_time: float):
+        #
+        # Driving and movement
+        #
         if self.input.debug_3.pressed:
             self._swap_drive_mode()
 
-        self.drive_modes[self.drive_mode_index].update(delta_time)
+        self.drive_modes[self.drive_mode_index].drive(delta_time)
+
+        # Pac-man style screen wrapping
+        position = self.sprite.position
+        self.sprite.position = (position[0] % SCREEN_WIDTH, position[1] % SCREEN_HEIGHT)
+
+        #
+        # Weapons
+        #
         self.primary_weapon.update(delta_time)
         self.secondary_weapon.update(delta_time)
         if self.input.swap_weapons_button.pressed:
@@ -97,3 +112,11 @@ class Player:
         self.player_health -= damage
         if self.player_health < 0:
             self.player_health = 0
+
+    @property
+    def location(self):
+        return get_sprite_location(self.sprite)
+
+    @location.setter
+    def location(self, location: tuple[float, float, float]):
+        return set_sprite_location(self.sprite, location)

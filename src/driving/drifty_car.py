@@ -56,10 +56,6 @@ class DriftyCar(DriveMode):
     """
 
     def setup(self):
-        self.velocity = (0.0, 0.0)
-        # TODO
-        self._sprite = self.player.sprite
-
         # Single point on the curve means it's a flat line: all Y values
         # are the same
         self.forward_acceleration = Curve([(0.0, 1500)])
@@ -102,8 +98,11 @@ class DriftyCar(DriveMode):
         TODO needs work.
         """
 
-    def update(self, delta_time: float):
-        prev_velocity = self.velocity
+    def drive(self, delta_time: float):
+        prev_location = self.player.location
+        prev_position = prev_location[:2]
+        prev_rotation = prev_location[2]
+        prev_velocity = self.player.velocity
 
         # Holding both gas and reverse means you're in "drift mode"
         drifting = (
@@ -115,7 +114,7 @@ class DriftyCar(DriveMode):
 
         # Break down the car's current heading and velocity in a variety of ways.
         # We use these values later.
-        facing = rotate_vec((1, 0), self._sprite.radians)
+        facing = rotate_vec((1, 0), prev_rotation)
         """
         Unit vector pointing in front of the car's hood, independent of velocity
         which might be in a totally different direction
@@ -201,16 +200,11 @@ class DriftyCar(DriveMode):
         )
 
         # apply delta-time-d acceleration to velocity
-        new_velocity = add_vec(self.velocity, scale_vec(acceleration, delta_time))
-        self.velocity = new_velocity
+        new_velocity = add_vec(prev_velocity, scale_vec(acceleration, delta_time))
+        self.player.velocity = new_velocity
 
         # apply delta-time-d velocity to position
-        new_position = add_vec(
-            self._sprite.position, scale_vec(new_velocity, delta_time)
-        )
-
-        # Pac-man style screen wrapping
-        new_position = (new_position[0] % SCREEN_WIDTH, new_position[1] % SCREEN_HEIGHT)
+        new_position = add_vec(prev_position, scale_vec(new_velocity, delta_time))
 
         # Compute maximum rate of angular acceleration, if player is holding
         # control stick fully to one side.
@@ -224,10 +218,9 @@ class DriftyCar(DriveMode):
         sign = -1
         if facing_speed < 0 and not drifting:
             sign = 1
-        angular_velocity = (
-            max_angular_speed * sign * delta_time * self.input.x_axis.value
-        )
+        angular_velocity = max_angular_speed * sign * self.input.x_axis.value
+
+        new_rotation = prev_rotation + angular_velocity * delta_time
 
         # Apply movement to the sprite
-        self._sprite.position = new_position
-        self._sprite.radians += angular_velocity
+        self.player.location = (new_position[0], new_position[1], new_rotation)
