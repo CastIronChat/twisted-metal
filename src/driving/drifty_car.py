@@ -34,8 +34,8 @@ def scaled_down_drifty_car(player: Player):
     drive_mode.turning_radius_from_velocity = Curve(
         [(0.0, 30.0), (30.0, 50), (300.0, 100.0)]
     )
-    drive_mode.kinetic_friction = -5
-    drive_mode.static_friction = -5
+    drive_mode.kinetic_friction_fudge = -5
+    drive_mode.static_friction_fudge = -5
     return drive_mode
 
 
@@ -56,8 +56,6 @@ class DriftyCar(DriveMode):
     """
 
     def setup(self):
-        # Single point on the curve means it's a flat line: all Y values
-        # are the same
         self.forward_acceleration = Curve([(0.0, 1500)])
         """
         Effectively, torque of the engine driving forward.
@@ -84,12 +82,13 @@ class DriftyCar(DriveMode):
         even as you e.g. do a 720, drifting past enemies, shooting in all directions.  This is fun but
         not realistic.
         """
-        self.kinetic_friction = -10
+        self.kinetic_friction_fudge = -10
         """
         Kinetic friction for wheels to resist lateral sliding.
         Note: the math here is wonky, does not follow real-world physics rules.
+        Named `_fudge` as a reminder these are fudge-factors, not real physics.
         """
-        self.static_friction = -100
+        self.static_friction_fudge = -100
         "Static friction for wheels to resist lateral sliding."
         self.lateral_velocity_kinetic_friction_threshold = 40
         """
@@ -112,7 +111,7 @@ class DriftyCar(DriveMode):
             self.input.accelerate_axis.value == 0 and self.input.brake_axis.value == 0
         )
 
-        # Break down the car's current heading and velocity in a variety of ways.
+        # Break down the car's current rotation and velocity in a variety of ways.
         # We use these values later.
         facing = rotate_vec((1, 0), prev_rotation)
         """
@@ -186,9 +185,9 @@ class DriftyCar(DriveMode):
         if drifting:
             chosen_friction = 0
         elif absolute_lateral_speed > self.lateral_velocity_kinetic_friction_threshold:
-            chosen_friction = self.kinetic_friction
+            chosen_friction = self.kinetic_friction_fudge
         else:
-            chosen_friction = self.static_friction
+            chosen_friction = self.static_friction_fudge
         lateral_friction_acceleration = scale_vec(lateral_velocity, chosen_friction)
 
         # Sum up net accelerations

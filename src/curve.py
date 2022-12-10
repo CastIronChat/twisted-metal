@@ -10,6 +10,8 @@ class Curve:
     The graph is flat to the left of the first point and to the right of the last point.
 
     Despite the name "curve", there are no curves here, only straight lines.
+
+    A Curve with a single point is a flat line.  Y is constant for all X values.
     """
 
     def __init__(self, points: list[tuple[float, float]] = []):

@@ -163,7 +163,6 @@ def clamp(value: float, min: float, max: float):
     return value
 
 
-# TODO think about lerp functions; check if this function duplicates or should be accompanied by a lerp function
 def rescale_value_between(
     value: float,
     from_min: float,
