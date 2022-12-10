@@ -5,19 +5,14 @@ from typing import List
 import arcade
 from arcade import Text
 
+from constants import DRAW_DRIVE_MODE_DEBUG_HUD, DRAW_INPUT_DEBUG_HUD
+from player import Player
 from player_input import PlayerInput
 
 
-class InputDebugHud:
-
-    player_inputs: List[PlayerInput]
-
-    controls: List[str]
-
-    __text: Text
-
-    def __init__(self, player_inputs: List[PlayerInput]):
-        self.player_inputs = player_inputs
+class DebugHud:
+    def __init__(self, players: List[Player]):
+        self.players = players
         self.controls = [
             "x_axis",
             "y_axis",
@@ -46,14 +41,20 @@ class InputDebugHud:
 
     def get_readout(self):
         lines = []
-        for (index, player_input) in enumerate(self.player_inputs):
-            lines += [f"Player #{index + 1}: {player_input.layout_name} layout"]
-            lines += [
-                f"{control}: {getattr(player_input, control).value}"
-                for control in self.controls
-            ]
+        for (index, player) in enumerate(self.players):
+            player_input = player.input
+            lines += [f"Player #{index + 1}"]
+            if DRAW_DRIVE_MODE_DEBUG_HUD:
+                lines += [f"Drive mode: {player.drive_mode.name}"]
+            if DRAW_INPUT_DEBUG_HUD:
+                lines += [f"Layout: {player_input.layout_name}"]
+                lines += [
+                    f"{control}: {getattr(player_input, control).value}"
+                    for control in self.controls
+                ]
         return "\n".join(lines)
 
     def draw(self):
-        self.__text.text = self.get_readout()
-        self.__text.draw()
+        if DRAW_INPUT_DEBUG_HUD or DRAW_DRIVE_MODE_DEBUG_HUD:
+            self.__text.text = self.get_readout()
+            self.__text.draw()
