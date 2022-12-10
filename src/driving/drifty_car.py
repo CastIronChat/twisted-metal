@@ -193,9 +193,12 @@ class DriftyCar(DriveMode):
         lateral_friction_acceleration = scale_vec(lateral_velocity, chosen_friction)
 
         # Sum up net accelerations
-        acceleration = add_vec(forward_acceleration, reverse_acceleration)
-        acceleration = add_vec(acceleration, lateral_friction_acceleration)
-        acceleration = add_vec(acceleration, braking_acceleration)
+        acceleration = add_vec(
+            forward_acceleration,
+            reverse_acceleration,
+            lateral_friction_acceleration,
+            braking_acceleration,
+        )
 
         # apply delta-time-d acceleration to velocity
         new_velocity = add_vec(self.velocity, scale_vec(acceleration, delta_time))
