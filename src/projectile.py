@@ -1,10 +1,18 @@
 from __future__ import annotations
+import math
 
 from typing import TYPE_CHECKING, List, Tuple, cast
 
 import arcade
 
-from iron_math import move_sprite_polar, set_sprite_location, sprite_in_bounds
+from arena.wall import Wall
+from iron_math import (
+    add_vec,
+    move_sprite_polar,
+    polar_to_cartesian,
+    set_sprite_location,
+    sprite_in_bounds,
+)
 from linked_sprite import LinkedSprite
 from sprite_lists import SpriteLists
 
@@ -108,18 +116,43 @@ class Beam(Projectile):
         self.explodes = explodes
 
     def update(self, delta_time: float):
-        set_sprite_location(self.sprite, self.muzzle_location)
-        move_sprite_polar(self.sprite, self.sprite.width / 2, self.muzzle_location[2])
+        self.sprite.width = self.beam_range
+        self._update_sprite_location()
 
-    def on_collision_with_wall(self, walls_touching_projectile: arcade.SpriteList):
-        pass
+    def on_collision_with_wall(
+        self, walls_touching_projectile: list[LinkedSprite[Wall]]
+    ):
+        self._shorten_beam(walls_touching_projectile)
 
     def on_collision_with_player(
         self, delta_time: float, players_touching_projectile: list[LinkedSprite[Player]]
     ):
-        for player in players_touching_projectile:
-            player: LinkedSprite[Player]
+        player: LinkedSprite[Player] = self._shorten_beam(players_touching_projectile)
+        if player != None:
             player.owner.take_damage(self.damage * delta_time)
+
+    def _shorten_beam(self, collision_list: list[LinkedSprite]):
+        """
+        Given a list of sprites the beam collided with, stop the beam at that sprite
+        Return the first sprite that is collided with
+        """
+        collisions = arcade.SpriteList()
+        closest_collision: arcade.Sprite = None
+        for collision in collision_list:
+            collisions.append(collision)
+        point: Tuple(float, float) = self.muzzle_location[:2]
+        for x in range(1,self.beam_range):
+            if arcade.get_sprites_at_point(point, collisions):
+                closest_collision = arcade.get_sprites_at_point(point, collisions)[0]
+                self.sprite.width = x
+                break
+            point = add_vec(point, polar_to_cartesian(1, self.sprite.radians))
+        self._update_sprite_location()
+        return closest_collision
+
+    def _update_sprite_location(self):
+        set_sprite_location(self.sprite, self.muzzle_location)
+        move_sprite_polar(self.sprite, self.sprite.width / 2, self.muzzle_location[2])
 
 
 def update_projectiles(
