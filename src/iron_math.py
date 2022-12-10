@@ -30,15 +30,20 @@ def rotate_vec(vector: Tuple[float, float], radians: float, /):
     return (c * x - s * y, s * x + c * y)
 
 
-def add_vec(
-    vector: Tuple[float, float],
-    translation: Tuple[
-        float,
-        float,
-    ],
-    /,
-):
-    return (vector[0] + translation[0], vector[1] + translation[1])
+def add_vec(*vectors: Tuple[float, float]):
+    """
+    Add zero or more 2d cartesian vectors together.
+
+    Example usage:
+        result = add_vec((0.0, 1.0), (-3.0, 4.0), (5.0, 0.0))
+        # result is (2.0, 5.0)
+    """
+    x = 0.0
+    y = 0.0
+    for vector in vectors:
+        x += vector[0]
+        y += vector[1]
+    return (x, y)
 
 
 def scale_vec(vector: Tuple[float, float], factor: float, /):
