@@ -7,19 +7,16 @@ from pyglet.input import ControllerManager
 from pyglet.window.key import KeyStateHandler
 
 from arena.arena import Arena
-from constants import START_WITH_ALTERNATE_CONTROLLER_LAYOUT
+from constants import (
+    KEYBOARD_PLAYER_ALSO_USES_A_CONTROLLER,
+    KEYBOARD_PLAYER_INDEX,
+    PLAYER_COUNT,
+    START_WITH_ALTERNATE_CONTROLLER_LAYOUT,
+)
 from iron_math import set_sprite_location
 from player import Player
 from player_input import PlayerInput, bind_to_keyboard, set_controller_layout
 from sprite_lists import SpriteLists
-
-PLAYER_COUNT = 4
-KEYBOARD_PLAYER_INDEX = 0
-KEYBOARD_PLAYER_ALSO_USES_A_CONTROLLER = True
-"""
-If false, keyboard player will be controlled by keyboard, *not* a controller.
-Useful if you want to debug two players and you only have one controller.
-"""
 
 
 class PlayerManager:
