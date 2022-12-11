@@ -6,6 +6,7 @@ from arena.arena import Arena
 from arena.arena_loader import load_arena_by_name
 from collision import projectile_hits_player, projectile_hits_wall
 from constants import (
+    ARENA,
     SCREEN_HEIGHT,
     SCREEN_TITLE,
     SCREEN_WIDTH,
@@ -43,7 +44,7 @@ class MyGame(arcade.Window):
         self.projectile_sprite_list = arcade.SpriteList()
 
         # Arena
-        self.arena = load_arena_by_name("default")
+        self.arena = load_arena_by_name(ARENA)
         self.arena.init_for_drawing(self.sprite_lists)
 
         # Players

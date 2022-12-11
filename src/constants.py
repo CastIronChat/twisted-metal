@@ -46,3 +46,8 @@ START_FULLSCREEN = False
 """
 Start the game in fullscreen mode.  Can also be toggled with F11 on keyboard.
 """
+
+ARENA = "default"
+"""
+Loads this arena at startup, from assets/arenas/<ARENA>.tmx
+"""
