@@ -48,15 +48,27 @@ class Player:
         self.drive_mode_index = 0
         self.drive_modes = create_drive_modes(self)
         self.velocity = (0.0, 0.0)
+        self.drivemode_toggle = False
         self.vehicle = MovementControls(LinkedSprite[Player](texture=RED_CAR, scale=0.45))
         "Translational velocity -- (x,y) tuple -- measured in pixels per second"
+        
 
     def update(self, delta_time: float):
         #
         # Driving and movement
         #
-        self.vehicle.drive_input(delta_time,self.input,self.sprite,self.sprite_lists.walls)
-        self.vehicle.move(self.sprite,self.sprite_lists.walls)
+        if self.drivemode_toggle:
+            if self.input.debug_3.pressed:
+                self._swap_drive_mode()
+
+            self.drive_modes[self.drive_mode_index].drive(delta_time)
+
+            # Pac-man style screen wrapping
+            position = self.sprite.position
+            self.sprite.position = (position[0] % SCREEN_WIDTH, position[1] % SCREEN_HEIGHT)
+        else:
+            self.vehicle.drive_input(delta_time,self.input,self.sprite,self.sprite_lists.walls)
+            self.vehicle.move(self.sprite,self.sprite_lists.walls)
 
         #
         # Weapons
