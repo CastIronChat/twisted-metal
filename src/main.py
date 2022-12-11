@@ -13,6 +13,7 @@ from constants import (
     TICK_DURATION,
     USE_DEBUGGER_TIMING_FIXES,
 )
+from debug_patrol_loop import DebugPatrolLoop
 from fullscreen import FullscreenController
 from global_input import GlobalInput, bind_global_inputs_to_keyboard
 from hud import Hud
@@ -58,7 +59,9 @@ class MyGame(arcade.Window):
 
         # Player Huds
         self.hud = Hud(self.player_manager.players, self.sprite_lists)
-        self.patrol_timer = 0.0
+
+        # Debug thingie that puppeteers a player on a patrol loop
+        self.debug_patrol_loop = DebugPatrolLoop(self.player_manager, self.arena)
 
     def on_update(self, delta_time):
         # Arcade engine has a quirk where, in the debugger, it calls `on_update` twice back-to-back,
@@ -76,18 +79,13 @@ class MyGame(arcade.Window):
         self.player_manager.update_inputs()
         for player in self.player_manager.players:
             player.update(delta_time)
+        self.debug_patrol_loop.update(delta_time)
         update_projectiles(
             delta_time,
             self.sprite_lists,
         )
         projectile_hits_wall(self.sprite_lists)
         projectile_hits_player(delta_time, self.sprite_lists)
-        self.patrol_timer += delta_time
-        if self.patrol_timer >= self.arena._patrol_loop.max_time:
-            self.patrol_timer = self.arena._patrol_loop.min_time
-        self.player_manager.players[1].sprite.position = self.arena._patrol_loop.sample(
-            self.patrol_timer
-        )
         self.hud.update()
 
     def on_draw(self):
