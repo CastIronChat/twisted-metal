@@ -13,7 +13,7 @@ from iron_math import (
     set_sprite_location,
     sprite_in_bounds,
 )
-from linked_sprite import LinkedSprite
+from linked_sprite import LinkedSprite, LinkedSpriteCircle
 from sprite_lists import SpriteLists
 
 # This allows a circular import only for the purposes of type hints
@@ -30,7 +30,7 @@ class Projectile:
 
     sprite: LinkedSprite[Projectile]
     sprite_lists: SpriteLists
-    muzzle_location: Tuple[float, float, float]
+    start_location: Tuple[float, float, float]
     damage: float
     speed: float
     angle_of_motion: float
@@ -39,8 +39,7 @@ class Projectile:
     """
     Projectile is visible and can be collided with.  Used for long-lived projectile objects that are repeatedly added to/removed from the world over time, such as laser beams.
     """
-
-    explodes: bool
+    explosion_radius: float
 
     def __init__(
         self,
@@ -55,6 +54,8 @@ class Projectile:
         self.exists = False
         self.speed = 0
         self.angle_of_motion = 0
+        self.sprite_rotation_offset = 0
+        self.explosion_radius = 0
 
     def setup(
         self,
@@ -62,14 +63,14 @@ class Projectile:
         speed: float,
         angle_of_motion: float,
         sprite_rotation_offet: float = 0,
-        explodes: bool = False,
+        explosion_radius: float = 0,
     ):
-        self.muzzle_location = muzzle_location
+        self.start_location = muzzle_location
         self.speed = speed
         self.angle_of_motion = angle_of_motion
         self.sprite_rotation_offset = sprite_rotation_offet
-        self.explodes = explodes
-        set_sprite_location(self.sprite, muzzle_location)
+        self.explosion_radius = explosion_radius
+        set_sprite_location(self.sprite, self.start_location)
         self.sprite.radians += self.sprite_rotation_offset
         self.append_sprite()
 
@@ -97,6 +98,7 @@ class Projectile:
 
     def on_collision_with_wall(self, walls_touching_projectile: arcade.SpriteList):
         self.remove_sprite()
+        self._explode()
 
     def on_collision_with_player(
         self, delta_time: float, players_touching_projectile: list[LinkedSprite[Player]]
@@ -105,6 +107,18 @@ class Projectile:
             player: LinkedSprite[Player]
             player.owner.take_damage(self.damage)
         self.remove_sprite()
+        self._explode()
+
+    def _explode(self):
+        explosion_appearance = LinkedSpriteCircle[Explosion](
+            self.explosion_radius, arcade.color.RED, soft=False
+        )
+        explosion = Explosion(
+            explosion_appearance,
+            self.sprite_lists,
+            self.damage,
+        )
+        explosion.setup(self.location, self.explosion_radius)
 
 
 class Beam(Projectile):
@@ -115,9 +129,9 @@ class Beam(Projectile):
 
     beam_range: float
 
-    def setup(self, beam_range: float, explodes: bool = False):
+    def setup(self, beam_range: float, explosion_radius: float = 0):
         self.beam_range = beam_range
-        self.explodes = explodes
+        self.explosion_radius = explosion_radius
 
     def update(self, delta_time: float):
         self.sprite.width = self.beam_range
@@ -144,7 +158,7 @@ class Beam(Projectile):
         closest_collision: Optional[LinkedSprite] = None
         for collision in collision_list:
             collisions.append(collision)
-        point: Tuple[float, float] = self.muzzle_location[:2]
+        point: Tuple[float, float] = self.start_location[:2]
         point_vec: Tuple[float, float] = polar_to_cartesian(1, self.sprite.radians)
         for x in range(1, self.beam_range):
             if arcade.get_sprites_at_point(point, collisions):
@@ -156,8 +170,8 @@ class Beam(Projectile):
         return closest_collision
 
     def _update_sprite_location(self):
-        set_sprite_location(self.sprite, self.muzzle_location)
-        move_sprite_polar(self.sprite, self.sprite.width / 2, self.muzzle_location[2])
+        set_sprite_location(self.sprite, self.start_location)
+        move_sprite_polar(self.sprite, self.sprite.width / 2, self.start_location[2])
 
 
 def update_projectiles(
@@ -167,3 +181,35 @@ def update_projectiles(
     for projectile_sprite in sprite_lists.projectiles:
         projectile_sprite: LinkedSprite[Projectile]
         projectile_sprite.owner.update(delta_time)
+
+
+class Explosion(Projectile):
+    explosion_rate: float
+
+    def setup(
+        self, start_location: Tuple[float, float, float], explosion_radius: float
+    ):
+        self.start_location = start_location
+        self.explosion_radius = explosion_radius
+        self.sprite.height = 1
+        self.sprite.width = 1
+        self.explosion_rate = 50
+        set_sprite_location(self.sprite, self.start_location)
+        self.append_sprite()
+
+    def update(self, delta_time: float):
+        if self.sprite.height < self.explosion_radius * 2:
+            self.sprite.height += self.explosion_rate * delta_time
+            self.sprite.width += self.explosion_rate * delta_time
+        else:
+            self.remove_sprite()
+
+    def on_collision_with_wall(
+        self, walls_touching_projectile: list[LinkedSprite[Wall]]
+    ):
+        pass
+
+    def on_collision_with_player(
+        self, delta_time: float, players_touching_projectile: list[LinkedSprite[Player]]
+    ):
+        pass

@@ -108,7 +108,7 @@ class LaserBeam(Weapon):
 
     def aim_beam(self):
         if self.beam.exists:
-            self.beam.muzzle_location = get_transformed_location(
+            self.beam.start_location = get_transformed_location(
                 self.weapon_sprite, self.muzzle_transform
             )
 
@@ -149,7 +149,7 @@ class RocketLauncher(Weapon):
             self.rocket_speed,
             self.weapon_sprite.radians,
             sprite_rotation_offet=math.radians(-45),
-            explodes=True,
+            explosion_radius=50,
         )
         self.time_since_shoot = 0
 
