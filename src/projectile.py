@@ -204,7 +204,6 @@ class Explosion(Projectile):
         self, delta_time: float, players_touching_projectile: list[LinkedSprite[Player]]
     ):
         for player_sprite in players_touching_projectile:
-            player_sprite: LinkedSprite[Player]
             if player_sprite not in self.players_hit:
                 player_sprite.owner.take_damage(self.damage)
                 self.players_hit.append(player_sprite)
