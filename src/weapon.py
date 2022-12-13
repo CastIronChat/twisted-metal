@@ -143,7 +143,7 @@ class RocketLauncher(Weapon):
         self.time_since_shoot += delta_time
 
     def shoot(self):
-        #Create the explosion that will be stored in the payload of the rocket
+        # Create the explosion that will be stored in the payload of the rocket
         explosion_appearance = LinkedSpriteCircle[Explosion](
             self.explosion_radius, arcade.color.ORANGE_RED, soft=False
         )
@@ -153,13 +153,10 @@ class RocketLauncher(Weapon):
             self.explosion_damage,
         )
         explosion.setup(self.explosion_radius, self.explosion_rate)
-        #Create the rocket
+        # Create the rocket
         rocket_appearance = LinkedSprite[Projectile](texture=ROCKET, scale=1)
         rocket = Projectile(
-            rocket_appearance,
-            self.sprite_lists,
-            self.impact_damage,
-            [explosion]
+            rocket_appearance, self.sprite_lists, self.impact_damage, [explosion]
         )
         # ROCKET texture appears at 45 degree angle. Sprite_rotation_offset compensates for this
         rocket.setup(
