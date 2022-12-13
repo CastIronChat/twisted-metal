@@ -6,9 +6,9 @@ from typing import TYPE_CHECKING, Tuple
 import arcade
 
 from iron_math import get_transformed_location, move_sprite_relative_to_parent
-from linked_sprite import LinkedSprite, LinkedSpriteSolidColor
+from linked_sprite import LinkedSprite, LinkedSpriteCircle, LinkedSpriteSolidColor
 from player_input import VirtualButton
-from projectile import Beam, Projectile
+from projectile import Beam, Explosion, Projectile
 from sprite_lists import SpriteLists
 from textures import LASER_PISTOL, MACHINE_GUN, ROCKET, ROCKET_LAUNCHER
 
@@ -69,7 +69,7 @@ class LaserBeam(Weapon):
     stays on while button is pressed and moved with the ship
     """
 
-    beam: Projectile
+    beam: Beam
     beam_range: float
     dps: float
     # Is a class attribute, not instance attribute
@@ -119,15 +119,21 @@ class RocketLauncher(Weapon):
     """
 
     rocket_speed: float
-    rocket_damage: float
+    impact_damage: float
+    explosion_damage: float
     fire_rate: float
+    explosion_radius: float
+    explosion_rate: float
     weapon_icon = ROCKET_LAUNCHER
 
     def setup(self):
         self.rocket_speed = 550
-        self.rocket_damage = 80
+        self.impact_damage = 0
+        self.explosion_damage = 80
         self.fire_rate = 0.5
         self.muzzle_transform = (12, 0, 0)
+        self.explosion_radius = 50
+        self.explosion_rate = 200
 
     def update(self, delta_time: float):
         super().update()
@@ -137,11 +143,23 @@ class RocketLauncher(Weapon):
         self.time_since_shoot += delta_time
 
     def shoot(self):
+        #Create the explosion that will be stored in the payload of the rocket
+        explosion_appearance = LinkedSpriteCircle[Explosion](
+            self.explosion_radius, arcade.color.ORANGE_RED, soft=False
+        )
+        explosion = Explosion(
+            explosion_appearance,
+            self.sprite_lists,
+            self.explosion_damage,
+        )
+        explosion.setup(self.explosion_radius, self.explosion_rate)
+        #Create the rocket
         rocket_appearance = LinkedSprite[Projectile](texture=ROCKET, scale=1)
         rocket = Projectile(
             rocket_appearance,
             self.sprite_lists,
-            self.rocket_damage,
+            self.impact_damage,
+            [explosion]
         )
         # ROCKET texture appears at 45 degree angle. Sprite_rotation_offset compensates for this
         rocket.setup(
@@ -149,7 +167,6 @@ class RocketLauncher(Weapon):
             self.rocket_speed,
             self.weapon_sprite.radians,
             sprite_rotation_offet=math.radians(-45),
-            explosion_radius=50,
         )
         self.time_since_shoot = 0
 
