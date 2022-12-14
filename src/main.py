@@ -14,7 +14,7 @@ from constants import (
 from fullscreen import FullscreenController
 from global_input import GlobalInput, bind_global_inputs_to_keyboard
 from hud import Hud
-from input_debug_hud import DebugHud
+from debug_hud import DebugHud
 from player_manager import PlayerManager
 from projectile import update_projectiles
 from sprite_lists import SpriteLists
