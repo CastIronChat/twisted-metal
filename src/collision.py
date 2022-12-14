@@ -1,7 +1,9 @@
 from __future__ import annotations
+
 import arcade
-from projectile import Projectile
+
 from linked_sprite import LinkedSprite
+from projectile import Projectile
 from sprite_lists import SpriteLists
 
 
@@ -24,4 +26,6 @@ def projectile_hits_player(delta_time, sprite_lists: SpriteLists):
         )
 
         if len(players_touching_projectile) > 0:
-            projectile_sprite.owner.on_collision_with_player(delta_time, players_touching_projectile)
+            projectile_sprite.owner.on_collision_with_player(
+                delta_time, players_touching_projectile
+            )

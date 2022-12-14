@@ -1,0 +1,21 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Format all code",
+            // Ctrl-Shift-B will run this,
+            // because it is the default build task
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "type": "shell",
+            // Run `make fmt`, as if it were typed in a terminal
+            "command": "make",
+            "args": [
+                "fmt"
+            ],
+            "problemMatcher": [],
+        }
+    ]
+}
