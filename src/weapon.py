@@ -41,7 +41,7 @@ class Weapon:
         self.sprite_lists = player.sprite_lists
         self.weapon_transform = weapon_transform
         self.time_since_shoot = 100
-        self.weapon_sprite = arcade.Sprite(texture=self.weapon_icon, scale=3)
+        self.weapon_sprite = arcade.Sprite(texture=self.weapon_icon, scale=1)
         self.setup()
 
     def setup(self):
@@ -78,7 +78,7 @@ class LaserBeam(Weapon):
     def setup(self):
         self.beam_range = 400
         self.dps = 20
-        self.muzzle_transform = (20, 5, 0)
+        self.muzzle_transform = (7, 2, 0)
         self.create_beam()
 
     def update(self, delta_time: float):
@@ -101,7 +101,7 @@ class LaserBeam(Weapon):
 
     def create_beam(self):
         beam_appearance = LinkedSpriteSolidColor[Projectile](
-            self.beam_range, 5, arcade.color.RED
+            self.beam_range, 3, arcade.color.RED
         )
         self.beam = Beam(beam_appearance, self.sprite_lists, self.dps)
         self.beam.setup(self.beam_range)
@@ -124,10 +124,10 @@ class RocketLauncher(Weapon):
     weapon_icon = ROCKET_LAUNCHER
 
     def setup(self):
-        self.rocket_speed = 300
+        self.rocket_speed = 550
         self.rocket_damage = 80
         self.fire_rate = 0.5
-        self.muzzle_transform = (30, 2, 0)
+        self.muzzle_transform = (12, 0, 0)
 
     def update(self, delta_time: float):
         super().update()
@@ -137,7 +137,7 @@ class RocketLauncher(Weapon):
         self.time_since_shoot += delta_time
 
     def shoot(self):
-        rocket_appearance = LinkedSprite[Projectile](texture=ROCKET, scale=2)
+        rocket_appearance = LinkedSprite[Projectile](texture=ROCKET, scale=1)
         rocket = Projectile(
             rocket_appearance,
             self.sprite_lists,
@@ -165,10 +165,10 @@ class MachineGun(Weapon):
     weapon_icon = MACHINE_GUN
 
     def setup(self):
-        self.bullet_speed = 500
+        self.bullet_speed = 800
         self.bullet_damage = 10
-        self.fire_rate = 10
-        self.muzzle_transform = (20, 7, 0)
+        self.fire_rate = 8
+        self.muzzle_transform = (7, 2, 0)
 
     def update(self, delta_time: float):
         super().update()
@@ -177,7 +177,7 @@ class MachineGun(Weapon):
         self.time_since_shoot += delta_time
 
     def shoot(self):
-        bullet_appearance = LinkedSpriteSolidColor[Projectile](10, 5, arcade.color.RED)
+        bullet_appearance = LinkedSpriteSolidColor[Projectile](8, 3, arcade.color.RED)
         bullet = Projectile(
             bullet_appearance,
             self.sprite_lists,

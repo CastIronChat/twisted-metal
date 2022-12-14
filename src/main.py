@@ -15,7 +15,7 @@ from constants import (
 from fullscreen import FullscreenController
 from global_input import GlobalInput, bind_global_inputs_to_keyboard
 from hud import Hud
-from input_debug_hud import InputDebugHud
+from input_debug_hud import DebugHud
 from player_manager import PlayerManager
 from projectile import update_projectiles
 from sprite_lists import SpriteLists
@@ -23,7 +23,7 @@ from sprite_lists import SpriteLists
 
 class MyGame(arcade.Window):
     # Declare class members; enables tab-completion
-    input_debug_hud: InputDebugHud = None
+    input_debug_hud: DebugHud = None
     sprite_lists: SpriteLists
 
     def __init__(self, width: int, height: int, title: str):
@@ -53,9 +53,7 @@ class MyGame(arcade.Window):
         )
 
         # Debug UI for input handling
-        self.input_debug_hud = InputDebugHud(
-            [player.input for player in self.player_manager.players]
-        )
+        self.input_debug_hud = DebugHud(self.player_manager.players)
 
         # Player Huds
         self.hud = Hud(self.player_manager.players, self.sprite_lists)

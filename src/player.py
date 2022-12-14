@@ -5,6 +5,9 @@ from typing import List
 
 import arcade
 
+from constants import SCREEN_HEIGHT, SCREEN_WIDTH
+from driving.create_drive_modes import create_drive_modes
+from iron_math import get_sprite_location, set_sprite_location
 from linked_sprite import LinkedSprite
 from player_input import PlayerInput
 from sprite_lists import SpriteLists
@@ -18,16 +21,14 @@ class Player:
         input: PlayerInput,
         sprite_lists: SpriteLists,
     ):
-        self.sprite = LinkedSprite[Player](texture=RED_CAR, scale=0.5)
+        self.sprite = LinkedSprite[Player](texture=RED_CAR, scale=0.2)
         self.sprite.owner = self
         self.sprite.center_x = 256
         self.sprite.center_y = 256
         self.input = input
         self.sprite_lists = sprite_lists
-        self.drive_speed = 200
-        self.turn_speed = 100
-        self.primary_weapon_transform = (50, 20, 0)
-        self.secondary_weapon_transform = (50, -20, 0)
+        self.primary_weapon_transform = (16, 10, 0)
+        self.secondary_weapon_transform = (16, -10, 0)
         # Weapons
         self.weapons_list: List[Weapon] = [
             LaserBeam,
@@ -44,43 +45,40 @@ class Player:
         self.x_shift = float
         self.y_shift = float
 
+        self.drive_mode_index = 0
+        self.drive_modes = create_drive_modes(self)
+        self.velocity = (0.0, 0.0)
+        "Translational velocity -- (x,y) tuple -- measured in pixels per second"
+
     def update(self, delta_time: float):
-        if self.input.accelerate_axis.value > 0:
-            self.sprite.angle -= self.turn_speed * delta_time * self.input.x_axis.value
-            self.x_shift = (
-                self.drive_speed
-                * self.input.accelerate_axis.value
-                * math.cos(self.sprite.radians)
-                * delta_time
-            )
-            self.sprite.center_x += self.x_shift
+        #
+        # Driving and movement
+        #
+        if self.input.debug_3.pressed:
+            self._swap_drive_mode()
 
-            self.y_shift = (
-                self.drive_speed
-                * self.input.accelerate_axis.value
-                * math.sin(self.sprite.radians)
-                * delta_time
-            )
-            self.sprite.center_y += self.y_shift
-        if self.input.brake_axis.value > 0:
-            self.sprite.angle += self.turn_speed * delta_time * self.input.x_axis.value
-            self.sprite.center_x -= (
-                self.drive_speed
-                * self.input.brake_axis.value
-                * math.cos(self.sprite.radians)
-                * delta_time
-            )
-            self.sprite.center_y -= (
-                self.drive_speed
-                * self.input.brake_axis.value
-                * math.sin(self.sprite.radians)
-                * delta_time
-            )
+        self.drive_modes[self.drive_mode_index].drive(delta_time)
 
+        # Pac-man style screen wrapping
+        position = self.sprite.position
+        self.sprite.position = (position[0] % SCREEN_WIDTH, position[1] % SCREEN_HEIGHT)
+
+        #
+        # Weapons
+        #
         self.primary_weapon.update(delta_time)
         self.secondary_weapon.update(delta_time)
         if self.input.swap_weapons_button.pressed:
             self._swap_weapons()
+
+    @property
+    def drive_mode(self):
+        return self.drive_modes[self.drive_mode_index]
+
+    def _swap_drive_mode(self):
+        self.drive_mode_index += 1
+        if self.drive_mode_index >= len(self.drive_modes):
+            self.drive_mode_index = 0
 
     def _swap_weapons(self):
         # Moves the current secondary weapon to the primary weapon slot and the next weapon on the list becomes the secondary weapon
@@ -114,3 +112,11 @@ class Player:
         self.player_health -= damage
         if self.player_health < 0:
             self.player_health = 0
+
+    @property
+    def location(self):
+        return get_sprite_location(self.sprite)
+
+    @location.setter
+    def location(self, location: tuple[float, float, float]):
+        return set_sprite_location(self.sprite, location)
