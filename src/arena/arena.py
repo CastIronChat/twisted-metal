@@ -7,6 +7,7 @@ from arcade import SpriteList
 
 from arena.spawn_point import SpawnPoint
 from arena.wall import Wall
+from path import Path
 from sprite_lists import SpriteLists
 
 
@@ -15,6 +16,7 @@ class Arena:
         self._walls: List[Wall] = []
         self._spawn_points: List[SpawnPoint] = []
         self._initial_spawn_points: List[SpawnPoint] = [None, None, None, None]
+        self.patrol_loop: Path
 
     @property
     def walls(self) -> Sequence[Wall]:

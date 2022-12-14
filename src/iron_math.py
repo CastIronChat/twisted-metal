@@ -46,6 +46,19 @@ def add_vec(*vectors: Tuple[float, float]):
     return (x, y)
 
 
+def subtract_vec(vector_a: tuple[float, float], vector_b: tuple[float, float], /):
+    """
+    Subtract vector_b from vector_a, getting the relative vector pointing from b to a.
+
+    vector_a = (x, y)
+
+    vector_b = (x, y)
+
+    Returns (x, y)
+    """
+    return (vector_a[0] - vector_b[0], vector_a[1] - vector_b[1])
+
+
 def scale_vec(vector: Tuple[float, float], factor: float, /):
     """
     Scale a 2d vector by a given factor.

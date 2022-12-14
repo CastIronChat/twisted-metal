@@ -9,20 +9,20 @@
     "propertyTypes": [
         {
             "color": "#ffa0a0a4",
-            "id": 1,
+            "id": 4,
             "members": [
+                {
+                    "name": "next",
+                    "type": "object",
+                    "value": 0
+                }
             ],
-            "name": "Wall",
+            "name": "PatrolWaypoint",
             "type": "class",
             "useAs": [
                 "property",
-                "map",
-                "layer",
                 "object",
-                "tile",
-                "tileset",
-                "wangcolor",
-                "wangset"
+                "tile"
             ]
         },
         {
@@ -39,13 +39,21 @@
             "type": "class",
             "useAs": [
                 "property",
-                "map",
-                "layer",
                 "object",
-                "tile",
-                "tileset",
-                "wangcolor",
-                "wangset"
+                "tile"
+            ]
+        },
+        {
+            "color": "#ffa0a0a4",
+            "id": 1,
+            "members": [
+            ],
+            "name": "Wall",
+            "type": "class",
+            "useAs": [
+                "property",
+                "object",
+                "tile"
             ]
         }
     ]

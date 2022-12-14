@@ -32,6 +32,12 @@ If false, keyboard player will be controlled by keyboard, *not* a controller.
 Useful if you want to debug two players and you only have one controller.
 """
 
+PLAYER_ON_PATROL_LOOP = None
+"""
+If set to a player number, 1 to 4, then that player will be moved on autopilot in
+a loop around the map, giving you a moving target to shoot at while testing.
+"""
+
 DRAW_DRIVE_MODE_DEBUG_HUD = True
 """
 Draw a text overlay with the name of each player's current driving mode.
@@ -45,4 +51,9 @@ Draw a text overlay listing the name and value of all controller inputs.
 START_FULLSCREEN = False
 """
 Start the game in fullscreen mode.  Can also be toggled with F11 on keyboard.
+"""
+
+ARENA = "default"
+"""
+Loads this arena at startup, from assets/arenas/<ARENA>.tmx
 """
