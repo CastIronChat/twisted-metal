@@ -12,18 +12,24 @@ class DebugPatrolLoop:
     def __init__(self, player_manager: PlayerManager, arena: Arena):
         self.player_manager = player_manager
         self.arena = arena
-        self.patrol_timer = 0.0
+        self.patrol_timer = self.arena.patrol_loop.min_time
 
     def update(self, delta_time: float):
         # skip if not enabled
         if PLAYER_ON_PATROL_LOOP is None:
             return
+        max_time = self.arena.patrol_loop.max_time
         self.patrol_timer += delta_time
-        if self.patrol_timer >= self.arena._patrol_loop.max_time:
-            self.patrol_timer = self.arena._patrol_loop.min_time
-        player = self.player_manager.players[PLAYER_ON_PATROL_LOOP]
-        position = self.arena._patrol_loop.sample(self.patrol_timer)
-        position_soon = self.arena._patrol_loop.sample(self.patrol_timer + 0.2)
+        if self.patrol_timer >= max_time:
+            self.patrol_timer = self.arena.patrol_loop.min_time
+        patrol_timer_soon = self.patrol_timer + 0.2
+        if patrol_timer_soon >= max_time:
+            patrol_timer_soon = (
+                self.arena.patrol_loop.min_time + patrol_timer_soon - max_time
+            )
+        player = self.player_manager.players[PLAYER_ON_PATROL_LOOP - 1]
+        position = self.arena.patrol_loop.sample(self.patrol_timer)
+        position_soon = self.arena.patrol_loop.sample(patrol_timer_soon)
         heading_vec = subtract_vec(position_soon, position)
         heading_radians = math.atan2(heading_vec[1], heading_vec[0])
         player.location = (position[0], position[1], heading_radians)

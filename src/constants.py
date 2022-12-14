@@ -34,7 +34,7 @@ Useful if you want to debug two players and you only have one controller.
 
 PLAYER_ON_PATROL_LOOP = None
 """
-If set to a player index, 0 to 3, then that player will be moved on autopilot in
+If set to a player number, 1 to 4, then that player will be moved on autopilot in
 a loop around the map, giving you a moving target to shoot at while testing.
 """
 

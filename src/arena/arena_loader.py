@@ -79,7 +79,7 @@ def load_arena_by_name(name: str) -> Arena:
         raise Exception(
             "Arena must have exactly one patrol loop.  This restriction will likely be removed in the future."
         )
-    arena._patrol_loop = Path(
+    arena.patrol_loop = Path(
         [
             (index * 1.0, point.location[0], point.location[1])
             for index, point in enumerate(patrol_loops[0] + [patrol_loops[0][0]])
