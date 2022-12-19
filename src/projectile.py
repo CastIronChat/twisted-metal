@@ -81,19 +81,6 @@ class Ordnance:
         self.sprite_lists.ordnance.remove(self.sprite)
         self.exists = False
 
-    def on_collision_with_wall(self, walls_touching_projectile: arcade.SpriteList):
-        self.remove_sprite()
-        self.activate_payload()
-
-    def on_collision_with_player(
-        self, delta_time: float, players_touching_projectile: list[LinkedSprite[Player]]
-    ):
-        for player_sprite in players_touching_projectile:
-            player_sprite: LinkedSprite[Player]
-            player_sprite.owner.take_damage(self.damage)
-        self.remove_sprite()
-        self.activate_payload()
-
     def activate_payload(self):
         for payload in self.payload_list:
             payload.activate(self.location)
@@ -102,6 +89,17 @@ class Ordnance:
         self.start_location = start_location
         set_sprite_location(self.sprite, self.start_location)
         self.append_sprite()
+
+    def update(self, delta_time: float):
+        ...
+
+    def on_collision_with_wall(self, walls_touching_projectile: arcade.SpriteList):
+        ...
+
+    def on_collision_with_player(
+        self, delta_time: float, players_touching_projectile: list[LinkedSprite[Player]]
+    ):
+        ...
 
 
 class Projectile(Ordnance):
@@ -131,6 +129,18 @@ class Projectile(Ordnance):
         if not sprite_in_bounds(self.sprite):
             self.remove_sprite()
 
+    def on_collision_with_wall(self, walls_touching_projectile: arcade.SpriteList):
+        self.remove_sprite()
+        self.activate_payload()
+
+    def on_collision_with_player(
+        self, delta_time: float, players_touching_projectile: list[LinkedSprite[Player]]
+    ):
+        for player_sprite in players_touching_projectile:
+            player_sprite: LinkedSprite[Player]
+            player_sprite.owner.take_damage(self.damage)
+        self.remove_sprite()
+        self.activate_payload()
 
 class Beam(Ordnance):
     """
@@ -219,10 +229,10 @@ class Explosion(Ordnance):
                 self.players_hit.append(player_sprite.owner)
 
 
-def update_projectiles(
+def update_ordnance(
     delta_time: float,
     sprite_lists: SpriteLists,
 ):
-    for projectile_sprite in sprite_lists.ordnance:
-        projectile_sprite: LinkedSprite[Projectile]
-        projectile_sprite.owner.update(delta_time)
+    for ordnance_sprite in sprite_lists.ordnance:
+        ordnance_sprite: LinkedSprite[Ordnance]
+        ordnance_sprite.owner.update(delta_time)
