@@ -22,13 +22,14 @@ if TYPE_CHECKING:
     from player import Player
 
 
-class Projectile:
+class Ordnance:
     """
-    A projectile can be anything that is created by a weapon or another projectile included beams, rockets, etc.
-    It stores the characteristics of the projectile and is responible the associated sprite
+    An ordnance can be anything that is created by a weapon or another ordnance included beams, rockets, explosions, etc.
+    Ordnace can be conatined in the payload of another ordance to be later activated under the right conditions
+    Although by definition, the term ordnance includes weapons as well, this class does not contain the weapons themselves
     """
 
-    sprite: LinkedSprite[Projectile]
+    sprite: LinkedSprite[Ordnance]
     sprite_lists: SpriteLists
     start_location: Tuple[float, float, float]
     """
@@ -38,21 +39,21 @@ class Projectile:
     speed: float
     angle_of_motion: float
     sprite_rotation_offset: float
-    payload_list: list[Projectile]
+    payload_list: list[Ordnance]
     """
-    List of Projectiles that are spawned when this Projectile collides with something. This could be explosions, hit indicators, more rockets that go in every direction, etc.
+    List of Ordnance that are spawned when this Ordnance collides with something. This could be explosions, hit indicators, more rockets that go in every direction, etc.
     """
     exists: bool
     """
-    Projectile is visible and can be collided with.  Used for long-lived projectile objects that are repeatedly added to/removed from the world over time, such as laser beams.
+    Ordnance is visible and can be collided with.  Used for long-lived projectile objects that are repeatedly added to/removed from the world over time, such as laser beams.
     """
 
     def __init__(
         self,
-        sprite: LinkedSprite[Projectile],
+        sprite: LinkedSprite[Ordnance],
         sprite_lists: SpriteLists,
         damage: float,
-        payload_list: list[LinkedSprite[Projectile]] = [],
+        payload_list: list[Ordnance] = [],
     ):
         self.sprite = sprite
         sprite.owner = self
@@ -64,27 +65,6 @@ class Projectile:
         self.sprite_rotation_offset = 0
         self.payload_list = payload_list
 
-    def setup(
-        self,
-        start_location: Tuple[float, float, float],
-        speed: float,
-        angle_of_motion: float,
-        sprite_rotation_offet: float = 0,
-    ):
-        self.start_location = start_location
-        self.speed = speed
-        self.angle_of_motion = angle_of_motion
-        self.sprite_rotation_offset = sprite_rotation_offet
-        set_sprite_location(self.sprite, self.start_location)
-        self.sprite.radians += self.sprite_rotation_offset
-        self.append_sprite()
-
-    def update(self, delta_time: float):
-        move_sprite_polar(self.sprite, self.speed * delta_time, self.angle_of_motion)
-        # check if the projectile left the screen
-        if not sprite_in_bounds(self.sprite):
-            self.remove_sprite()
-
     @property
     def location(self) -> Tuple[float, float, float]:
         return (
@@ -94,11 +74,11 @@ class Projectile:
         )
 
     def append_sprite(self):
-        self.sprite_lists.projectiles.append(self.sprite)
+        self.sprite_lists.ordnance.append(self.sprite)
         self.exists = True
 
     def remove_sprite(self):
-        self.sprite_lists.projectiles.remove(self.sprite)
+        self.sprite_lists.ordnance.remove(self.sprite)
         self.exists = False
 
     def on_collision_with_wall(self, walls_touching_projectile: arcade.SpriteList):
@@ -124,9 +104,37 @@ class Projectile:
         self.append_sprite()
 
 
-class Beam(Projectile):
+class Projectile(Ordnance):
     """
-    A Beam is a special type of Projectile that continues to be controlled by the weapon after it is created.
+    A Projectile is a type of Ordncance that is created by a weapon with a direction and speed, and then forgotten about by the weapon.
+    When it collides with something, it activates its payload and is removed
+    """
+
+    def setup(
+        self,
+        start_location: Tuple[float, float, float],
+        speed: float,
+        angle_of_motion: float,
+        sprite_rotation_offet: float = 0,
+    ):
+        self.start_location = start_location
+        self.speed = speed
+        self.angle_of_motion = angle_of_motion
+        self.sprite_rotation_offset = sprite_rotation_offet
+        set_sprite_location(self.sprite, self.start_location)
+        self.sprite.radians += self.sprite_rotation_offset
+        self.append_sprite()
+
+    def update(self, delta_time: float):
+        move_sprite_polar(self.sprite, self.speed * delta_time, self.angle_of_motion)
+        # check if the projectile left the screen
+        if not sprite_in_bounds(self.sprite):
+            self.remove_sprite()
+
+
+class Beam(Ordnance):
+    """
+    A Beam is a type of Ordncance that continues to be controlled by the weapon after it is created.
     When it collides with something, it shortens to stop at whatever it is colliding with
     """
 
@@ -178,7 +186,7 @@ class Beam(Projectile):
         move_sprite_polar(self.sprite, self.sprite.width / 2, self.start_location[2])
 
 
-class Explosion(Projectile):
+class Explosion(Ordnance):
     explosion_rate: float
     explosion_radius: float
     players_hit: list[Player]
@@ -215,6 +223,6 @@ def update_projectiles(
     delta_time: float,
     sprite_lists: SpriteLists,
 ):
-    for projectile_sprite in sprite_lists.projectiles:
+    for projectile_sprite in sprite_lists.ordnance:
         projectile_sprite: LinkedSprite[Projectile]
         projectile_sprite.owner.update(delta_time)

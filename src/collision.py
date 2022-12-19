@@ -8,7 +8,7 @@ from sprite_lists import SpriteLists
 
 
 def projectile_hits_wall(sprite_lists: SpriteLists):
-    for projectile_sprite in sprite_lists.projectiles:
+    for projectile_sprite in sprite_lists.ordnance:
         projectile_sprite: LinkedSprite[Projectile]
         walls_touching_projectile = arcade.check_for_collision_with_list(
             projectile_sprite, sprite_lists.walls
@@ -19,7 +19,7 @@ def projectile_hits_wall(sprite_lists: SpriteLists):
 
 
 def projectile_hits_player(delta_time, sprite_lists: SpriteLists):
-    for projectile_sprite in sprite_lists.projectiles:
+    for projectile_sprite in sprite_lists.ordnance:
         projectile_sprite: LinkedSprite[Projectile]
         players_touching_projectile = arcade.check_for_collision_with_list(
             projectile_sprite, sprite_lists.players
