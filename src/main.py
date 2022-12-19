@@ -1,20 +1,23 @@
 from __future__ import annotations
+
 import arcade
 
 from arena.arena import Arena
 from arena.arena_loader import load_arena_by_name
 from collision import projectile_hits_player, projectile_hits_wall
 from constants import (
+    ARENA,
     SCREEN_HEIGHT,
     SCREEN_TITLE,
     SCREEN_WIDTH,
     TICK_DURATION,
     USE_DEBUGGER_TIMING_FIXES,
 )
+from debug_patrol_loop import DebugPatrolLoop
 from fullscreen import FullscreenController
 from global_input import GlobalInput, bind_global_inputs_to_keyboard
 from hud import Hud
-from input_debug_hud import DebugHud
+from debug_hud import DebugHud
 from player_manager import PlayerManager
 from projectile import update_projectiles
 from sprite_lists import SpriteLists
@@ -42,7 +45,7 @@ class MyGame(arcade.Window):
         self.projectile_sprite_list = arcade.SpriteList()
 
         # Arena
-        self.arena = load_arena_by_name("default")
+        self.arena = load_arena_by_name(ARENA)
         self.arena.init_for_drawing(self.sprite_lists)
 
         # Players
@@ -56,6 +59,9 @@ class MyGame(arcade.Window):
 
         # Player Huds
         self.hud = Hud(self.player_manager.players, self.sprite_lists)
+
+        # Debug thingie that puppeteers a player on a patrol loop
+        self.debug_patrol_loop = DebugPatrolLoop(self.player_manager, self.arena)
 
     def on_update(self, delta_time):
         # Arcade engine has a quirk where, in the debugger, it calls `on_update` twice back-to-back,
@@ -73,6 +79,7 @@ class MyGame(arcade.Window):
         self.player_manager.update_inputs()
         for player in self.player_manager.players:
             player.update(delta_time)
+        self.debug_patrol_loop.update(delta_time)
         update_projectiles(
             delta_time,
             self.sprite_lists,
