@@ -31,11 +31,14 @@ class Projectile:
     sprite: LinkedSprite[Projectile]
     sprite_lists: SpriteLists
     start_location: Tuple[float, float, float]
+    """
+    Where the projectile's sprite spawns in or begins in the case of a laser
+    """
     damage: float
     speed: float
     angle_of_motion: float
     sprite_rotation_offset: float
-    payload_List: list[LinkedSprite[Projectile]]
+    payload_list: list[Projectile]
     """
     List of Projectiles that are spawned when this Projectile collides with something. This could be explosions, hit indicators, more rockets that go in every direction, etc.
     """
@@ -49,7 +52,7 @@ class Projectile:
         sprite: LinkedSprite[Projectile],
         sprite_lists: SpriteLists,
         damage: float,
-        payload_List: list[LinkedSprite[Projectile]] = [],
+        payload_list: list[LinkedSprite[Projectile]] = [],
     ):
         self.sprite = sprite
         sprite.owner = self
@@ -59,16 +62,16 @@ class Projectile:
         self.speed = 0
         self.angle_of_motion = 0
         self.sprite_rotation_offset = 0
-        self.payload_List = payload_List
+        self.payload_list = payload_list
 
     def setup(
         self,
-        muzzle_location: Tuple[float, float, float],
+        start_location: Tuple[float, float, float],
         speed: float,
         angle_of_motion: float,
         sprite_rotation_offet: float = 0,
     ):
-        self.start_location = muzzle_location
+        self.start_location = start_location
         self.speed = speed
         self.angle_of_motion = angle_of_motion
         self.sprite_rotation_offset = sprite_rotation_offet
@@ -100,7 +103,7 @@ class Projectile:
 
     def on_collision_with_wall(self, walls_touching_projectile: arcade.SpriteList):
         self.remove_sprite()
-        self.activate_Payload()
+        self.activate_payload()
 
     def on_collision_with_player(
         self, delta_time: float, players_touching_projectile: list[LinkedSprite[Player]]
@@ -109,11 +112,10 @@ class Projectile:
             player_sprite: LinkedSprite[Player]
             player_sprite.owner.take_damage(self.damage)
         self.remove_sprite()
-        self.activate_Payload()
+        self.activate_payload()
 
-    def activate_Payload(self):
-        for payload in self.payload_List:
-            payload: Projectile
+    def activate_payload(self):
+        for payload in self.payload_list:
             payload.activate(self.location)
 
     def activate(self, start_location: Tuple[float, float, float]):
@@ -179,7 +181,7 @@ class Beam(Projectile):
 class Explosion(Projectile):
     explosion_rate: float
     explosion_radius: float
-    players_hit: list[LinkedSprite[Player]]
+    players_hit: list[Player]
 
     def setup(self, explosion_radius: float, explosion_rate: float):
         self.explosion_radius = explosion_radius
@@ -204,9 +206,9 @@ class Explosion(Projectile):
         self, delta_time: float, players_touching_projectile: list[LinkedSprite[Player]]
     ):
         for player_sprite in players_touching_projectile:
-            if player_sprite not in self.players_hit:
+            if player_sprite.owner not in self.players_hit:
                 player_sprite.owner.take_damage(self.damage)
-                self.players_hit.append(player_sprite)
+                self.players_hit.append(player_sprite.owner)
 
 
 def update_projectiles(
