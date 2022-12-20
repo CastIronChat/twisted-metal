@@ -13,7 +13,7 @@ from iron_math import (
     set_sprite_location,
     sprite_in_bounds,
 )
-from linked_sprite import LinkedSprite
+from linked_sprite import LinkedSprite, LinkedSpriteCircle
 from sprite_lists import SpriteLists
 
 # This allows a circular import only for the purposes of type hints
@@ -63,6 +63,7 @@ class Ordnance:
         self.speed = 0
         self.angle_of_motion = 0
         self.sprite_rotation_offset = 0
+        self.payload_list = []
         self.payload_list = payload_list
 
     @property
@@ -82,6 +83,7 @@ class Ordnance:
         self.exists = False
 
     def activate_payload(self):
+        print(len(self.payload_list))
         for payload in self.payload_list:
             payload.activate(self.location)
 
@@ -142,6 +144,7 @@ class Projectile(Ordnance):
         self.remove_sprite()
         self.activate_payload()
 
+
 class Beam(Ordnance):
     """
     A Beam is a type of Ordncance that continues to be controlled by the weapon after it is created.
@@ -199,34 +202,81 @@ class Beam(Ordnance):
 class Explosion(Ordnance):
     explosion_rate: float
     explosion_radius: float
+    current_radius: float
     players_hit: list[Player]
 
     def setup(self, explosion_radius: float, explosion_rate: float):
         self.explosion_radius = explosion_radius
         self.explosion_rate = explosion_rate
-        self.sprite.height = 1
-        self.sprite.width = 1
+        self.current_radius = 1
         self.players_hit = []
+        self.sprite.height = 0
+        self.sprite.width = 0
+        # Make a list of all directions in radians in pi/16 (11.25 degree) increments
+        directions = [x * (math.pi / 16) for x in range(-16, 16)]
+        self.payload_list = []
+        for direction in directions:
+            self.payload_list.append(self.create_sub_explosion(direction))
 
     def update(self, delta_time: float):
-        if self.sprite.height < self.explosion_radius * 2:
-            self.sprite.height += self.explosion_rate * delta_time
-            self.sprite.width += self.explosion_rate * delta_time
-        else:
+        self.current_radius += delta_time * self.explosion_rate
+        if self.current_radius > self.explosion_radius:
+            for payload in self.payload_list:
+                if payload.exists:
+                    payload.remove_sprite()
             self.remove_sprite()
+        else:
+            self.current_radius += delta_time * self.explosion_rate
+
+    def create_sub_explosion(self, direction: float):
+        sub_explosion_appearance = LinkedSpriteCircle[SubExplosion](
+            100, arcade.color.ORANGE_RED, soft=False
+        )
+        sub_explosion = SubExplosion(
+            sub_explosion_appearance,
+            self.sprite_lists,
+            self.damage,
+        )
+        sub_explosion.setup(self, self.explosion_rate, direction)
+        return sub_explosion
+
+
+    def activate(self, start_location: Tuple[float, float, float]):
+        super().activate(start_location)
+        self.activate_payload()
+
+
+class SubExplosion(Ordnance):
+    explosion: Explosion
+    explosion_rate: float
+    direction: float
+
+    def setup(self, explosion: Explosion, explosion_rate: float, direction: float):
+        self.explosion = explosion
+        self.explosion_rate = explosion_rate
+        self.direction = direction
+        self.sprite.height = 1
+        self.sprite.width = 1
+
+    def update(self, delta_time: float):
+        move_sprite_polar(
+            self.sprite, 3 * self.explosion_rate / 4 * delta_time, self.direction
+        )
+        self.sprite.height += self.explosion_rate / 2 * delta_time
+        self.sprite.width += self.explosion_rate / 2 * delta_time
 
     def on_collision_with_wall(
         self, walls_touching_projectile: list[LinkedSprite[Wall]]
     ):
-        pass
+        self.explosion_rate = 0
 
     def on_collision_with_player(
         self, delta_time: float, players_touching_projectile: list[LinkedSprite[Player]]
     ):
         for player_sprite in players_touching_projectile:
-            if player_sprite.owner not in self.players_hit:
+            if player_sprite.owner not in self.explosion.players_hit:
                 player_sprite.owner.take_damage(self.damage)
-                self.players_hit.append(player_sprite.owner)
+                self.explosion.players_hit.append(player_sprite.owner)
 
 
 def update_ordnance(

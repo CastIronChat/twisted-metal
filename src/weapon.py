@@ -8,7 +8,7 @@ import arcade
 from iron_math import get_transformed_location, move_sprite_relative_to_parent
 from linked_sprite import LinkedSprite, LinkedSpriteCircle, LinkedSpriteSolidColor
 from player_input import VirtualButton
-from projectile import Beam, Explosion, Projectile
+from projectile import Beam, Explosion, Projectile, Ordnance
 from sprite_lists import SpriteLists
 from textures import LASER_PISTOL, MACHINE_GUN, ROCKET, ROCKET_LAUNCHER
 
@@ -132,7 +132,7 @@ class RocketLauncher(Weapon):
         self.explosion_damage = 80
         self.fire_rate = 0.5
         self.muzzle_transform = (12, 0, 0)
-        self.explosion_radius = 50
+        self.explosion_radius = 100
         self.explosion_rate = 200
 
     def update(self, delta_time: float):
@@ -145,7 +145,7 @@ class RocketLauncher(Weapon):
     def shoot(self):
         # Create the explosion that will be stored in the payload of the rocket
         explosion_appearance = LinkedSpriteCircle[Explosion](
-            self.explosion_radius, arcade.color.ORANGE_RED, soft=False
+            self.explosion_radius, arcade.color.ORANGE, soft=False
         )
         explosion = Explosion(
             explosion_appearance,
