@@ -42,7 +42,8 @@ class Player:
         self._swap_in_weapons()
         self.player_health = 100
         self.alive = True
-        self.respawn_time: float = 0
+        self.respawn_time_passed: float = 0
+        self.time_to_respawn: float = 5
         self.initial_spawn_points = initial_spawn_points
         self.x_shift = float
         self.y_shift = float
@@ -58,8 +59,8 @@ class Player:
         #
         if self.input.debug_3.pressed:
             self._swap_drive_mode()
-
-        self.drive_modes[self.drive_mode_index].drive(delta_time)
+        if self.alive:
+            self.drive_modes[self.drive_mode_index].drive(delta_time)
 
         # Pac-man style screen wrapping
         position = self.sprite.position
@@ -68,10 +69,11 @@ class Player:
         #
         # Weapons
         #
-        self.primary_weapon.update(delta_time)
-        self.secondary_weapon.update(delta_time)
-        if self.input.swap_weapons_button.pressed:
-            self._swap_weapons()
+        if self.alive:
+            self.primary_weapon.update(delta_time)
+            self.secondary_weapon.update(delta_time)
+            if self.input.swap_weapons_button.pressed:
+                self._swap_weapons()
 
         #
         # Respawn
@@ -123,14 +125,14 @@ class Player:
 
     def die(self, delta_time):
         self.alive = False
-        self.respawn_time = self.respawn_time + delta_time
-        if self.respawn_time > 5:
+        self.respawn_time_passed = self.respawn_time_passed + delta_time
+        if self.respawn_time_passed > self.time_to_respawn:
             self.respawn()
 
     def respawn(self):
         self.player_health = 100
         self.alive = True
-        self.respawn_time = 0
+        self.respawn_time_passed = 0
         chosen_spawn_point = self.initial_spawn_points[
             random.randrange(len(self.initial_spawn_points))
         ].transform

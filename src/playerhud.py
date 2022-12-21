@@ -3,6 +3,7 @@ from __future__ import annotations
 import arcade
 
 from player import Player
+from textures import RESPAWN_COUNTDOWN
 
 
 class PlayerHud:
@@ -13,6 +14,7 @@ class PlayerHud:
     health_sprite: arcade.Sprite
     full_color: arcade.Color = arcade.color.GREEN
     background_color: arcade.Color = arcade.color.RED
+    player_status: arcade.Text
     player: Player
     hud_x: int
     hud_y: int
@@ -24,6 +26,12 @@ class PlayerHud:
         self.player = player
         self.hud_x = hud_x
         self.hud_y = hud_y
+        self.player_respawn_countdown_sprites: list[arcade.Sprite] = [
+            arcade.Sprite(texture=texture) for texture in RESPAWN_COUNTDOWN
+        ]
+        self.player_respawn_countdown_sprite = arcade.Sprite()
+        self.player_respawn_countdown_sprite.center_x = hud_x + 50
+        self.player_respawn_countdown_sprite.center_y = hud_y - 30
 
         self.background_sprite = arcade.SpriteSolidColor(
             self.width, self.height, self.background_color
@@ -48,5 +56,17 @@ class PlayerHud:
             ratio = self.player.player_health / 100
             self.health_sprite.width = self.health_width * ratio
             self.health_sprite.left = self.hud_x - (self.health_width // 2)
-        elif self.player.player_health < 0:
-            self.health_sprite.width = 0
+        elif self.player.player_health <= 0:
+            self.health_sprite.width = 0.1
+            self.health_sprite.left = self.hud_x - (self.health_width // 2)
+
+        if (
+            self.player.alive == False
+            and len(RESPAWN_COUNTDOWN) >= self.player.time_to_respawn
+        ):
+            self.player_respawn_countdown_sprite.visible = True
+            self.player_respawn_countdown_sprite.texture = RESPAWN_COUNTDOWN[
+                self.player.time_to_respawn - round(self.player.respawn_time_passed)
+            ]
+        else:
+            self.player_respawn_countdown_sprite.visible = False

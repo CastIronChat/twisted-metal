@@ -38,6 +38,7 @@ class Hud:
             self.sprite_lists.huds.append(player_hud.background_sprite)
             self.sprite_lists.huds.append(player_hud.health_sprite)
             self.sprite_lists.huds.append(player_hud.player_hud_avatar)
+            self.sprite_lists.huds.append(player_hud.player_respawn_countdown_sprite)
 
             self.player_hud_startx += 150
             self.player_number_tracker += 1
