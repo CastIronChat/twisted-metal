@@ -16,6 +16,8 @@ import arcade
 from pyglet.input import Controller
 from pyglet.window.key import KeyStateHandler
 
+from constants import FRAMES_OF_INPUT_DELAY
+
 
 class PlayerInput:
     def __init__(self, keys: KeyStateHandler, controller: Controller) -> None:
@@ -47,6 +49,12 @@ class PlayerInput:
         self.debug_4 = VirtualButton(keys, controller)
 
     def update(self):
+        self.x_axis.update()
+        self.y_axis.update()
+        self.rx_axis.update()
+        self.ry_axis.update()
+        self.accelerate_axis.update()
+        self.brake_axis.update()
         self.primary_fire_button._update()
         self.secondary_fire_button._update()
         self.swap_weapons_button._update()
@@ -60,10 +68,12 @@ class PlayerInput:
 class VirtualAxis:
     _keys: KeyStateHandler = None
     _controller: Controller = None
+    _value_buffer: list[float]
 
     def __init__(self, keys: KeyStateHandler, controller: Controller):
         self._keys = keys
         self._controller = controller
+        self._value_buffer = []
 
         self.key_negative: Optional[int] = None
         self.key_positive: Optional[int] = None
@@ -73,6 +83,9 @@ class VirtualAxis:
 
     @property
     def value(self) -> float:
+        return self._value_buffer[-1]
+
+    def update(self):
         neg_pressed = (
             self.key_negative is not None and self._keys[self.key_negative]
         ) or (
@@ -100,7 +113,11 @@ class VirtualAxis:
             axis_value_from_analog = 0
 
         # Combine keyboard/button/stick values, and clamp
-        return min(max(axis_value_from_analog + axis_value_from_buttons, -1), 1)
+        self._value = min(max(axis_value_from_analog + axis_value_from_buttons, -1), 1)
+
+        self._value_buffer.insert(0, self._value)
+        if len(self._value_buffer) > FRAMES_OF_INPUT_DELAY:
+            self._value_buffer.pop()
 
 
 class VirtualButton:
@@ -114,6 +131,9 @@ class VirtualButton:
         self._pressed: bool
         self._released: bool
         self.toggle: bool = False
+        self._value_buffer = []
+        self._pressed_buffer = []
+        self._released_buffer = []
         """
         Every time the button is pressed, this toggles between true to false. May be useful for switching debug
         features on and off; should probably not be used for gameplay.
@@ -123,21 +143,21 @@ class VirtualButton:
 
     @property
     def value(self):
-        return self._value
+        return self._value_buffer[-1]
 
     @property
     def pressed(self):
         """
         True of the button was pressed on this frame, meaning it is held now but was not last frame.
         """
-        return self._pressed
+        return self._pressed_buffer[-1]
 
     @property
     def released(self):
         """
         True of the button was released on this frame, meaning it was held last frame but is not any more.
         """
-        return self._released
+        return self._released_buffer[-1]
 
     def _get_value(self) -> bool:
         key_pressed = self.key is not None and self._keys[self.key]
@@ -158,6 +178,13 @@ class VirtualButton:
             self.toggle = not self.toggle
         if not value_this_frame and value_last_frame:
             self._released = True
+        self._pressed_buffer.insert(0, self._pressed)
+        self._released_buffer.insert(0, self._released)
+        self._value_buffer.insert(0, self._value)
+        if len(self._value_buffer) > FRAMES_OF_INPUT_DELAY:
+            self._pressed_buffer.pop()
+            self._released_buffer.pop()
+            self._value_buffer.pop()
 
 
 def set_controller_layout(player_input: PlayerInput, alternate: bool):

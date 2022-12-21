@@ -3,3 +3,5 @@ arcade
 mypy
 black
 isort
+nuitka
+ordered-set

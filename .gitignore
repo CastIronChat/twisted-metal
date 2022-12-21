@@ -1,2 +1,5 @@
 __pycache__
 assets/arenas/arenas.tiled-session
+/main.build
+/main.dist
+/.mypy_cache

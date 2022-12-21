@@ -1,4 +1,5 @@
 from __future__ import annotations
+import time
 
 import arcade
 
@@ -63,6 +64,9 @@ class MyGame(arcade.Window):
         # Debug thingie that puppeteers a player on a patrol loop
         self.debug_patrol_loop = DebugPatrolLoop(self.player_manager, self.arena)
 
+        self.foo = 0
+        # self.on_draw_skip = False
+
     def on_update(self, delta_time):
         # Arcade engine has a quirk where, in the debugger, it calls `on_update` twice back-to-back,
         # then `on_draw` twice, and so on.
@@ -72,6 +76,9 @@ class MyGame(arcade.Window):
             self.our_update(delta_time)
 
     def our_update(self, delta_time: float):
+        start = time.perf_counter()
+        self.foo += 1
+
         # Pretty sure this does animation updates, in case any of the sprites
         # Have animations
         self.global_input.update()
@@ -88,9 +95,18 @@ class MyGame(arcade.Window):
         projectile_hits_player(delta_time, self.sprite_lists)
         self.hud.update()
 
+        end = time.perf_counter()
+        diff = end - start
+        if self.foo == 60:
+            self.foo = 0
+            print(diff * 60, end, start)
+
+
     def on_draw(self):
         if USE_DEBUGGER_TIMING_FIXES:
-            self.our_update(TICK_DURATION)
+            # self.on_draw_skip = not self.on_draw_skip
+            # if self.on_draw_skip:
+                self.our_update(TICK_DURATION)
 
         # clear screen
         self.clear()
@@ -98,6 +114,7 @@ class MyGame(arcade.Window):
         for player in self.player_manager.players:
             player.draw()
         self.input_debug_hud.draw()
+
 
 
 def main():
