@@ -26,9 +26,7 @@ class PlayerHud:
         self.player = player
         self.hud_x = hud_x
         self.hud_y = hud_y
-        self.player_respawn_countdown_sprites: list[arcade.Sprite] = [
-            arcade.Sprite(texture=texture) for texture in RESPAWN_COUNTDOWN
-        ]
+
         self.player_respawn_countdown_sprite = arcade.Sprite()
         self.player_respawn_countdown_sprite.center_x = hud_x + 50
         self.player_respawn_countdown_sprite.center_y = hud_y - 30
@@ -59,7 +57,7 @@ class PlayerHud:
         elif self.player.player_health <= 0:
             self.health_sprite.width = 0.1
             self.health_sprite.left = self.hud_x - (self.health_width // 2)
-
+        # creates respawn timer on player's hud
         if (
             self.player.alive == False
             and len(RESPAWN_COUNTDOWN) >= self.player.time_to_respawn
