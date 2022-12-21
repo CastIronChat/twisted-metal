@@ -13,13 +13,13 @@ from constants import (
     TICK_DURATION,
     USE_DEBUGGER_TIMING_FIXES,
 )
+from debug_hud import DebugHud
 from debug_patrol_loop import DebugPatrolLoop
 from fullscreen import FullscreenController
 from global_input import GlobalInput, bind_global_inputs_to_keyboard
 from hud import Hud
-from debug_hud import DebugHud
 from player_manager import PlayerManager
-from projectile import update_projectiles
+from projectile import update_ordnance
 from sprite_lists import SpriteLists
 
 
@@ -80,7 +80,7 @@ class MyGame(arcade.Window):
         for player in self.player_manager.players:
             player.update(delta_time)
         self.debug_patrol_loop.update(delta_time)
-        update_projectiles(
+        update_ordnance(
             delta_time,
             self.sprite_lists,
         )
