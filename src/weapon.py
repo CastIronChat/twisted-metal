@@ -8,7 +8,7 @@ import arcade
 from iron_math import get_transformed_location, move_sprite_relative_to_parent
 from linked_sprite import LinkedSprite, LinkedSpriteCircle, LinkedSpriteSolidColor
 from player_input import VirtualButton
-from projectile import Beam, Explosion, Projectile, Ordnance
+from projectile import Beam, Explosion, Ordnance, Projectile
 from sprite_lists import SpriteLists
 from textures import LASER_PISTOL, MACHINE_GUN, ROCKET, ROCKET_LAUNCHER
 
@@ -103,12 +103,13 @@ class LaserBeam(Weapon):
         beam_appearance = LinkedSpriteSolidColor[Projectile](
             self.beam_range, 3, arcade.color.RED
         )
-        self.beam = Beam(beam_appearance, self.sprite_lists, self.dps)
-        self.beam.setup(self.beam_range)
+        self.beam = Beam(
+            beam_appearance, self.sprite_lists, [], self.dps, self.beam_range
+        )
 
     def aim_beam(self):
         if self.beam.exists:
-            self.beam.start_location = get_transformed_location(
+            self.beam.muzzle_location = get_transformed_location(
                 self.weapon_sprite, self.muzzle_transform
             )
 
@@ -132,7 +133,7 @@ class RocketLauncher(Weapon):
         self.explosion_damage = 80
         self.fire_rate = 0.5
         self.muzzle_transform = (12, 0, 0)
-        self.explosion_radius = 100
+        self.explosion_radius = 75
         self.explosion_rate = 200
 
     def update(self, delta_time: float):
@@ -144,27 +145,27 @@ class RocketLauncher(Weapon):
 
     def shoot(self):
         # Create the explosion that will be stored in the payload of the rocket
-        explosion_appearance = LinkedSpriteCircle[Explosion](
-            self.explosion_radius, arcade.color.ORANGE, soft=False
-        )
         explosion = Explosion(
-            explosion_appearance,
+            arcade.color.ORANGE_RED,
             self.sprite_lists,
+            [],
             self.explosion_damage,
+            self.explosion_radius,
+            self.explosion_rate,
         )
-        explosion.setup(self.explosion_radius, self.explosion_rate)
         # Create the rocket
         rocket_appearance = LinkedSprite[Projectile](texture=ROCKET, scale=1)
         rocket = Projectile(
-            rocket_appearance, self.sprite_lists, self.impact_damage, [explosion]
-        )
-        # ROCKET texture appears at 45 degree angle. Sprite_rotation_offset compensates for this
-        rocket.setup(
+            rocket_appearance,
+            self.sprite_lists,
+            [explosion],
+            self.impact_damage,
             get_transformed_location(self.weapon_sprite, self.muzzle_transform),
             self.rocket_speed,
             self.weapon_sprite.radians,
             sprite_rotation_offet=math.radians(-45),
         )
+        # ROCKET texture appears at 45 degree angle. Sprite_rotation_offset compensates for this
         self.time_since_shoot = 0
 
 
@@ -195,9 +196,8 @@ class MachineGun(Weapon):
         bullet = Projectile(
             bullet_appearance,
             self.sprite_lists,
+            [],
             self.bullet_damage,
-        )
-        bullet.setup(
             get_transformed_location(self.weapon_sprite, self.muzzle_transform),
             self.bullet_speed,
             self.weapon_sprite.radians,
