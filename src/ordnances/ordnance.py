@@ -5,9 +5,7 @@ from typing import TYPE_CHECKING, List, Optional, Tuple, cast
 import arcade
 
 from arena.wall import Wall
-from iron_math import (
-    set_sprite_location,
-)
+from iron_math import set_sprite_location
 from linked_sprite import LinkedSprite, LinkedSpriteCircle
 from sprite_lists import SpriteLists
 

@@ -4,13 +4,14 @@ import math
 
 import arcade
 
-from weapons.weapon import Weapon
 from iron_math import get_transformed_location, move_sprite_relative_to_parent
 from linked_sprite import LinkedSprite
+from ordnances.explosion import Explosion
 from ordnances.ordnance import Ordnance
 from ordnances.projectile import Projectile
-from ordnances.explosion import Explosion
 from textures import ROCKET, ROCKET_LAUNCHER
+from weapons.weapon import Weapon
+
 
 class RocketLauncher(Weapon):
     """

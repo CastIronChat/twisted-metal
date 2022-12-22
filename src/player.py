@@ -14,10 +14,10 @@ from movement_controls import MovementControls
 from player_input import PlayerInput
 from sprite_lists import SpriteLists
 from textures import RED_CAR
-from weapons.weapon import Weapon
 from weapons.laser_beam import LaserBeam
 from weapons.machine_gun import MachineGun
 from weapons.rocket_launcher import RocketLauncher
+from weapons.weapon import Weapon
 
 
 class Player:

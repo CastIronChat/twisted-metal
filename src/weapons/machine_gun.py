@@ -2,12 +2,13 @@ from __future__ import annotations
 
 import arcade
 
-from weapons.weapon import Weapon
 from iron_math import get_transformed_location, move_sprite_relative_to_parent
 from linked_sprite import LinkedSpriteSolidColor
 from ordnances.ordnance import Ordnance
 from ordnances.projectile import Projectile
 from textures import MACHINE_GUN
+from weapons.weapon import Weapon
+
 
 class MachineGun(Weapon):
     """
