@@ -14,7 +14,6 @@ class PlayerHud:
     health_sprite: arcade.Sprite
     full_color: arcade.Color = arcade.color.GREEN
     background_color: arcade.Color = arcade.color.RED
-    player_status: arcade.Text
     player: Player
     hud_x: int
     hud_y: int
