@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import math
+import random
 from typing import List
 
 import arcade
@@ -18,9 +19,7 @@ from weapon import LaserBeam, MachineGun, RocketLauncher, Weapon
 
 class Player:
     def __init__(
-        self,
-        input: PlayerInput,
-        sprite_lists: SpriteLists,
+        self, input: PlayerInput, sprite_lists: SpriteLists, initial_spawn_points: list
     ):
         self.sprite = LinkedSprite[Player](texture=RED_CAR, scale=0.2)
         self.sprite.owner = self
@@ -43,6 +42,10 @@ class Player:
         self.secondary_weapon_sprite: arcade.Sprite
         self._swap_in_weapons()
         self.player_health = 100
+        self.alive = True
+        self.respawn_time_passed: float = 0
+        self.time_to_respawn: float = 5
+        self.initial_spawn_points = initial_spawn_points
         self.x_shift = float
         self.y_shift = float
 
@@ -59,16 +62,24 @@ class Player:
         #
         # Driving and movement
         #
-        self.vehicle.drive_input(delta_time, self.input, self.sprite)
+        if self.alive:
+            self.vehicle.drive_input(delta_time, self.input, self.sprite)
         self.vehicle.move(delta_time, self.sprite, self.sprite_lists.walls)
 
         #
         # Weapons
         #
-        self.primary_weapon.update(delta_time)
-        self.secondary_weapon.update(delta_time)
-        if self.input.swap_weapons_button.pressed:
-            self._swap_weapons()
+        if self.alive:
+            self.primary_weapon.update(delta_time)
+            self.secondary_weapon.update(delta_time)
+            if self.input.swap_weapons_button.pressed:
+                self._swap_weapons()
+
+        #
+        # Respawn
+        #
+        if self.player_health <= 0:
+            self.die(delta_time)
 
     @property
     def drive_mode(self):
@@ -111,6 +122,21 @@ class Player:
         self.player_health -= damage
         if self.player_health < 0:
             self.player_health = 0
+
+    def die(self, delta_time):
+        self.alive = False
+        self.respawn_time_passed = self.respawn_time_passed + delta_time
+        if self.respawn_time_passed > self.time_to_respawn:
+            self.respawn()
+
+    def respawn(self):
+        self.player_health = 100
+        self.alive = True
+        self.respawn_time_passed = 0
+        chosen_spawn_point = self.initial_spawn_points[
+            random.randrange(len(self.initial_spawn_points))
+        ].transform
+        set_sprite_location(self.sprite, chosen_spawn_point)
 
     @property
     def location(self):
