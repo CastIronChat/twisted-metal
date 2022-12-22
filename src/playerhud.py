@@ -26,10 +26,12 @@ class PlayerHud:
         self.player = player
         self.hud_x = hud_x
         self.hud_y = hud_y
+        respawn_counter_x_offset = 50
+        below_health_bar_offset = 30
 
         self.player_respawn_countdown_sprite = arcade.Sprite()
-        self.player_respawn_countdown_sprite.center_x = hud_x + 50
-        self.player_respawn_countdown_sprite.center_y = hud_y - 30
+        self.player_respawn_countdown_sprite.center_x = hud_x + respawn_counter_x_offset
+        self.player_respawn_countdown_sprite.center_y = hud_y - below_health_bar_offset
 
         self.background_sprite = arcade.SpriteSolidColor(
             self.width, self.height, self.background_color
@@ -39,7 +41,7 @@ class PlayerHud:
 
         self.player_hud_avatar = player_hud_avatar
         self.player_hud_avatar.center_x = hud_x
-        self.player_hud_avatar.center_y = hud_y - 30
+        self.player_hud_avatar.center_y = hud_y - below_health_bar_offset
 
         self.health_sprite = arcade.SpriteSolidColor(
             self.width, self.height, self.full_color
