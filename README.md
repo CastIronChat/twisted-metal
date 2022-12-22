@@ -38,3 +38,20 @@ Getting started on Windows:
 Restart VSCode to detect installed changes.
 
 At this point, you should be able to press F5 in VSCode and for the game to launch.
+
+### Install git commit hook (optional)
+
+It's easy to forget to run the formatter.  When configured,
+git can double-check this every time we commit.  We have a
+makefile target to configure this:
+
+```shell
+make install-git-hooks
+```
+
+This will install a git pre-commit hook.  When installed, git commit will error
+when code doesn't match the formatter.  This is a reminder to press Ctrl+Shift+B
+and commit the newly-formatted code.
+
+It works by telling git to run `make check` every time you commit.  See the
+`Makefile` for details.
