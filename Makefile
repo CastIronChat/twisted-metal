@@ -22,12 +22,12 @@ lint:
 # match the formatter.  `make fmt` or Ctrl+Shift+B can fix this.
 .PHONY: install-git-hooks
 install-git-hooks:
-	bash -c "echo $$'#!/usr/bin/env bash\nmake check' > .git/hooks/pre-commit"
+	python scripts/install-git-hooks.py
 
 # Uninstall the pre-commit hook
 .PHONY: uninstall-git-hooks
 uninstall-git-hooks:
-	bash -c 'rm .git/hooks/pre-commit'
+	python scripts/uninstall-git-hooks.py
 
 # This is run by the pre-commit hook to verify formatting
 .PHONY: pre-commit
