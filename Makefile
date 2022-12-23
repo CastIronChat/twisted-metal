@@ -31,4 +31,5 @@ uninstall-git-hooks:
 
 # This is run by the pre-commit hook to verify formatting
 .PHONY: pre-commit
-pre-commit: check
+pre-commit:
+	@python scripts/pre-commit.py
