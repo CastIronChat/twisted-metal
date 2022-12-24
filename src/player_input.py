@@ -116,7 +116,7 @@ class VirtualAxis:
         self._value = min(max(axis_value_from_analog + axis_value_from_buttons, -1), 1)
 
         self._value_buffer.insert(0, self._value)
-        if len(self._value_buffer) > FRAMES_OF_INPUT_DELAY:
+        if len(self._value_buffer) > FRAMES_OF_INPUT_DELAY + 1:
             self._value_buffer.pop()
 
 
@@ -181,7 +181,7 @@ class VirtualButton:
         self._pressed_buffer.insert(0, self._pressed)
         self._released_buffer.insert(0, self._released)
         self._value_buffer.insert(0, self._value)
-        if len(self._value_buffer) > FRAMES_OF_INPUT_DELAY:
+        if len(self._value_buffer) > FRAMES_OF_INPUT_DELAY + 1:
             self._pressed_buffer.pop()
             self._released_buffer.pop()
             self._value_buffer.pop()
