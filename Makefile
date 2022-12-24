@@ -58,11 +58,11 @@ connect:
 .PHONY: create-server-env
 create-server-env:
 	sudo yum update -y
-	# sudo yum groupinstall "Development Tools" -y
-	# sudo yum erase openssl-devel -y
-	# sudo yum install openssl11 openssl11-devel  libffi-devel bzip2-devel wget -y
+#	sudo yum groupinstall "Development Tools" -y
+#	sudo yum erase openssl-devel -y
+#	sudo yum install openssl11 openssl11-devel  libffi-devel bzip2-devel wget -y
 	sudo yum install docker -y
 	sudo systemctl start docker.service
 	sudo usermod -a -G docker ec2-user
-	python3 -m venv .venv
-	echo 'Do this: source .venv/bin/activate'
+#	python3 -m venv .venv
+#	echo 'Do this: source .venv/bin/activate'
