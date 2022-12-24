@@ -13,9 +13,12 @@ class DriveMode:
 
     def __init__(self, player: Player):
         self.player = player
-        self.input = self.player.input
         self.name = "unnamed"
         self.setup()
+
+    @property
+    def input(self):
+        return self.player.input
 
     def setup(self):
         ...

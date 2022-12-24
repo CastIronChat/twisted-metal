@@ -8,6 +8,7 @@ from pyglet.window.key import KeyStateHandler
 
 from arena.arena import Arena
 from constants import (
+    FRAMES_OF_INPUT_DELAY,
     KEYBOARD_PLAYER_ALSO_USES_A_CONTROLLER,
     KEYBOARD_PLAYER_INDEX,
     PLAYER_COUNT,
@@ -15,7 +16,8 @@ from constants import (
 )
 from iron_math import set_sprite_location
 from player import Player
-from player_input import PlayerInput, bind_to_keyboard, set_controller_layout
+from player_input import PlayerInput, PlayerInputSnapshot
+from player_input_layouts import bind_to_keyboard, set_controller_layout
 from sprite_lists import SpriteLists
 
 
@@ -76,13 +78,22 @@ class PlayerManager:
             sprite_lists.players.append(player.sprite)
             self.players.append(player)
 
+        self.player_input_buffers = [
+            [PlayerInputSnapshot() for i in range(FRAMES_OF_INPUT_DELAY)]
+            for player in self._players
+        ]
+
     def update_inputs(self):
         """
         Must be called at the *start* of every frame, before calling other
         gameplay logic.  Does internal input-handling bookkeeping.
         """
-        for player in self.players:
-            player.input.update()
+        for (index, player) in enumerate(self.players):
+            player_input_buffer = self.player_input_buffers[index]
+            snapshot_to_apply = player_input_buffer.pop()
+            player_input_buffer.insert(0, player.input.capture_physical_inputs())
+            player.input.update_from_snapshot(snapshot_to_apply)
+            # player.input.update()
             if player.input.debug_2.pressed or player.input.debug_2.released:
                 # xor
                 alternate = (

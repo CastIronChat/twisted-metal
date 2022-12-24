@@ -22,10 +22,14 @@ class Endpoint:
 
     def send(self, packet: Packet):
         data = packet.encode()
-        header = struct.pack(PACKET_HEADER_FORMAT, packet.id, len(data))
+        header = struct.pack(PACKET_HEADER_FORMAT, packet.packet_type_id, len(data))
+        print(
+            f"sending packet {packet.packet_type_id} {packets_by_id[packet.packet_type_id].__name__} with length {len(data)}"
+        )
         self.socket.send(header + data)
 
     def receive(self):
+        # Pull all socket data into buffer
         while True:
             try:
                 new_data = self.socket.recv(RECEIVE_CHUNK_SIZE)
@@ -34,17 +38,26 @@ class Endpoint:
             if len(new_data) == 0:
                 break
             self.buffer = self.buffer + new_data
+
+        # Pull packets out of the buffer
         while len(self.buffer) >= PACKET_HEADER_SIZE:
             (id, size) = struct.unpack_from(PACKET_HEADER_FORMAT, self.buffer, 0)
-            if len(self.buffer) >= PACKET_HEADER_SIZE + size:
-                packet_data = self.buffer[
-                    PACKET_HEADER_SIZE : PACKET_HEADER_SIZE + size
-                ]
-                packet = packets_by_id[id].decode(packet_data)
-                self.packets.append(packet)
-                self.buffer = self.buffer[PACKET_HEADER_SIZE + size :]
-            else:
+            if len(self.buffer) < PACKET_HEADER_SIZE + size:
                 break
+
+            print(
+                f"receiving packet {id} {packets_by_id[id].__name__} with length {size}"
+            )
+            packet_data = self.buffer[PACKET_HEADER_SIZE : PACKET_HEADER_SIZE + size]
+            try:
+                packet = packets_by_id[id].decode(packet_data)
+            except Exception as e:
+                print(
+                    f"Error decoding packet: {id} {packets_by_id[id].__name__} {len(packet_data)}"
+                )
+                raise e
+            self.packets.append(packet)
+            self.buffer = self.buffer[PACKET_HEADER_SIZE + size :]
 
     """
     Receive and unpack as many packets as possible,
