@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import math
+import random
 from typing import List
 
 import arcade
@@ -9,17 +10,19 @@ from constants import SCREEN_HEIGHT, SCREEN_WIDTH
 from driving.create_drive_modes import create_drive_modes
 from iron_math import get_sprite_location, set_sprite_location
 from linked_sprite import LinkedSprite
+from movement_controls import MovementControls
 from player_input import PlayerInput
 from sprite_lists import SpriteLists
 from textures import RED_CAR
-from weapon import LaserBeam, MachineGun, RocketLauncher, Weapon
+from weapons.laser_beam import LaserBeam
+from weapons.machine_gun import MachineGun
+from weapons.rocket_launcher import RocketLauncher
+from weapons.weapon import Weapon
 
 
 class Player:
     def __init__(
-        self,
-        input: PlayerInput,
-        sprite_lists: SpriteLists,
+        self, input: PlayerInput, sprite_lists: SpriteLists, initial_spawn_points: list
     ):
         self.sprite = LinkedSprite[Player](texture=RED_CAR, scale=0.2)
         self.sprite.owner = self
@@ -42,6 +45,10 @@ class Player:
         self.secondary_weapon_sprite: arcade.Sprite
         self._swap_in_weapons()
         self.player_health = 100
+        self.alive = True
+        self.respawn_time_passed: float = 0
+        self.time_to_respawn: float = 5
+        self.initial_spawn_points = initial_spawn_points
         self.x_shift = float
         self.y_shift = float
 
@@ -50,26 +57,32 @@ class Player:
         self.velocity = (0.0, 0.0)
         "Translational velocity -- (x,y) tuple -- measured in pixels per second"
 
+        self.vehicle = MovementControls(
+            LinkedSprite[Player](texture=RED_CAR, scale=0.18)
+        )
+
     def update(self, delta_time: float):
         #
         # Driving and movement
         #
-        if self.input.debug_3.pressed:
-            self._swap_drive_mode()
-
-        self.drive_modes[self.drive_mode_index].drive(delta_time)
-
-        # Pac-man style screen wrapping
-        position = self.sprite.position
-        self.sprite.position = (position[0] % SCREEN_WIDTH, position[1] % SCREEN_HEIGHT)
+        if self.alive:
+            self.vehicle.drive_input(delta_time, self.input, self.sprite)
+        self.vehicle.move(delta_time, self.sprite, self.sprite_lists.walls)
 
         #
         # Weapons
         #
-        self.primary_weapon.update(delta_time)
-        self.secondary_weapon.update(delta_time)
-        if self.input.swap_weapons_button.pressed:
-            self._swap_weapons()
+        if self.alive:
+            self.primary_weapon.update(delta_time)
+            self.secondary_weapon.update(delta_time)
+            if self.input.swap_weapons_button.pressed:
+                self._swap_weapons()
+
+        #
+        # Respawn
+        #
+        if self.player_health <= 0:
+            self.die(delta_time)
 
     @property
     def drive_mode(self):
@@ -112,6 +125,21 @@ class Player:
         self.player_health -= damage
         if self.player_health < 0:
             self.player_health = 0
+
+    def die(self, delta_time):
+        self.alive = False
+        self.respawn_time_passed = self.respawn_time_passed + delta_time
+        if self.respawn_time_passed > self.time_to_respawn:
+            self.respawn()
+
+    def respawn(self):
+        self.player_health = 100
+        self.alive = True
+        self.respawn_time_passed = 0
+        chosen_spawn_point = self.initial_spawn_points[
+            random.randrange(len(self.initial_spawn_points))
+        ].transform
+        set_sprite_location(self.sprite, chosen_spawn_point)
 
     @property
     def location(self):

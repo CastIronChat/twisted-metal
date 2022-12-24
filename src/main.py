@@ -5,7 +5,7 @@ import arcade
 
 from arena.arena import Arena
 from arena.arena_loader import load_arena_by_name
-from collision import projectile_hits_player, projectile_hits_wall
+from collision import ordnance_hits_player, ordnance_hits_wall
 from constants import (
     ARENA,
     SCREEN_HEIGHT,
@@ -14,13 +14,13 @@ from constants import (
     TICK_DURATION,
     USE_DEBUGGER_TIMING_FIXES,
 )
+from debug_hud import DebugHud
 from debug_patrol_loop import DebugPatrolLoop
 from fullscreen import FullscreenController
 from global_input import GlobalInput, bind_global_inputs_to_keyboard
 from hud import Hud
-from debug_hud import DebugHud
+from ordnances.ordnance import update_ordnance
 from player_manager import PlayerManager
-from projectile import update_projectiles
 from sprite_lists import SpriteLists
 
 
@@ -87,12 +87,12 @@ class MyGame(arcade.Window):
         for player in self.player_manager.players:
             player.update(delta_time)
         self.debug_patrol_loop.update(delta_time)
-        update_projectiles(
+        update_ordnance(
             delta_time,
             self.sprite_lists,
         )
-        projectile_hits_wall(self.sprite_lists)
-        projectile_hits_player(delta_time, self.sprite_lists)
+        ordnance_hits_wall(self.sprite_lists)
+        ordnance_hits_player(delta_time, self.sprite_lists)
         self.hud.update()
 
         end = time.perf_counter()

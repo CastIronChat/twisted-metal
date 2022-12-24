@@ -60,3 +60,6 @@ RED_CAR = load_texture("assets/vehicle/red-car-top-view.png")
 PLAYER_AVATARS = [
     load_texture(f"assets/hud/player{index}avatar.png") for index in range(1, 5)
 ]
+RESPAWN_COUNTDOWN = [
+    load_texture(f"assets/hud/countdown{index}.png") for index in range(0, 6)
+]
