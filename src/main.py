@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 import time
 
 import arcade
@@ -101,12 +102,11 @@ class MyGame(arcade.Window):
             self.foo = 0
             print(diff * 60, end, start)
 
-
     def on_draw(self):
         if USE_DEBUGGER_TIMING_FIXES:
             # self.on_draw_skip = not self.on_draw_skip
             # if self.on_draw_skip:
-                self.our_update(TICK_DURATION)
+            self.our_update(TICK_DURATION)
 
         # clear screen
         self.clear()
@@ -114,7 +114,6 @@ class MyGame(arcade.Window):
         for player in self.player_manager.players:
             player.draw()
         self.input_debug_hud.draw()
-
 
 
 def main():

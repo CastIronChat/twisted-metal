@@ -3,3 +3,4 @@ assets/arenas/arenas.tiled-session
 /main.build
 /main.dist
 /.mypy_cache
+/src/server_config.py

@@ -41,3 +41,28 @@ uninstall-git-hooks:
 .PHONY: pre-commit
 pre-commit:
 	@python scripts/pre-commit.py
+
+.PHONY: serve
+serve:
+	python src/serve.py
+
+.PHONY: serve-ec2
+serve-ec2:
+	docker kill game || true
+	docker run --name game --rm -v $$(pwd):/game --network host python:3.10 python /game/src/serve.py
+
+.PHONY: connect
+connect:
+	python src/connect.py
+
+.PHONY: create-server-env
+create-server-env:
+	sudo yum update -y
+	# sudo yum groupinstall "Development Tools" -y
+	# sudo yum erase openssl-devel -y
+	# sudo yum install openssl11 openssl11-devel  libffi-devel bzip2-devel wget -y
+	sudo yum install docker -y
+	sudo systemctl start docker.service
+	sudo usermod -a -G docker ec2-user
+	python3 -m venv .venv
+	echo 'Do this: source .venv/bin/activate'

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import math
+import random
 from typing import Tuple
 
 import arcade
@@ -218,3 +219,11 @@ def sprite_in_bounds(sprite: arcade.Sprite, /) -> bool:
         return False
     else:
         return True
+
+
+random_number_generator = random.Random()
+
+
+rand_seed = random_number_generator.seed
+
+randrange = random_number_generator.randrange

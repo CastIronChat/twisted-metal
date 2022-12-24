@@ -1,14 +1,13 @@
 from __future__ import annotations
 
 import math
-import random
 from typing import List
 
 import arcade
 
 from constants import SCREEN_HEIGHT, SCREEN_WIDTH
 from driving.create_drive_modes import create_drive_modes
-from iron_math import get_sprite_location, set_sprite_location
+from iron_math import get_sprite_location, randrange, set_sprite_location
 from linked_sprite import LinkedSprite
 from movement_controls import MovementControls
 from player_input import PlayerInput
@@ -137,7 +136,7 @@ class Player:
         self.alive = True
         self.respawn_time_passed = 0
         chosen_spawn_point = self.initial_spawn_points[
-            random.randrange(len(self.initial_spawn_points))
+            randrange(len(self.initial_spawn_points))
         ].transform
         set_sprite_location(self.sprite, chosen_spawn_point)
 
