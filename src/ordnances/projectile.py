@@ -62,6 +62,6 @@ class Projectile(Ordnance):
     ):
         for vehicle_sprite in vehicles_touching_projectile:
             vehicle_sprite: LinkedSprite[Vehicle]
-            vehicle_sprite.owner.player.take_damage(self.damage)
+            vehicle_sprite.owner.apply_damage(self.damage)
         self.remove_sprite()
         self.activate_payload()

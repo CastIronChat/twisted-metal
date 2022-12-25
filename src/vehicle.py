@@ -77,6 +77,9 @@ class Vehicle:
             if self.input.swap_weapons_button.pressed:
                 self._swap_weapons()
 
+    def apply_damage(self, damage: float):
+        self.player.take_damage(damage)
+
     @property
     def location(self):
         return get_sprite_location(self.sprite)

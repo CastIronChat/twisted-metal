@@ -119,5 +119,5 @@ class SubExplosion(Ordnance):
     ):
         for vehicle_sprite in vehicles_touching_projectile:
             if vehicle_sprite.owner not in self.explosion.vehicles_hit:
-                vehicle_sprite.owner.player.take_damage(self.damage)
+                vehicle_sprite.owner.apply_damage(self.damage)
                 self.explosion.vehicles_hit.append(vehicle_sprite.owner)

@@ -62,7 +62,7 @@ class Beam(Ordnance):
             vehicles_touching_projectile
         )
         if vehicle_sprite != None:
-            vehicle_sprite.owner.player.take_damage(self.dps * delta_time)
+            vehicle_sprite.owner.apply_damage(self.dps * delta_time)
 
     def _shorten_beam(self, collision_list: list[LinkedSprite]):
         """
