@@ -36,7 +36,6 @@ class RocketLauncher(Weapon):
         self.explosion_rate = 200
 
     def update(self, delta_time: float):
-        super().update()
         if self.input_button.pressed:
             if self.time_since_shoot > 1 / self.fire_rate:
                 self.shoot()

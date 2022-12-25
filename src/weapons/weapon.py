@@ -49,9 +49,7 @@ class Weapon:
         ...
 
     def update(self):
-        move_sprite_relative_to_parent(
-            self.weapon_sprite, self.vehicle.sprite, self.weapon_transform
-        )
+        ...
 
     def swap_out(self):
         self.sprite_lists.weapons.remove(self.weapon_sprite)

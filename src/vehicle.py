@@ -8,7 +8,11 @@ import arcade
 
 from constants import SCREEN_HEIGHT, SCREEN_WIDTH
 from driving.create_drive_modes import create_drive_modes
-from iron_math import get_sprite_location, set_sprite_location
+from iron_math import (
+    get_sprite_location,
+    move_sprite_relative_to_parent,
+    set_sprite_location,
+)
 from linked_sprite import LinkedSprite
 from movement_controls import MovementControls
 from player_input import PlayerInput
@@ -65,7 +69,7 @@ class Vehicle:
         #
         if self.player.alive:
             self.movement.drive_input(delta_time, self.input, self.sprite)
-        self.movement.move(delta_time, self.sprite, self.sprite_lists.walls)
+        self.movement.move(delta_time, self, self.sprite_lists.walls)
 
         #
         # Weapons
@@ -83,6 +87,16 @@ class Vehicle:
     @location.setter
     def location(self, location: tuple[float, float, float]):
         set_sprite_location(self.sprite, location)
+        move_sprite_relative_to_parent(
+            self.primary_weapon.weapon_sprite,
+            self.sprite,
+            self.primary_weapon_transform,
+        )
+        move_sprite_relative_to_parent(
+            self.secondary_weapon.weapon_sprite,
+            self.sprite,
+            self.secondary_weapon_transform,
+        )
 
     def _swap_weapons(self):
         # Moves the current secondary weapon to the primary weapon slot and the next weapon on the list becomes the secondary weapon

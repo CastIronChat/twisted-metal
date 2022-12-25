@@ -1,11 +1,16 @@
 from __future__ import annotations
 
 import math
+from typing import TYPE_CHECKING
 
 import arcade
 
 import constants
 from player_input import PlayerInput
+
+# This allows a circular import only for the purposes of type hints
+if TYPE_CHECKING:
+    from vehicle import Vehicle
 
 # This is setup for the Player to call "drive_input" where the vehicle updates it's
 # intended velocity and rotation based on the player input
@@ -17,7 +22,7 @@ from player_input import PlayerInput
 #
 # for checking if a vehicle should take damage from an impact. as a percentage of their top acceleration
 
-DEFAULT_WORLD_SIZE = 750
+DEFAULT_WORLD_SIZE = constants.SCREEN_WIDTH
 DEFAULT_ACCELERATION_RATE = 2.5
 DEFAULT_BRAKE_RATE = 0.8
 DEFAULT_FRICTION = 0.1
@@ -127,12 +132,14 @@ class MovementControls:
         )
 
     # called from the player to tell the vehicle to act on it's intended velocity and rotation
-    def move(self, delta_time: float, vehicle: arcade.Sprite, walls: arcade.SpriteList):
+    def move(self, delta_time: float, vehicle: Vehicle, walls: arcade.SpriteList):
         # the shadow sprite is used to simply math and planning to deal with the arena not being an array
-        self.shadow_sprite.center_x = vehicle.center_x + self.current_velocity_x
-        self.shadow_sprite.center_y = vehicle.center_y + self.current_velocity_y
+        self.shadow_sprite.center_x = vehicle.sprite.center_x + self.current_velocity_x
+        self.shadow_sprite.center_y = vehicle.sprite.center_y + self.current_velocity_y
         self.shadow_sprite.angle = (
-            self.current_velocity_turn + vehicle.angle + self.external_velocity_turn
+            self.current_velocity_turn
+            + vehicle.sprite.angle
+            + self.external_velocity_turn
         )
         walls_touching_player = arcade.check_for_collision_with_list(
             self.shadow_sprite, walls
@@ -153,18 +160,23 @@ class MovementControls:
                     self.current_velocity_x = 0
                     self.current_velocity_y = 0
 
-            self.shadow_sprite.center_x = vehicle.center_x
-            self.shadow_sprite.center_y = vehicle.center_y
+            self.shadow_sprite.center_x = vehicle.sprite.center_x
+            self.shadow_sprite.center_y = vehicle.sprite.center_y
         else:
             # no wall collisions means a valid spot to move to
-            vehicle.center_x = self.shadow_sprite.center_x
-            vehicle.center_y = self.shadow_sprite.center_y
+            vehicle.location = (
+                self.shadow_sprite.center_x,
+                self.shadow_sprite.center_y,
+                self.shadow_sprite.radians,
+            )
 
-            vehicle.angle = self.shadow_sprite.angle
         # NOTE: place holder boundaries to wrap aroung like pacman
         if self.debug_world_boundary != 0:
-            vehicle.center_x = vehicle.center_x % self.debug_world_boundary
-            vehicle.center_y = vehicle.center_y % self.debug_world_boundary
+            vehicle.location = (
+                vehicle.sprite.center_x % self.debug_world_boundary,
+                vehicle.sprite.center_y % self.debug_world_boundary,
+                self.shadow_sprite.radians,
+            )
 
     def clamp(self, num, min_value, max_value):
         return max(min(num, max_value), min_value)
