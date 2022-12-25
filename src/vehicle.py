@@ -57,7 +57,7 @@ class Vehicle:
         "Translational velocity -- (x,y) tuple -- measured in pixels per second"
 
         self.movement = MovementControls(
-            LinkedSprite[Vehicle](texture=RED_CAR, scale=0.18)
+            self, LinkedSprite[Vehicle](texture=RED_CAR, scale=0.18)
         )
 
     def update(self, delta_time: float):
@@ -65,8 +65,8 @@ class Vehicle:
         # Driving and movement
         #
         if self.player.alive:
-            self.movement.drive_input(delta_time, self.input, self.sprite)
-        self.movement.move(delta_time, self, self.sprite_lists.walls)
+            self.movement.drive_input(delta_time, self.input)
+        self.movement.move(delta_time, self.sprite_lists.walls)
 
         #
         # Weapons
@@ -79,24 +79,6 @@ class Vehicle:
 
     def apply_damage(self, damage: float):
         self.player.take_damage(damage)
-
-    @property
-    def location(self):
-        return get_sprite_location(self.sprite)
-
-    @location.setter
-    def location(self, location: tuple[float, float, float]):
-        set_sprite_location(self.sprite, location)
-        move_sprite_relative_to_parent(
-            self.primary_weapon.weapon_sprite,
-            self.sprite,
-            self.primary_weapon_transform,
-        )
-        move_sprite_relative_to_parent(
-            self.secondary_weapon.weapon_sprite,
-            self.sprite,
-            self.secondary_weapon_transform,
-        )
 
     def _swap_weapons(self):
         # Moves the current secondary weapon to the primary weapon slot and the next weapon on the list becomes the secondary weapon
@@ -121,6 +103,42 @@ class Vehicle:
             self.input.secondary_fire_button,
             self.secondary_weapon_transform,
         )
+
+    @property
+    def location(self):
+        return get_sprite_location(self.sprite)
+
+    @location.setter
+    def location(self, location: tuple[float, float, float]):
+        set_sprite_location(self.sprite, location)
+        move_sprite_relative_to_parent(
+            self.primary_weapon.weapon_sprite,
+            self.sprite,
+            self.primary_weapon_transform,
+        )
+        move_sprite_relative_to_parent(
+            self.secondary_weapon.weapon_sprite,
+            self.sprite,
+            self.secondary_weapon_transform,
+        )
+
+    # these properties are for the convenience of calling vehicle.center_x rather than vehicle.location[0]
+    # they specifically don't have setters because location should be set instead to move the weapons as well
+    @property
+    def center_x(self):
+        return self.sprite.center_x
+
+    @property
+    def center_y(self):
+        return self.sprite.center_y
+
+    @property
+    def angle(self):
+        return self.sprite.angle
+
+    @property
+    def radians(self):
+        return self.sprite.radians
 
     @property
     def drive_mode(self):
