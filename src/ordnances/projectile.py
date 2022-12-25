@@ -4,9 +4,8 @@ from typing import TYPE_CHECKING, List, Optional, Tuple, cast
 
 import arcade
 
-from arena.wall import Wall
 from iron_math import move_sprite_polar, set_sprite_location, sprite_in_bounds
-from linked_sprite import LinkedSprite, LinkedSpriteCircle
+from linked_sprite import LinkedSprite
 from ordnances.ordnance import Ordnance
 from sprite_lists import SpriteLists
 

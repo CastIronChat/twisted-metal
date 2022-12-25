@@ -1,16 +1,11 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Tuple
+from typing import Tuple
 
 import arcade
 
-from iron_math import move_sprite_relative_to_parent
 from player_input import VirtualButton
 from sprite_lists import SpriteLists
-
-# This allows a circular import only for the purposes of type hints
-if TYPE_CHECKING:
-    from vehicle import Vehicle
 
 
 class Weapon:
