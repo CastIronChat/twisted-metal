@@ -1,12 +1,9 @@
 from __future__ import annotations
 
-import math
-import random
 from typing import TYPE_CHECKING, List
 
 import arcade
 
-from constants import SCREEN_HEIGHT, SCREEN_WIDTH
 from driving.create_drive_modes import create_drive_modes
 from iron_math import (
     get_sprite_location,
@@ -109,7 +106,7 @@ class Vehicle:
 
     def _swap_in_weapons(self):
         self.primary_weapon = self.weapons_list[self.weapon_index](
-            self,
+            self.sprite_lists,
             self.input.primary_fire_button,
             self.primary_weapon_transform,
         )
@@ -117,7 +114,7 @@ class Vehicle:
         if self.weapon_index >= len(self.weapons_list):
             self.weapon_index = 0
         self.secondary_weapon = self.weapons_list[self.weapon_index](
-            self,
+            self.sprite_lists,
             self.input.secondary_fire_button,
             self.secondary_weapon_transform,
         )

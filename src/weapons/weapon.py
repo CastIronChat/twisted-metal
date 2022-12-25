@@ -19,7 +19,6 @@ class Weapon:
     """
 
     input_button: VirtualButton
-    vehicle: Vehicle
     sprite_lists: SpriteLists
     time_since_shoot: float
     weapon_icon: arcade.texture
@@ -27,13 +26,12 @@ class Weapon:
 
     def __init__(
         self,
-        vehicle: Vehicle,
+        sprite_lists: SpriteLists,
         input_button: VirtualButton,
         weapon_transform: Tuple[float, float, float],
     ):
         self.input_button = input_button
-        self.vehicle = vehicle
-        self.sprite_lists = vehicle.sprite_lists
+        self.sprite_lists = sprite_lists
         self.weapon_transform = weapon_transform
         self.time_since_shoot = 100
         self.weapon_sprite = arcade.Sprite(texture=self.weapon_icon, scale=1)
