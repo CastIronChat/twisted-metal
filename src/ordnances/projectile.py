@@ -11,9 +11,8 @@ from ordnances.ordnance import Ordnance
 from sprite_lists import SpriteLists
 
 # This allows a circular import only for the purposes of type hints
-# Weapon will never create and instance of Player
 if TYPE_CHECKING:
-    from player import Player
+    from vehicle import Vehicle
 
 
 class Projectile(Ordnance):
@@ -56,11 +55,13 @@ class Projectile(Ordnance):
         self.remove_sprite()
         self.activate_payload()
 
-    def on_collision_with_player(
-        self, delta_time: float, players_touching_projectile: list[LinkedSprite[Player]]
+    def on_collision_with_vehicle(
+        self,
+        delta_time: float,
+        vehicles_touching_projectile: list[LinkedSprite[Vehicle]],
     ):
-        for player_sprite in players_touching_projectile:
-            player_sprite: LinkedSprite[Player]
-            player_sprite.owner.take_damage(self.damage)
+        for vehicle_sprite in vehicles_touching_projectile:
+            vehicle_sprite: LinkedSprite[Vehicle]
+            vehicle_sprite.owner.player.take_damage(self.damage)
         self.remove_sprite()
         self.activate_payload()

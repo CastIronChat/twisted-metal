@@ -1,29 +1,25 @@
 from __future__ import annotations
 
-import math
 from typing import TYPE_CHECKING, Tuple
 
 import arcade
 
-from iron_math import get_transformed_location, move_sprite_relative_to_parent
-from linked_sprite import LinkedSprite, LinkedSpriteCircle, LinkedSpriteSolidColor
+from iron_math import move_sprite_relative_to_parent
 from player_input import VirtualButton
 from sprite_lists import SpriteLists
-from textures import LASER_PISTOL, MACHINE_GUN, ROCKET, ROCKET_LAUNCHER
 
 # This allows a circular import only for the purposes of type hints
-# Weapon will never create and instance of Player
 if TYPE_CHECKING:
-    from player import Player
+    from vehicle import Vehicle
 
 
 class Weapon:
     """
-    Slotted into player's car and behaves according to it's subclass weapon type
+    Slotted into a vehicle and behaves according to it's subclass weapon type
     """
 
     input_button: VirtualButton
-    player: Player
+    vehicle: Vehicle
     sprite_lists: SpriteLists
     time_since_shoot: float
     weapon_icon: arcade.texture
@@ -31,16 +27,17 @@ class Weapon:
 
     def __init__(
         self,
-        player: Player,
+        vehicle: Vehicle,
         input_button: VirtualButton,
         weapon_transform: Tuple[float, float, float],
     ):
         self.input_button = input_button
-        self.player = player
-        self.sprite_lists = player.sprite_lists
+        self.vehicle = vehicle
+        self.sprite_lists = vehicle.sprite_lists
         self.weapon_transform = weapon_transform
         self.time_since_shoot = 100
         self.weapon_sprite = arcade.Sprite(texture=self.weapon_icon, scale=1)
+        self.sprite_lists.weapons.append(self.weapon_sprite)
         self.setup()
 
     def setup(self):
@@ -53,11 +50,8 @@ class Weapon:
 
     def update(self):
         move_sprite_relative_to_parent(
-            self.weapon_sprite, self.player.sprite, self.weapon_transform
+            self.weapon_sprite, self.vehicle.sprite, self.weapon_transform
         )
 
     def swap_out(self):
-        pass
-
-    def draw(self):
-        self.weapon_sprite.draw()
+        self.sprite_lists.weapons.remove(self.weapon_sprite)

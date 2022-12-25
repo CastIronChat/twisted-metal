@@ -12,9 +12,8 @@ from ordnances.ordnance import Ordnance
 from sprite_lists import SpriteLists
 
 # This allows a circular import only for the purposes of type hints
-# Weapon will never create and instance of Player
 if TYPE_CHECKING:
-    from player import Player
+    from vehicle import Vehicle
 
 
 class Explosion(Ordnance):
@@ -22,7 +21,7 @@ class Explosion(Ordnance):
     explosion_rate: float
     explosion_radius: float
     current_radius: float
-    players_hit: list[Player]
+    vehicles_hit: list[Vehicle]
 
     def __init__(
         self,
@@ -43,7 +42,7 @@ class Explosion(Ordnance):
         self.explosion_radius = explosion_radius
         self.explosion_rate = explosion_rate
         self.current_radius = 1
-        self.players_hit = []
+        self.vehicles_hit = []
         # Make a list of all directions in radians in pi/16 (11.25 degree) increments
         directions = [x * (math.pi / 16) for x in range(-16, 16)]
         for direction in directions:
@@ -113,10 +112,12 @@ class SubExplosion(Ordnance):
     ):
         self.explosion_rate = 0
 
-    def on_collision_with_player(
-        self, delta_time: float, players_touching_projectile: list[LinkedSprite[Player]]
+    def on_collision_with_vehicle(
+        self,
+        delta_time: float,
+        vehicles_touching_projectile: list[LinkedSprite[Vehicle]],
     ):
-        for player_sprite in players_touching_projectile:
-            if player_sprite.owner not in self.explosion.players_hit:
-                player_sprite.owner.take_damage(self.damage)
-                self.explosion.players_hit.append(player_sprite.owner)
+        for vehicle_sprite in vehicles_touching_projectile:
+            if vehicle_sprite.owner not in self.explosion.vehicles_hit:
+                vehicle_sprite.owner.player.take_damage(self.damage)
+                self.explosion.vehicles_hit.append(vehicle_sprite.owner)
