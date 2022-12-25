@@ -64,7 +64,8 @@ class Player:
         chosen_spawn_point = self.initial_spawn_points[
             random.randrange(len(self.initial_spawn_points))
         ].transform
-        set_sprite_location(self.vehicle.sprite, chosen_spawn_point)
+        self.vehicle.location = chosen_spawn_point
+        self.vehicle.movement.reset_velocity()
 
     @property
     def input(self):

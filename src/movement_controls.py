@@ -130,6 +130,12 @@ class MovementControls:
             * -self.current_acceleration
         )
 
+    def reset_velocity(self):
+        self.current_acceleration = 0
+        self.current_velocity_x = 0
+        self.current_velocity_y = 0
+        self.current_velocity_turn = 0
+
     # called from the player to tell the vehicle to act on it's intended velocity and rotation
     def move(self, delta_time: float, walls: arcade.SpriteList):
         # the shadow sprite is used to simply math and planning to deal with the arena not being an array
