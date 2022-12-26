@@ -21,12 +21,17 @@ from weapons.weapon import Weapon
 
 class Player:
     def __init__(
-        self, input: PlayerInput, sprite_lists: SpriteLists, initial_spawn_points: list
+        self,
+        index: int,
+        input: PlayerInput,
+        sprite_lists: SpriteLists,
+        initial_spawn_points: list,
     ):
         self.sprite = LinkedSprite[Player](texture=RED_CAR, scale=0.2)
         self.sprite.owner = self
         self.sprite.center_x = 256
         self.sprite.center_y = 256
+        self.index = index
         self.input = input
         self.sprite_lists = sprite_lists
         self.primary_weapon_transform = (16, 10, 0)

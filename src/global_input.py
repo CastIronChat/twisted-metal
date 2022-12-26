@@ -14,10 +14,13 @@ class GlobalInput:
         self._keys = keys
         self._controller = controller
         self.fullscreen_toggle = VirtualButton(keys, controller)
+        self.network_unlock = VirtualButton(keys, controller)
 
     def update(self):
         self.fullscreen_toggle._update()
+        self.network_unlock._update()
 
 
 def bind_global_inputs_to_keyboard(global_input: GlobalInput):
     global_input.fullscreen_toggle.key = key.F11
+    global_input.network_unlock.key = key.F10

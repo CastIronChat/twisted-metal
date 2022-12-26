@@ -1,3 +1,5 @@
+# Input Logic Changes
+
 `PlayerInput`:
     generic interface
     gameplay is coded against this
@@ -10,8 +12,12 @@
 
 When networked:
     at start of frame
-    the network controller calls `PlayerInput.capture` on local players
-    sends it on the network
-    the network controller then calls `PlayerInput.inject()` on all players
-    based on received `PlayerInput`
-    If it does not have enough data, it ends the `update()`
+    the network controller captures inputs for all local players
+    broadcasts them on the network
+    the network controller then injects inputs previously-received from the network
+    If it does not have enough data, it tells the game update loop to skip this frame
+        This causes a noticable hitch, but the logic is simple
+
+`InputUpdater`?
+    Swappable implementation, can be a `NetworkedInputUpdater` or a `LocalInputUpdater`
+    Currently, `PlayerManager` and `NetworkManager` are kinda filling this role

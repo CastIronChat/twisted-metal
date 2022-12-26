@@ -14,6 +14,7 @@ serv.setsockopt(socket.IPPROTO_TCP, socket.TCP_NODELAY, True)
 serv.bind((server_config.bind_ip, server_config.port))
 serv.listen(4)
 endpoints: list[Endpoint] = []
+server_eps: list[Server] = []
 all_sockets: list[socket.socket] = []
 
 print("Server is up")
@@ -33,6 +34,8 @@ while True:
         clientsocket.setblocking(False)
         ep = Endpoint()
         server_ep = Server()
+        server_eps.append(server_ep)
+        server_ep.other_handlers = server_eps
         ep.socket = clientsocket
         ep.handler = server_ep
         server_ep.endpoint = ep
@@ -41,3 +44,9 @@ while True:
 
     for ep in endpoints:
         ep.update()
+    # In case receiving data on one endpoint queues data on another, we want to
+    # queue all outgoing packets at once, then flush them at once, reducing
+    # total number of outgoing TCP packets.
+    # TODO is this best?  Not sure.  We have Nagle disabled, so probably?
+    for ep in endpoints:
+        ep.flush_send_queue()

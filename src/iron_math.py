@@ -221,7 +221,7 @@ def sprite_in_bounds(sprite: arcade.Sprite, /) -> bool:
         return True
 
 
-random_number_generator = random.Random()
+random_number_generator = random.Random(0)
 
 
 rand_seed = random_number_generator.seed

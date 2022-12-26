@@ -23,7 +23,7 @@ packets_by_id = dict[int, Type[Packet]]()
 next_id = 0
 
 
-def set_packet_id(cls: AnyPacket) -> AnyPacket:
+def assign_packet_id(cls: AnyPacket) -> AnyPacket:
     global next_id
     cls.packet_type_id = next_id
     packets_by_id[next_id] = cls
@@ -31,7 +31,7 @@ def set_packet_id(cls: AnyPacket) -> AnyPacket:
     return cls
 
 
-@set_packet_id
+@assign_packet_id
 class Ping(Packet):
     last_received_server_time_ns: int
     current_client_time_ns: int
@@ -58,7 +58,7 @@ class Ping(Packet):
         )
 
 
-@set_packet_id
+@assign_packet_id
 class Pong(Packet):
     current_server_time_ns: int
     last_received_client_time_ns: int
@@ -85,26 +85,41 @@ class Pong(Packet):
         )
 
 
-@set_packet_id
-class SendToAllClients(Packet):
-    packet_id: int
+@assign_packet_id
+class Broadcast(Packet):
+    wrapped_packet_type_id: int
     packet_contents: bytearray
 
-    packet_id_format = "!i"
-    id_length = struct.calcsize(packet_id_format)
+    _packet_id_format = "!i"
+    _id_length = struct.calcsize(_packet_id_format)
+
+    @classmethod
+    def from_packet(cls, packet: Packet) -> Broadcast:
+        broadcast = Broadcast()
+        broadcast.wrapped_packet_type_id = packet.packet_type_id
+        broadcast.packet_contents = packet.encode()
+        return broadcast
 
     @classmethod
     def decode(cls, bytes):
         p = cls()
-        (p.packet_id) = struct.unpack(cls.packet_id_format, bytes)
-        p.packet_contents = bytes[cls.id_length :]
+        (p.wrapped_packet_type_id,) = struct.unpack(
+            cls._packet_id_format, bytes[: cls._id_length]
+        )
+        p.packet_contents = bytes[cls._id_length :]
         return p
 
     def encode(self):
-        return struct.pack(self.packet_id_format, self.packet_id) + self.packet_contents
+        return (
+            struct.pack(self._packet_id_format, self.wrapped_packet_type_id)
+            + self.packet_contents
+        )
+
+    def decode_wrapped_packet(self):
+        return packets_by_id[self.wrapped_packet_type_id].decode(self.packet_contents)
 
 
-@set_packet_id
+@assign_packet_id
 class SetInputDelay(Packet):
     delay: int
 
@@ -120,7 +135,7 @@ class SetInputDelay(Packet):
         return struct.pack(self.format, self.delay)
 
 
-@set_packet_id
+@assign_packet_id
 class AssignPlayerId(Packet):
     player_id: int
 
@@ -136,12 +151,13 @@ class AssignPlayerId(Packet):
         return struct.pack(self.format, self.player_id)
 
 
-@set_packet_id
-class PlayerInput(Packet):
+@assign_packet_id
+class PlayerInputPacket(Packet):
     player_id: int
+    tick: int
     snapshot: PlayerInputSnapshot
 
-    format = "!iffffff????????"
+    format = "!iiffffff????????"
 
     @classmethod
     def decode(cls, bytes):
@@ -149,6 +165,7 @@ class PlayerInput(Packet):
         s = p.snapshot = PlayerInputSnapshot()
         (
             p.player_id,
+            p.tick,
             s.x_axis,
             s.y_axis,
             s.rx_axis,
@@ -170,7 +187,8 @@ class PlayerInput(Packet):
         s = self.snapshot
         return struct.pack(
             self.format,
-            self.packet_type_id,
+            self.player_id,
+            self.tick,
             s.x_axis,
             s.y_axis,
             s.rx_axis,
@@ -186,3 +204,13 @@ class PlayerInput(Packet):
             s.debug_3,
             s.debug_4,
         )
+
+
+@assign_packet_id
+class NetworkUnlock(Packet):
+    @classmethod
+    def decode(cls, bytes):
+        return cls()
+
+    def encode(self):
+        return b""

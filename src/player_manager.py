@@ -16,7 +16,7 @@ from constants import (
 )
 from iron_math import set_sprite_location
 from player import Player
-from player_input import PlayerInput, PlayerInputSnapshot
+from player_input import EMPTY_INPUT_SNAPSHOT, PlayerInput, PlayerInputSnapshot
 from player_input_layouts import bind_to_keyboard, set_controller_layout
 from sprite_lists import SpriteLists
 
@@ -65,14 +65,21 @@ class PlayerManager:
                 and not KEYBOARD_PLAYER_ALSO_USES_A_CONTROLLER
             ):
                 controller_index -= 1
-            if len(controllers) > controller_index:
+            can_use_controller = KEYBOARD_PLAYER_ALSO_USES_A_CONTROLLER or (
+                player_index != KEYBOARD_PLAYER_INDEX
+            )
+            if can_use_controller and len(controllers) > controller_index:
+                print(controller_index)
                 controller = controllers[controller_index]
                 controller.open()
             player_input = PlayerInput(self._keyboard, controller)
+            player_input.update_from_snapshot(EMPTY_INPUT_SNAPSHOT)
             if player_index == KEYBOARD_PLAYER_INDEX:
                 bind_to_keyboard(player_input)
             set_controller_layout(player_input, START_WITH_ALTERNATE_CONTROLLER_LAYOUT)
-            player = Player(player_input, sprite_lists, arena.initial_spawn_points)
+            player = Player(
+                player_index, player_input, sprite_lists, arena.initial_spawn_points
+            )
             spawn_point = arena.initial_spawn_points[player_index]
             set_sprite_location(player.sprite, spawn_point.transform)
             sprite_lists.players.append(player.sprite)
@@ -89,10 +96,10 @@ class PlayerManager:
         gameplay logic.  Does internal input-handling bookkeeping.
         """
         for (index, player) in enumerate(self.players):
-            player_input_buffer = self.player_input_buffers[index]
-            snapshot_to_apply = player_input_buffer.pop()
-            player_input_buffer.insert(0, player.input.capture_physical_inputs())
-            player.input.update_from_snapshot(snapshot_to_apply)
+            # player_input_buffer = self.player_input_buffers[index]
+            # player_input_buffer.insert(0, player.input.capture_physical_inputs())
+            # snapshot_to_apply = player_input_buffer.pop()
+            # player.input.update_from_snapshot(snapshot_to_apply)
             # player.input.update()
             if player.input.debug_2.pressed or player.input.debug_2.released:
                 # xor

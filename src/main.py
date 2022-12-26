@@ -20,6 +20,7 @@ from debug_patrol_loop import DebugPatrolLoop
 from fullscreen import FullscreenController
 from global_input import GlobalInput, bind_global_inputs_to_keyboard
 from hud import Hud
+from networking.network_manager import NetworkManager
 from ordnances.ordnance import update_ordnance
 from player_manager import PlayerManager
 from sprite_lists import SpriteLists
@@ -66,7 +67,11 @@ class MyGame(arcade.Window):
         self.debug_patrol_loop = DebugPatrolLoop(self.player_manager, self.arena)
 
         self.foo = 0
+        self.start_sec = 0.0
         # self.on_draw_skip = False
+
+        self.network_manager = NetworkManager(self.player_manager, self.global_input)
+        self.network_manager.connect()
 
     def on_update(self, delta_time):
         # Arcade engine has a quirk where, in the debugger, it calls `on_update` twice back-to-back,
@@ -84,6 +89,9 @@ class MyGame(arcade.Window):
         # Have animations
         self.global_input.update()
         self.fullscreen_controller.update()
+        can_simulate_frame = self.network_manager.update()
+        if not can_simulate_frame:
+            return
         self.player_manager.update_inputs()
         for player in self.player_manager.players:
             player.update(delta_time)
@@ -98,9 +106,11 @@ class MyGame(arcade.Window):
 
         end = time.perf_counter()
         diff = end - start
+        diff_sec = end - self.start_sec
         if self.foo == 60:
             self.foo = 0
-            print(diff * 60, end, start)
+            self.start_sec = time.perf_counter()
+            print(diff * 60, diff_sec, end, start)
 
     def on_draw(self):
         if USE_DEBUGGER_TIMING_FIXES:

@@ -24,9 +24,9 @@ and triggers are primary/secondary fire.  At this early stage of development,
 this flag is meant for experimentation.
 """
 
-PLAYER_COUNT = 4
+PLAYER_COUNT = 2
 KEYBOARD_PLAYER_INDEX = 0
-KEYBOARD_PLAYER_ALSO_USES_A_CONTROLLER = True
+KEYBOARD_PLAYER_ALSO_USES_A_CONTROLLER = False
 """
 If false, keyboard player will be controlled by keyboard, *not* a controller.
 Useful if you want to debug two players and you only have one controller.
@@ -65,4 +65,6 @@ Impose artificial input delay to test how network latency will feel.
 Delay of 6 frames is 1/10 of a second.
 If worst ping stays below 100ms, then can get away with 1/10s input delay
 and keep things lockstep.
+
+In my informal testing, round-trip ping to a west-coast EC2 server w/my wired Comcast in Cambridge was ~90ms.
 """

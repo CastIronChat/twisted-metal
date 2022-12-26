@@ -129,6 +129,9 @@ class PlayerInputSnapshot:
         self.debug_4 = False
 
 
+EMPTY_INPUT_SNAPSHOT = PlayerInputSnapshot()
+
+
 class VirtualAxis:
     _keys: KeyStateHandler = None
     _controller: Controller = None
