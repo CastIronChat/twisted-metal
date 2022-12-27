@@ -79,7 +79,7 @@ class Vehicle:
 
     def deactivate(self):
         self.primary_weapon.deactivate()
-        self.primary_weapon.deactivate()
+        self.secondary_weapon.deactivate()
 
     def _swap_weapons(self):
         # Moves the current secondary weapon to the primary weapon slot and the next weapon on the list becomes the secondary weapon
