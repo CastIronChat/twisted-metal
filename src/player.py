@@ -40,6 +40,7 @@ class Player:
 
     def die(self, delta_time):
         self.alive = False
+        self.vehicle.deactivate()
         self.respawn_time_passed = self.respawn_time_passed + delta_time
         if self.respawn_time_passed > self.time_to_respawn:
             self.respawn()

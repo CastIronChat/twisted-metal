@@ -77,6 +77,10 @@ class Vehicle:
     def apply_damage(self, damage: float):
         self.player.take_damage(damage)
 
+    def deactivate(self):
+        self.primary_weapon.deactivate()
+        self.primary_weapon.deactivate()
+
     def _swap_weapons(self):
         # Moves the current secondary weapon to the primary weapon slot and the next weapon on the list becomes the secondary weapon
         self._swap_out_weapons()

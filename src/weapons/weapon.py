@@ -46,3 +46,6 @@ class Weapon:
 
     def swap_out(self):
         self.sprite_lists.weapons.remove(self.weapon_sprite)
+
+    def deactivate(self):
+        ...
