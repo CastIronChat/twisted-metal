@@ -8,7 +8,7 @@ import arcade
 from arena.spawn_point import SpawnPoint
 from constants import SCREEN_HEIGHT, SCREEN_WIDTH
 from driving.create_drive_modes import create_drive_modes
-from iron_math import get_sprite_location, randrange, set_sprite_location
+from iron_math import get_sprite_location, random
 from linked_sprite import LinkedSprite
 from movement_controls import MovementControls
 from player_input import PlayerInput
@@ -58,7 +58,7 @@ class Player:
         self.alive = True
         self.respawn_time_passed = 0
         chosen_spawn_point = self.initial_spawn_points[
-            randrange(len(self.initial_spawn_points))
+            random.randrange(len(self.initial_spawn_points))
         ].transform
         self.vehicle.location = chosen_spawn_point
         self.vehicle.movement.reset_velocity()

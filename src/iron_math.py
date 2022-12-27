@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import math
-import random
+import random as python_random_module
 from typing import Tuple
 
 import arcade
@@ -221,9 +221,11 @@ def sprite_in_bounds(sprite: arcade.Sprite, /) -> bool:
         return True
 
 
-random_number_generator = random.Random(0)
-
-
-rand_seed = random_number_generator.seed
-
-randrange = random_number_generator.randrange
+random = python_random_module.Random(0)
+"""
+To enable determinism, we never `import random`.
+Instead, we `from iron_math import random`
+This will give you all the same functions,
+but we control the randomizer seed, so we can ensure every game client generates
+an identical sequence of random numbers.
+"""
