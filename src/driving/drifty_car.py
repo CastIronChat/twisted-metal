@@ -98,10 +98,10 @@ class DriftyCar(DriveMode):
         """
 
     def drive(self, delta_time: float):
-        prev_location = self.player.location
+        prev_location = self.vehicle.location
         prev_position = prev_location[:2]
         prev_rotation = prev_location[2]
-        prev_velocity = self.player.velocity
+        prev_velocity = self.vehicle.velocity
 
         # Holding both gas and reverse means you're in "drift mode"
         drifting = (
@@ -200,7 +200,7 @@ class DriftyCar(DriveMode):
 
         # apply delta-time-d acceleration to velocity
         new_velocity = add_vec(prev_velocity, scale_vec(acceleration, delta_time))
-        self.player.velocity = new_velocity
+        self.vehicle.velocity = new_velocity
 
         # apply delta-time-d velocity to position
         new_position = add_vec(prev_position, scale_vec(new_velocity, delta_time))
@@ -222,4 +222,4 @@ class DriftyCar(DriveMode):
         new_rotation = prev_rotation + angular_velocity * delta_time
 
         # Apply movement to the sprite
-        self.player.location = (new_position[0], new_position[1], new_rotation)
+        self.vehicle.location = (new_position[0], new_position[1], new_rotation)

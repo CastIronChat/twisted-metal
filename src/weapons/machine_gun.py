@@ -27,7 +27,6 @@ class MachineGun(Weapon):
         self.muzzle_transform = (7, 2, 0)
 
     def update(self, delta_time: float):
-        super().update()
         if self.input_button.value and self.time_since_shoot > 1 / self.fire_rate:
             self.shoot()
         self.time_since_shoot += delta_time

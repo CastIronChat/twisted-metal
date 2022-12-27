@@ -28,7 +28,6 @@ class LaserBeam(Weapon):
         self.create_beam()
 
     def update(self, delta_time: float):
-        super().update()
         if self.input_button.pressed:
             self.shoot()
         if self.input_button.released:
@@ -39,6 +38,7 @@ class LaserBeam(Weapon):
         self.beam.append_sprite()
 
     def swap_out(self):
+        super().swap_out()
         self.remove_beam()
 
     def remove_beam(self):
