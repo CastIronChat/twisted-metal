@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="25" height="19" tilewidth="32" tileheight="32" infinite="0" nextlayerid="3" nextobjectid="31">
+<map version="1.9" tiledversion="1.9.2" orientation="orthogonal" renderorder="right-down" width="25" height="19" tilewidth="32" tileheight="32" infinite="0" nextlayerid="3" nextobjectid="36">
  <tileset firstgid="1" source="tiled_objects.tsx"/>
  <objectgroup id="2" name="objects">
-  <object id="1" name="top" class="Wall" x="0" y="0" width="800" height="32"/>
-  <object id="2" name="left" class="Wall" x="0" y="0" width="32" height="600"/>
+  <object id="1" name="top-left" class="Wall" x="0" y="-42.6667" width="300" height="74.6667"/>
+  <object id="2" name="left-upper" class="Wall" x="-91.3333" y="0" width="123.333" height="225"/>
   <object id="3" name="obstacle" class="Wall" x="284.628" y="227.89" width="267.863" height="37.4674" rotation="20"/>
-  <object id="4" name="bottom" class="Wall" x="0" y="576" width="800" height="32"/>
-  <object id="7" name="right" class="Wall" x="768" y="0" width="32" height="600"/>
+  <object id="7" name="right-lower" class="Wall" x="768" y="356" width="172.667" height="247.05"/>
   <object id="17" class="SpawnPoint" gid="1" x="112.833" y="142.167" width="50" height="30">
    <properties>
     <property name="initial_spawn_for_player" value="3"/>
@@ -65,5 +64,10 @@
    </properties>
    <point/>
   </object>
+  <object id="31" name="left-lower" class="Wall" x="-104.667" y="356" width="136.667" height="243.497"/>
+  <object id="32" name="right-upper" class="Wall" x="768" y="0" width="154" height="225"/>
+  <object id="33" name="top-right" class="Wall" x="500" y="-48.6667" width="300" height="80.6667"/>
+  <object id="34" name="bottom-left" class="Wall" x="0" y="576" width="300" height="102.667"/>
+  <object id="35" name="bottom-right" class="Wall" x="500" y="576" width="300" height="101.333"/>
  </objectgroup>
 </map>
