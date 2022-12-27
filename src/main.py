@@ -6,7 +6,7 @@ import arcade
 
 from arena.arena import Arena
 from arena.arena_loader import load_arena_by_name
-from collision import ordnance_hits_player, ordnance_hits_wall
+from collision import ordnance_hits_vehicle, ordnance_hits_wall
 from constants import (
     ARENA,
     SCREEN_HEIGHT,
@@ -101,7 +101,7 @@ class MyGame(arcade.Window):
             self.sprite_lists,
         )
         ordnance_hits_wall(self.sprite_lists)
-        ordnance_hits_player(delta_time, self.sprite_lists)
+        ordnance_hits_vehicle(delta_time, self.sprite_lists)
         self.hud.update()
 
         end = time.perf_counter()
@@ -121,8 +121,6 @@ class MyGame(arcade.Window):
         # clear screen
         self.clear()
         self.sprite_lists.draw()
-        for player in self.player_manager.players:
-            player.draw()
         self.input_debug_hud.draw()
 
 

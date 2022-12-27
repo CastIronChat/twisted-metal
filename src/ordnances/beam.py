@@ -16,9 +16,8 @@ from ordnances.ordnance import Ordnance
 from sprite_lists import SpriteLists
 
 # This allows a circular import only for the purposes of type hints
-# Weapon will never create and instance of Player
 if TYPE_CHECKING:
-    from player import Player
+    from vehicle import Vehicle
 
 
 class Beam(Ordnance):
@@ -54,12 +53,16 @@ class Beam(Ordnance):
     ):
         self._shorten_beam(walls_touching_projectile)
 
-    def on_collision_with_player(
-        self, delta_time: float, players_touching_projectile: list[LinkedSprite[Player]]
+    def on_collision_with_vehicle(
+        self,
+        delta_time: float,
+        vehicles_touching_projectile: list[LinkedSprite[Vehicle]],
     ):
-        player: LinkedSprite[Player] = self._shorten_beam(players_touching_projectile)
-        if player != None:
-            player.owner.take_damage(self.dps * delta_time)
+        vehicle_sprite: LinkedSprite[Vehicle] = self._shorten_beam(
+            vehicles_touching_projectile
+        )
+        if vehicle_sprite != None:
+            vehicle_sprite.owner.apply_damage(self.dps * delta_time)
 
     def _shorten_beam(self, collision_list: list[LinkedSprite]):
         """

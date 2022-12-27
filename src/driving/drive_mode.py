@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from player import Player
+    from vehicle import Vehicle
 
 
 class DriveMode:
@@ -11,8 +11,9 @@ class DriveMode:
     Abstract class that tells a car how to drive around.
     """
 
-    def __init__(self, player: Player):
-        self.player = player
+    def __init__(self, vehicle: Vehicle):
+        self.vehicle = vehicle
+        self.input = self.vehicle.player.input
         self.name = "unnamed"
         self.setup()
 
