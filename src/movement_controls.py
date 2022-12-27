@@ -177,7 +177,7 @@ class MovementControls:
             vehicle.location = (
                 vehicle.center_x % self.debug_world_boundary,
                 vehicle.center_y % self.debug_world_boundary,
-                self.shadow_sprite.radians,
+                vehicle.radians,
             )
 
     def clamp(self, num, min_value, max_value):
