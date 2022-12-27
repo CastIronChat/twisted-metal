@@ -52,8 +52,7 @@ class MovementControls:
     current_velocity_turn: float
     current_acceleration: float
 
-    def __init__(self, vehicle: Vehicle, sprite: arcade.Sprite):
-        self.vehicle = vehicle
+    def __init__(self, sprite: arcade.Sprite):
         self.shadow_sprite = sprite
         self.shadow_sprite.center_x = sprite.center_x
         self.shadow_sprite.center_y = sprite.center_y
@@ -75,7 +74,7 @@ class MovementControls:
     #   Drive input is called by the player and passed that player's input
     #   to set what the vehicle's velocity and rotation should be
     #   Does not change the vehicles position
-    def drive_input(self, delta_time: float, input: PlayerInput):
+    def drive_input(self, delta_time: float, vehicle: Vehicle, input: PlayerInput):
 
         if self.impact_buffer > 0:
             self.impact_buffer -= 1
@@ -84,8 +83,8 @@ class MovementControls:
 
         # updates the vehicles intended  velocity and rotation based on type
         acceleration_change = 0
-        self.shadow_sprite.center_x = self.vehicle.center_x
-        self.shadow_sprite.center_y = self.vehicle.center_y
+        self.shadow_sprite.center_x = vehicle.center_x
+        self.shadow_sprite.center_y = vehicle.center_y
 
         if input.accelerate_axis.value:
             if self.current_acceleration < 0:
@@ -106,7 +105,7 @@ class MovementControls:
             self.current_acceleration + (acceleration_change * delta_time), -1, 1
         )
 
-        car_angle = math.radians(self.vehicle.angle)
+        car_angle = math.radians(vehicle.angle)
 
         # find the X and Y movement based on the angle of the sprite
         self.current_velocity_x = (
@@ -137,14 +136,12 @@ class MovementControls:
         self.current_velocity_turn = 0
 
     # called from the player to tell the vehicle to act on it's intended velocity and rotation
-    def move(self, delta_time: float, walls: arcade.SpriteList):
+    def move(self, delta_time: float, vehicle: Vehicle, walls: arcade.SpriteList):
         # the shadow sprite is used to simply math and planning to deal with the arena not being an array
-        self.shadow_sprite.center_x = self.vehicle.center_x + self.current_velocity_x
-        self.shadow_sprite.center_y = self.vehicle.center_y + self.current_velocity_y
+        self.shadow_sprite.center_x = vehicle.center_x + self.current_velocity_x
+        self.shadow_sprite.center_y = vehicle.center_y + self.current_velocity_y
         self.shadow_sprite.angle = (
-            self.current_velocity_turn
-            + self.vehicle.angle
-            + self.external_velocity_turn
+            self.current_velocity_turn + vehicle.angle + self.external_velocity_turn
         )
         walls_touching_player = arcade.check_for_collision_with_list(
             self.shadow_sprite, walls
@@ -165,11 +162,11 @@ class MovementControls:
                     self.current_velocity_x = 0
                     self.current_velocity_y = 0
 
-            self.shadow_sprite.center_x = self.vehicle.center_x
-            self.shadow_sprite.center_y = self.vehicle.center_y
+            self.shadow_sprite.center_x = vehicle.center_x
+            self.shadow_sprite.center_y = vehicle.center_y
         else:
             # no wall collisions means a valid spot to move to
-            self.vehicle.location = (
+            vehicle.location = (
                 self.shadow_sprite.center_x,
                 self.shadow_sprite.center_y,
                 self.shadow_sprite.radians,
@@ -177,9 +174,9 @@ class MovementControls:
 
         # NOTE: place holder boundaries to wrap aroung like pacman
         if self.debug_world_boundary != 0:
-            self.vehicle.location = (
-                self.vehicle.center_x % self.debug_world_boundary,
-                self.vehicle.center_y % self.debug_world_boundary,
+            vehicle.location = (
+                vehicle.center_x % self.debug_world_boundary,
+                vehicle.center_y % self.debug_world_boundary,
                 self.shadow_sprite.radians,
             )
 

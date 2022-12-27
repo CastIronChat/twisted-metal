@@ -57,7 +57,7 @@ class Vehicle:
         "Translational velocity -- (x,y) tuple -- measured in pixels per second"
 
         self.movement = MovementControls(
-            self, LinkedSprite[Vehicle](texture=RED_CAR, scale=0.18)
+            LinkedSprite[Vehicle](texture=RED_CAR, scale=0.18)
         )
 
     def update(self, delta_time: float):
@@ -65,8 +65,8 @@ class Vehicle:
         # Driving and movement
         #
         if self.player.alive:
-            self.movement.drive_input(delta_time, self.input)
-        self.movement.move(delta_time, self.sprite_lists.walls)
+            self.movement.drive_input(delta_time, self, self.input)
+        self.movement.move(delta_time, self, self.sprite_lists.walls)
 
         #
         # Weapons
