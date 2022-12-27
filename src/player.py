@@ -5,6 +5,7 @@ from typing import List
 
 import arcade
 
+from arena.spawn_point import SpawnPoint
 from constants import SCREEN_HEIGHT, SCREEN_WIDTH
 from driving.create_drive_modes import create_drive_modes
 from iron_math import get_sprite_location, randrange, set_sprite_location
@@ -31,6 +32,7 @@ class Player:
         self.respawn_time_passed: float = 0
         self.time_to_respawn: float = 5
         self.initial_spawn_points = initial_spawn_points
+        self.player_index = player_index
 
     def update(self, delta_time: float):
         self.vehicle.update(delta_time)

@@ -95,7 +95,9 @@ class NetworkManager:
                             input_tick
                         ] = player_net_state.player.input.capture_physical_inputs()
                         self.send_player_input(
-                            player_net_state.player.index, input_tick, input_snapshot
+                            player_net_state.player.player_index,
+                            input_tick,
+                            input_snapshot,
                         )
                 self.next_unsent_input_tick = increment_tick(
                     self.next_unsent_input_tick

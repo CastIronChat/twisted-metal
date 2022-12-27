@@ -17,10 +17,6 @@ class DriveMode:
         self.name = "unnamed"
         self.setup()
 
-    @property
-    def input(self):
-        return self.player.input
-
     def setup(self):
         ...
 

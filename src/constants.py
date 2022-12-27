@@ -58,7 +58,7 @@ ARENA = "default"
 Loads this arena at startup, from assets/arenas/<ARENA>.tmx
 """
 
-FRAMES_OF_INPUT_DELAY = 6
+FRAMES_OF_INPUT_DELAY = 3
 """
 Impose artificial input delay to test how network latency will feel.
 
