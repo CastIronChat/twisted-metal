@@ -6,16 +6,17 @@ from typing import ClassVar, Type, TypeVar
 from player_input import PlayerInputSnapshot
 
 AnyPacket = TypeVar("AnyPacket", bound="Packet")
+AnyPacketSubclass = TypeVar("AnyPacketSubclass", bound="Type[Packet]")
 
 
 class Packet:
     packet_type_id: ClassVar[int]
 
     @classmethod
-    def decode(cls: type[AnyPacket], bytes: bytearray) -> AnyPacket:
+    def decode(cls: type[AnyPacket], bytes: bytes) -> AnyPacket:
         ...
 
-    def encode(self) -> bytearray:
+    def encode(self) -> bytes:
         ...
 
 
@@ -23,7 +24,7 @@ packets_by_id = dict[int, Type[Packet]]()
 next_id = 0
 
 
-def assign_packet_id(cls: AnyPacket) -> AnyPacket:
+def assign_packet_id(cls: AnyPacketSubclass) -> AnyPacketSubclass:
     global next_id
     cls.packet_type_id = next_id
     packets_by_id[next_id] = cls
@@ -88,7 +89,7 @@ class Pong(Packet):
 @assign_packet_id
 class Broadcast(Packet):
     wrapped_packet_type_id: int
-    packet_contents: bytearray
+    packet_contents: bytes
 
     _packet_id_format = "!i"
     _id_length = struct.calcsize(_packet_id_format)
@@ -128,7 +129,7 @@ class SetInputDelay(Packet):
     @classmethod
     def decode(cls, bytes):
         p = cls()
-        (p.delay) = struct.unpack(cls.format, bytes)
+        (p.delay,) = struct.unpack(cls.format, bytes)
         return p
 
     def encode(self):
@@ -208,9 +209,15 @@ class PlayerInputPacket(Packet):
 
 @assign_packet_id
 class NetworkUnlock(Packet):
+    input_delay: int
+
+    format = "!i"
+
     @classmethod
     def decode(cls, bytes):
-        return cls()
+        p = cls()
+        (p.input_delay,) = struct.unpack(cls.format, bytes)
+        return p
 
-    def encode(self):
-        return b""
+    def encode(self) -> bytes:
+        return struct.pack(self.format, self.input_delay)

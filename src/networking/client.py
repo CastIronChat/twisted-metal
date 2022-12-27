@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import time
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING
 
 from networking.common import Endpoint
 
@@ -47,9 +47,9 @@ class Client(PacketHandler):
         )
         self.last_received_server_time_ns = pong.current_server_time_ns
         self.send_ping(pong.current_server_time_ns)
-        # print(
-        #     f"Average ping: server calculated: {pong.ping_according_to_server_ms}ms, client calculated: {self.ping_average.average_ms}ms"
-        # )
+        print(
+            f"Average ping: server calculated: {pong.ping_according_to_server_ms}ms, client calculated: {self.ping_average.average_ms}ms"
+        )
 
     def send_ping(self, current_server_time_ns: int):
         ping = Ping()

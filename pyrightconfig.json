@@ -1,0 +1,31 @@
+{
+    "include": ["src"],
+
+    // Sets a variety of strict typechecking rules which are loosened by the
+    // overrides below.
+    "typeCheckingMode": "strict",
+
+    // Unused imports are not the end of the world IMO.
+    "reportUnusedImport": "information",
+
+    // Disabled because arcade library does not follow this rule.
+    // For example, `arcade.color` is flagged as an error.
+    "reportPrivateImportUsage": "none",
+
+    // reportMissingParameterType flags when explicit annotation is missing,
+    // even if the type can be inferred.
+    //
+    // reportUnknownParameterType flags when parameter type is unknown
+    // because it cannot be inferred.
+    //
+    // This configuration allows omitting explicit annotations when inference
+    // is sufficient.
+    "reportMissingParameterType": "none",
+    "reportUnknownParameterType": "error",
+
+    // // Disabled because arcade does not follow the rules
+    "reportUnknownMemberType": "none",
+
+    // Disabled because arcade library does not follow this rule.
+    "strictParameterNoneValue": false,
+}

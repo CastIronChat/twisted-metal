@@ -34,8 +34,7 @@ class NetworkManager:
         self.global_input = global_input
         self.local_player_ids = []
         self.player_net_states = [
-            PlayerNetState(player)
-            for (index, player) in enumerate(player_manager.players)
+            PlayerNetState(player) for player in player_manager.players
         ]
         # Input delay of 6 ticks.  Capture inputs for tick 6 while simulating tick 0, hoping that we've received those
         # inputs from all peers.  If we haven't, we'll have to pause a frame.
@@ -69,7 +68,9 @@ class NetworkManager:
     def update(self):
 
         if self.global_input.network_unlock.pressed:
-            self.client_ep.endpoint.queue(Broadcast.from_packet(NetworkUnlock()))
+            packet = NetworkUnlock()
+            packet.input_delay = FRAMES_OF_INPUT_DELAY
+            self.client_ep.endpoint.queue(Broadcast.from_packet(packet))
             print("sending unlock broadcast")
 
         input_tick = self.next_input_tick

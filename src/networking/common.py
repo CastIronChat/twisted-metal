@@ -26,8 +26,8 @@ class Endpoint:
 
     def __init__(self):
         self._received_packets: list[Packet] = []
-        self._buffer: bytearray = b""
-        self._send_queue: list[bytearray] = []
+        self._buffer: bytes = b""
+        self._send_queue: list[bytes] = []
 
     def queue(self, packet: Packet):
         self._send_queue.append(marshall_packet(packet))
