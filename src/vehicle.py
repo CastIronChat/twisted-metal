@@ -12,7 +12,6 @@ from iron_math import (
 )
 from linked_sprite import LinkedSprite
 from movement_controls import MovementControls
-from player_input import PlayerInput
 from sprite_lists import SpriteLists
 from textures import RED_CAR
 from weapons.laser_beam import LaserBeam
@@ -25,7 +24,7 @@ if TYPE_CHECKING:
 
 
 class Vehicle:
-    def __init__(self, player: Player, input: PlayerInput, sprite_lists: SpriteLists):
+    def __init__(self, player: Player, sprite_lists: SpriteLists):
         self.player = player
         self.sprite = LinkedSprite[Vehicle](texture=RED_CAR, scale=0.2)
         self.sprite.owner = self
@@ -33,7 +32,6 @@ class Vehicle:
         self.sprite_lists.vehicles.append(self.sprite)
         self.sprite.center_x = 256
         self.sprite.center_y = 256
-        self.input = input
         self.primary_weapon_transform = (16, 10, 0)
         self.secondary_weapon_transform = (16, -10, 0)
         # Weapons
@@ -50,7 +48,6 @@ class Vehicle:
         self._swap_in_weapons()
         self.x_shift = float
         self.y_shift = float
-
         self.drive_mode_index = 0
         self.drive_modes = create_drive_modes(self)
         self.velocity = (0.0, 0.0)
@@ -65,7 +62,7 @@ class Vehicle:
         # Driving and movement
         #
         if self.player.alive:
-            self.movement.drive_input(delta_time, self, self.input)
+            self.movement.drive_input(delta_time, self, self.player.input)
         self.movement.move(delta_time, self, self.sprite_lists.walls)
 
         #
@@ -74,7 +71,7 @@ class Vehicle:
         if self.player.alive:
             self.primary_weapon.update(delta_time)
             self.secondary_weapon.update(delta_time)
-            if self.input.swap_weapons_button.pressed:
+            if self.player.input.swap_weapons_button.pressed:
                 self._swap_weapons()
 
     def apply_damage(self, damage: float):
@@ -92,7 +89,7 @@ class Vehicle:
     def _swap_in_weapons(self):
         self.primary_weapon = self.weapons_list[self.weapon_index](
             self.sprite_lists,
-            self.input.primary_fire_button,
+            self.player.input.primary_fire_button,
             self.primary_weapon_transform,
         )
         self.weapon_index += 1
@@ -100,17 +97,11 @@ class Vehicle:
             self.weapon_index = 0
         self.secondary_weapon = self.weapons_list[self.weapon_index](
             self.sprite_lists,
-            self.input.secondary_fire_button,
+            self.player.input.secondary_fire_button,
             self.secondary_weapon_transform,
         )
 
-    @property
-    def location(self):
-        return get_sprite_location(self.sprite)
-
-    @location.setter
-    def location(self, location: tuple[float, float, float]):
-        set_sprite_location(self.sprite, location)
+    def _update_weapon_locations(self):
         move_sprite_relative_to_parent(
             self.primary_weapon.weapon_sprite,
             self.sprite,
@@ -122,23 +113,51 @@ class Vehicle:
             self.secondary_weapon_transform,
         )
 
+    @property
+    def location(self):
+        return get_sprite_location(self.sprite)
+
+    @location.setter
+    def location(self, location: tuple[float, float, float]):
+        set_sprite_location(self.sprite, location)
+        self._update_weapon_locations()
+
     # these properties are for the convenience of calling vehicle.center_x rather than vehicle.location[0]
-    # they specifically don't have setters because location should be set instead to move the weapons as well
     @property
     def center_x(self):
         return self.sprite.center_x
+
+    @center_x.setter
+    def center_x(self, center_x: float):
+        self.sprite.center_x = center_x
+        self._update_weapon_locations()
 
     @property
     def center_y(self):
         return self.sprite.center_y
 
+    @center_y.setter
+    def center_y(self, center_y: float):
+        self.sprite.center_y = center_y
+        self._update_weapon_locations()
+
     @property
     def angle(self):
         return self.sprite.angle
 
+    @angle.setter
+    def angle(self, angle: float):
+        self.sprite.angle = angle
+        self._update_weapon_locations()
+
     @property
     def radians(self):
         return self.sprite.radians
+
+    @radians.setter
+    def radians(self, radians: float):
+        self.sprite.radians = radians
+        self._update_weapon_locations()
 
     @property
     def drive_mode(self):

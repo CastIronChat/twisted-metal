@@ -16,7 +16,8 @@ class Player:
         initial_spawn_points: list[SpawnPoint],
         player_index: int,
     ):
-        self.vehicle = Vehicle(self, input, sprite_lists)
+        self.input = input
+        self.vehicle = Vehicle(self, sprite_lists)
         self.vehicle.location = initial_spawn_points[player_index].transform
         self.player_health = 100
         self.alive = True
@@ -52,11 +53,3 @@ class Player:
         ].transform
         self.vehicle.location = chosen_spawn_point
         self.vehicle.movement.reset_velocity()
-
-    @property
-    def input(self):
-        return self.vehicle.input
-
-    @input.setter
-    def input(self, input: PlayerInput):
-        self.vehicle.input = input

@@ -38,6 +38,7 @@ class LaserBeam(Weapon):
         self.beam.append_sprite()
 
     def swap_out(self):
+        super().swap_out()
         self.remove_beam()
 
     def remove_beam(self):
