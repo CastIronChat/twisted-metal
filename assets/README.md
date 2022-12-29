@@ -23,5 +23,5 @@ like that.
 
 - assets/hud/countdown[0-5].png: TODO
 - assets/hud/player[1-4]avatar.png: https://icons8.com/icon/set/alphabet/ios-filled (scroll down to "Numbers circled")
-- assets/vehicle/red-car-top-view.png: TODO
+- assets/vehicle/red-car-top-view.png: https://opengameart.org/content/red-car-top-down
 - assets/spritesheets/colored-transparent.png: https://www.kenney.nl/assets/bit-pack (inside the zip at `/Tilesheet/colored-transparent.png`)
