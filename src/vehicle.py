@@ -13,7 +13,7 @@ from iron_math import (
 from linked_sprite import LinkedSprite
 from movement_controls import MovementControls
 from sprite_lists import SpriteLists
-from textures import RED_CAR
+from textures import FIRE, RED_CAR
 from weapons.laser_beam import LaserBeam
 from weapons.machine_gun import MachineGun
 from weapons.rocket_launcher import RocketLauncher
@@ -29,6 +29,7 @@ class Vehicle:
         self.sprite = LinkedSprite[Vehicle](texture=RED_CAR, scale=0.2)
         self.sprite.owner = self
         self.sprite_lists = sprite_lists
+        self.health: float = 100
         self.sprite_lists.vehicles.append(self.sprite)
         self.primary_weapon_transform = (16, 10, 0)
         self.secondary_weapon_transform = (16, -10, 0)
@@ -46,6 +47,7 @@ class Vehicle:
         self._swap_in_weapons()
         self.hit_indicator: bool = False
         self.time_since_hit: float = 0
+        self.fire_sprite = arcade.Sprite(texture=FIRE, scale=3)
         self.drive_mode_index = 0
         self.drive_modes = create_drive_modes(self)
 
@@ -77,9 +79,22 @@ class Vehicle:
 
     def apply_damage(self, damage: float):
         if self.player.alive:
-            self.player.take_damage(damage)
+            self.health -= damage
+            if self.health <= 0:
+                self.health = 0
+                self.die()
             self.hit_indicator = True
             self.sprite.alpha = 150
+
+    def die(self):
+        self.player.alive = False
+        self.sprite_lists.vehicle_attachments.append(self.fire_sprite)
+
+    def respawn(self, location):
+        self.health = 100
+        self.sprite_lists.vehicle_attachments.remove(self.fire_sprite)
+        self.location = location
+        self.movement.reset_velocity()
 
     def _swap_weapons(self):
         # Moves the current secondary weapon to the primary weapon slot and the next weapon on the list becomes the secondary weapon
@@ -105,7 +120,7 @@ class Vehicle:
             self.secondary_weapon_transform,
         )
 
-    def _update_weapon_locations(self):
+    def _update_vehicle_attachment_locations(self):
         move_sprite_relative_to_parent(
             self.primary_weapon.weapon_sprite,
             self.sprite,
@@ -116,6 +131,10 @@ class Vehicle:
             self.sprite,
             self.secondary_weapon_transform,
         )
+        move_sprite_relative_to_parent(
+            self.fire_sprite, self.sprite, (0, 0, -self.radians)
+        )
+        self.fire_sprite.center_y += 15
 
     @property
     def location(self):
@@ -124,7 +143,7 @@ class Vehicle:
     @location.setter
     def location(self, location: tuple[float, float, float]):
         set_sprite_location(self.sprite, location)
-        self._update_weapon_locations()
+        self._update_vehicle_attachment_locations()
 
     # these properties are for the convenience of calling vehicle.center_x rather than vehicle.location[0]
     @property
@@ -134,7 +153,7 @@ class Vehicle:
     @center_x.setter
     def center_x(self, center_x: float):
         self.sprite.center_x = center_x
-        self._update_weapon_locations()
+        self._update_vehicle_attachment_locations()
 
     @property
     def center_y(self):
@@ -143,7 +162,7 @@ class Vehicle:
     @center_y.setter
     def center_y(self, center_y: float):
         self.sprite.center_y = center_y
-        self._update_weapon_locations()
+        self._update_vehicle_attachment_locations()
 
     @property
     def angle(self):
@@ -152,7 +171,7 @@ class Vehicle:
     @angle.setter
     def angle(self, angle: float):
         self.sprite.angle = angle
-        self._update_weapon_locations()
+        self._update_vehicle_attachment_locations()
 
     @property
     def radians(self):
@@ -161,7 +180,7 @@ class Vehicle:
     @radians.setter
     def radians(self, radians: float):
         self.sprite.radians = radians
-        self._update_weapon_locations()
+        self._update_vehicle_attachment_locations()
 
     @property
     def drive_mode(self):

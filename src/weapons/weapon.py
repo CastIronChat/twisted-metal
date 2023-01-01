@@ -30,7 +30,7 @@ class Weapon:
         self.weapon_transform = weapon_transform
         self.time_since_shoot = 100
         self.weapon_sprite = arcade.Sprite(texture=self.weapon_icon, scale=1)
-        self.sprite_lists.weapons.append(self.weapon_sprite)
+        self.sprite_lists.vehicle_attachments.append(self.weapon_sprite)
         self.setup()
 
     def setup(self):
@@ -45,4 +45,4 @@ class Weapon:
         ...
 
     def swap_out(self):
-        self.sprite_lists.weapons.remove(self.weapon_sprite)
+        self.sprite_lists.vehicle_attachments.remove(self.weapon_sprite)

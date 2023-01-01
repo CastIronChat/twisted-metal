@@ -9,24 +9,21 @@ class SpriteLists:
     """
 
     vehicles: arcade.SpriteList
-    weapons: arcade.SpriteList
+    vehicle_attachments: arcade.SpriteList
     ordnance: arcade.SpriteList
-    beams: arcade.SpriteList
     walls: arcade.SpriteList
     huds: arcade.SpriteList
 
     def __init__(self):
         self.vehicles = arcade.SpriteList()
-        self.weapons = arcade.SpriteList()
+        self.vehicle_attachments = arcade.SpriteList()
         self.ordnance = arcade.SpriteList()
-        self.beams = arcade.SpriteList()
         self.walls = arcade.SpriteList()
         self.huds = arcade.SpriteList()
 
     def draw(self):
         self.walls.draw()
         self.vehicles.draw()
-        self.weapons.draw()
+        self.vehicle_attachments.draw()
         self.ordnance.draw()
-        self.beams.draw()
         self.huds.draw()
