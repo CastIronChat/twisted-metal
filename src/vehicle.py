@@ -30,8 +30,6 @@ class Vehicle:
         self.sprite.owner = self
         self.sprite_lists = sprite_lists
         self.sprite_lists.vehicles.append(self.sprite)
-        self.sprite.center_x = 256
-        self.sprite.center_y = 256
         self.primary_weapon_transform = (16, 10, 0)
         self.secondary_weapon_transform = (16, -10, 0)
         # Weapons
@@ -40,42 +38,48 @@ class Vehicle:
             RocketLauncher,
             MachineGun,
         ]
-        self.weapon_index = 0
+        self.weapon_index: int = 0
         self.primary_weapon: Weapon
         self.secondary_weapon: Weapon
         self.primary_weapon_sprite: arcade.Sprite
         self.secondary_weapon_sprite: arcade.Sprite
         self._swap_in_weapons()
-        self.x_shift = float
-        self.y_shift = float
+        self.hit_indicator: bool = False
+        self.time_since_hit: float = 0
         self.drive_mode_index = 0
         self.drive_modes = create_drive_modes(self)
-        self.velocity = (0.0, 0.0)
-        "Translational velocity -- (x,y) tuple -- measured in pixels per second"
 
         self.movement = MovementControls(
             LinkedSprite[Vehicle](texture=RED_CAR, scale=0.18)
         )
 
     def update(self, delta_time: float):
-        #
+
         # Driving and movement
-        #
         if self.player.alive:
             self.movement.drive_input(delta_time, self, self.player.input)
         self.movement.move(delta_time, self, self.sprite_lists.walls)
 
-        #
         # Weapons
-        #
         if self.player.alive:
+            self.movement.drive_input(delta_time, self, self.player.input)
             self.primary_weapon.update(delta_time)
             self.secondary_weapon.update(delta_time)
             if self.player.input.swap_weapons_button.pressed:
                 self._swap_weapons()
 
+        if self.hit_indicator:
+            self.time_since_hit += delta_time
+            if self.time_since_hit > 0.2:
+                self.sprite.alpha = 255
+                self.hit_indicator = False
+                self.time_since_hit = 0
+
     def apply_damage(self, damage: float):
-        self.player.take_damage(damage)
+        if self.player.alive:
+            self.player.take_damage(damage)
+            self.hit_indicator = True
+            self.sprite.alpha = 150
 
     def _swap_weapons(self):
         # Moves the current secondary weapon to the primary weapon slot and the next weapon on the list becomes the secondary weapon

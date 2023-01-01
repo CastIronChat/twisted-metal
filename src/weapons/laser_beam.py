@@ -49,9 +49,7 @@ class LaserBeam(Weapon):
         beam_appearance = LinkedSpriteSolidColor[Ordnance](
             self.beam_range, 3, arcade.color.RED
         )
-        self.beam = Beam(
-            beam_appearance, self.sprite_lists, [], self.dps, self.beam_range
-        )
+        self.beam = Beam(beam_appearance, self.sprite_lists, self.dps, self.beam_range)
 
     def aim_beam(self):
         if self.beam.exists:

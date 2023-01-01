@@ -35,11 +35,10 @@ class Beam(Ordnance):
         self,
         sprite: LinkedSprite[Ordnance],
         sprite_lists: SpriteLists,
-        payload_list: list[Ordnance],
         dps: float,
         beam_range: float,
     ):
-        super().__init__(sprite, sprite_lists, payload_list)
+        super().__init__(sprite, sprite_lists)
         self.dps = dps
         self.beam_range = beam_range
         self.muzzle_location = (0, 0, 0)

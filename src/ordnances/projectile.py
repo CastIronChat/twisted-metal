@@ -28,14 +28,13 @@ class Projectile(Ordnance):
         self,
         sprite: LinkedSprite[Ordnance],
         sprite_lists: SpriteLists,
-        payload_list: list[Ordnance],
         damage: float,
         muzzle_location: Tuple[float, float, float],
         speed: float,
         angle_of_motion: float,
         sprite_rotation_offet: float = 0,
     ):
-        super().__init__(sprite, sprite_lists, payload_list)
+        super().__init__(sprite, sprite_lists)
         self.damage = damage
         self.speed = speed
         self.angle_of_motion = angle_of_motion
