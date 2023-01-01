@@ -19,7 +19,7 @@ class Player:
         self.input = input
         self.vehicle = Vehicle(self, sprite_lists)
         self.vehicle.location = initial_spawn_points[player_index].transform
-        self.alive = True
+        self.alive: bool = True
         self.respawn_time_passed: float = 0
         self.time_to_respawn: float = 5
         self.initial_spawn_points = initial_spawn_points
