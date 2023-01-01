@@ -41,6 +41,9 @@ class LaserBeam(Weapon):
         super().swap_out()
         self.remove_beam()
 
+    def deactivate(self):
+        self.remove_beam()
+
     def remove_beam(self):
         if self.beam.exists:
             self.beam.remove_sprite()

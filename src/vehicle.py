@@ -89,6 +89,8 @@ class Vehicle:
     def die(self):
         self.player.alive = False
         self.sprite_lists.vehicle_attachments.append(self.fire_sprite)
+        self.primary_weapon.deactivate()
+        self.secondary_weapon.deactivate()
 
     def respawn(self, location):
         self.health = 100
