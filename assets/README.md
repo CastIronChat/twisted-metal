@@ -4,6 +4,8 @@ Every asset: art, sound, etc -- should be paired with a link to their source.
 
 If we made it ourselves, then we should still include it and put "original" for the source.
 
+If we lost the download links, then we should still include it and put "unknown" for the source.
+
 ### Why we do this
 
 Two reasons:
@@ -16,12 +18,7 @@ like that.
 
 ### The List
 
-*Formatting:*  
-*&lt;filename>: &lt;URL> (&lt;what to search on the website, if applicable>)*  
-*...or...*  
-*&lt;filename>: original*
-
-- assets/hud/countdown[0-5].png: TODO
+- assets/hud/countdown[0-5].png: unknown
 - assets/hud/player[1-4]avatar.png: https://icons8.com/icon/set/alphabet/ios-filled (scroll down to "Numbers circled")
 - assets/vehicle/red-car-top-view.png: https://opengameart.org/content/red-car-top-down
 - assets/spritesheets/colored-transparent.png: https://www.kenney.nl/assets/bit-pack (inside the zip at `/Tilesheet/colored-transparent.png`)
