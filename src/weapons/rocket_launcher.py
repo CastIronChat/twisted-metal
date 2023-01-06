@@ -46,7 +46,6 @@ class RocketLauncher(Weapon):
         explosion = Explosion(
             arcade.color.ORANGE_RED,
             self.sprite_lists,
-            [],
             self.explosion_damage,
             self.explosion_radius,
             self.explosion_rate,
@@ -56,12 +55,12 @@ class RocketLauncher(Weapon):
         rocket = Projectile(
             rocket_appearance,
             self.sprite_lists,
-            [explosion],
             self.impact_damage,
             get_transformed_location(self.weapon_sprite, self.muzzle_transform),
             self.rocket_speed,
             self.weapon_sprite.radians,
             sprite_rotation_offet=math.radians(-45),
         )
+        rocket.payload_list.append(explosion)
         # ROCKET texture appears at 45 degree angle. Sprite_rotation_offset compensates for this
         self.time_since_shoot = 0

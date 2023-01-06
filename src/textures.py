@@ -55,6 +55,8 @@ ROCKET_LAUNCHER = kenney_sheet_1bit.get_texture(43, 9)
 AMMO_CASE = kenney_sheet_1bit.get_texture(43, 9)
 ROCKET = kenney_sheet_1bit.get_texture(33, 21)
 
+FIRE = kenney_sheet_1bit.get_texture(15, 10)
+
 RED_CAR = load_texture("assets/vehicle/red-car-top-view.png")
 
 PLAYER_AVATARS = [

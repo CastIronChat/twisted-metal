@@ -36,7 +36,6 @@ class MachineGun(Weapon):
         bullet = Projectile(
             bullet_appearance,
             self.sprite_lists,
-            [],
             self.bullet_damage,
             get_transformed_location(self.weapon_sprite, self.muzzle_transform),
             self.bullet_speed,

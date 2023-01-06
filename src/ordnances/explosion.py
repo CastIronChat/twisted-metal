@@ -27,7 +27,6 @@ class Explosion(Ordnance):
         self,
         color: arcade.color,
         sprite_lists: SpriteLists,
-        payload_list: list[Ordnance],
         damage: float,
         explosion_radius: float,
         explosion_rate: float,
@@ -35,7 +34,7 @@ class Explosion(Ordnance):
         explosion_appearance = LinkedSpriteCircle[Explosion](
             explosion_radius, color, soft=False
         )
-        super().__init__(explosion_appearance, sprite_lists, payload_list)
+        super().__init__(explosion_appearance, sprite_lists)
         self.sprite.visible = False
         self.color = color
         self.damage = damage
@@ -63,7 +62,6 @@ class Explosion(Ordnance):
         sub_explosion = SubExplosion(
             sub_explosion_appearance,
             self.sprite_lists,
-            [],
             self.damage,
             self,
             self.explosion_rate,
@@ -86,13 +84,12 @@ class SubExplosion(Ordnance):
         self,
         sprite: LinkedSprite[Ordnance],
         sprite_lists: SpriteLists,
-        payload_list: list[Ordnance],
         damage: float,
         explosion: Explosion,
         explosion_rate: float,
         direction: float,
     ):
-        super().__init__(sprite, sprite_lists, payload_list)
+        super().__init__(sprite, sprite_lists)
         self.damage = damage
         self.explosion = explosion
         self.explosion_rate = explosion_rate
