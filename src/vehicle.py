@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING, List
 
 import arcade
 
+from constants import HIT_INDICATOR_DURATION
 from driving.create_drive_modes import create_drive_modes
 from iron_math import (
     get_sprite_location,
@@ -72,7 +73,7 @@ class Vehicle:
 
         if self.hit_indicator:
             self.time_since_hit += delta_time
-            if self.time_since_hit > 0.2:
+            if self.time_since_hit > HIT_INDICATOR_DURATION:
                 self.sprite.alpha = 255
                 self.hit_indicator = False
                 self.time_since_hit = 0
@@ -84,6 +85,7 @@ class Vehicle:
                 self.health = 0
                 self.die()
             self.hit_indicator = True
+            self.time_since_hit = 0
             self.sprite.alpha = 150
 
     def die(self):
