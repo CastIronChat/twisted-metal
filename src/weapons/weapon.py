@@ -28,7 +28,7 @@ class Weapon:
         self.input_button = input_button
         self.sprite_lists = sprite_lists
         self.weapon_transform = weapon_transform
-        self.time_since_shoot = 100
+        self.time_since_shoot = 0
         self.weapon_sprite = arcade.Sprite(texture=self.weapon_icon, scale=1)
         self.sprite_lists.vehicle_attachments.append(self.weapon_sprite)
         self.setup()

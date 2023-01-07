@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING
 import arcade
 
 import constants
+from iron_math import move_sprite_polar
 from player_input import PlayerInput
 
 # This allows a circular import only for the purposes of type hints
@@ -31,6 +32,8 @@ DEFAULT_DRIVE_SPEED = 150
 DEFAULT_TURN_SPEED = 75
 
 IMPACT_FORCE_FLOOR = 1.5
+EXPLOSION_FORCE = 100
+LATERAL_FRICTION = 50
 
 
 class MovementControls:
@@ -39,6 +42,9 @@ class MovementControls:
     drive_speed: float
     # The stat for max rotational speed
     turn_speed: float
+
+    pushed_speed: float
+    pushed_radians: float
 
     # how fast the current acceleration goes from 0 -> 1
     acceleration_rate: float
@@ -65,6 +71,8 @@ class MovementControls:
         self.current_velocity_turn = 0
         self.current_acceleration = 0
         self.external_velocity_turn = 0
+        self.pushed_speed = 0
+        self.pushed_radians = 0
 
         self.acceleration_rate = DEFAULT_ACCELERATION_RATE
         self.brake_rate = DEFAULT_BRAKE_RATE
@@ -130,6 +138,13 @@ class MovementControls:
             * delta_time
             * -self.current_acceleration
         )
+        self.pushed_speed = self.clamp(
+            self.pushed_speed - LATERAL_FRICTION * delta_time, 0, EXPLOSION_FORCE
+        )
+
+    def hit_by_explosion(self, radians):
+        self.pushed_speed = EXPLOSION_FORCE
+        self.pushed_radians = radians
 
     def reset_velocity(self):
         self.current_acceleration = 0
@@ -144,6 +159,10 @@ class MovementControls:
         self.shadow_sprite.center_y = vehicle.center_y + self.current_velocity_y
         self.shadow_sprite.angle = (
             self.current_velocity_turn + vehicle.angle + self.external_velocity_turn
+        )
+        # Apply any external forces to car
+        move_sprite_polar(
+            self.shadow_sprite, self.pushed_speed * delta_time, self.pushed_radians
         )
         walls_touching_player = arcade.check_for_collision_with_list(
             self.shadow_sprite, walls
