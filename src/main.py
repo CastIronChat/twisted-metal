@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import arcade
+import audio
 
 from arena.arena import Arena
 from arena.arena_loader import load_arena_by_name
