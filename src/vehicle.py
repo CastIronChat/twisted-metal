@@ -14,7 +14,7 @@ from iron_math import (
 from linked_sprite import LinkedSprite
 from movement_controls import MovementControls
 from sprite_lists import SpriteLists
-from textures import FIRE, RED_CAR
+from textures import FIRE, VEHICLES
 from weapons.laser_beam import LaserBeam
 from weapons.machine_gun import MachineGun
 from weapons.rocket_launcher import RocketLauncher
@@ -25,9 +25,9 @@ if TYPE_CHECKING:
 
 
 class Vehicle:
-    def __init__(self, player: Player, sprite_lists: SpriteLists):
+    def __init__(self, player: Player, sprite_lists: SpriteLists, player_index: int):
         self.player = player
-        self.sprite = LinkedSprite[Vehicle](texture=RED_CAR, scale=0.2)
+        self.sprite = LinkedSprite[Vehicle](texture=VEHICLES[player_index], scale=0.2)
         self.sprite.owner = self
         self.sprite_lists = sprite_lists
         self.health: float = 100
@@ -53,7 +53,7 @@ class Vehicle:
         self.drive_modes = create_drive_modes(self)
 
         self.movement = MovementControls(
-            LinkedSprite[Vehicle](texture=RED_CAR, scale=0.18)
+            LinkedSprite[Vehicle](texture=VEHICLES[1], scale=0.18)
         )
 
     def update(self, delta_time: float):
