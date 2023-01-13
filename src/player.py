@@ -23,6 +23,10 @@ class Player:
         self.respawn_time_passed: float = 0
         self.time_to_respawn: float = 5
         self.initial_spawn_points = initial_spawn_points
+        self.player_index = player_index
+
+    def __hash__(self) -> int:
+        return self.player_index
 
     def update(self, delta_time: float):
         self.vehicle.update(delta_time)
