@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import List
 
 import arcade
-from pyglet.input import ControllerManager
+from pyglet.input import get_controllers
 from pyglet.window.key import KeyStateHandler
 
 from arena.arena import Arena
@@ -31,7 +31,6 @@ class PlayerManager:
     def __init__(self, keyboard: KeyStateHandler) -> None:
         self._players: list[Player] = []
         self._keyboard = keyboard
-        self._controller_manager: ControllerManager
         self._did_setup = False
 
     @property
@@ -52,8 +51,7 @@ class PlayerManager:
             raise Exception("Already setup; cannot setup twice")
         self._did_setup = True
 
-        _controller_manager = ControllerManager()
-        controllers = _controller_manager.get_controllers()
+        controllers = get_controllers()
 
         for player_index in range(0, PLAYER_COUNT):
             controller = None
