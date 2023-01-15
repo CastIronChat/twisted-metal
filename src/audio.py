@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import pygame
 
 
@@ -8,6 +6,10 @@ class SoundList:
 
 
 class TwistedSound:
+    @property
+    def mixer(self):
+        return self._mixer
+
     @property
     def sound(self):
         return self._sound
@@ -26,8 +28,11 @@ class TwistedSound:
         self.channel.set_volume(self._volume)
 
     def __init__(self, selection, times=1):
-        self._sound = pygame.mixer.Sound(selection)
-        self._channel = pygame.mixer.find_channel()
+        self._mixer = pygame.mixer
+        self.mixer.init()
+
+        self._sound = self.mixer.Sound(selection)
+        self._channel = self.mixer.find_channel()
         self.volume = 0.2
 
         self.play(times)
@@ -37,6 +42,3 @@ class TwistedSound:
 
     def stop(self):
         self.channel.stop()
-
-
-pygame.mixer.init()
