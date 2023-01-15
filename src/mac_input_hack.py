@@ -24,6 +24,10 @@ import pyglet
 # - add a more extensive database of GUID mappings
 # - fix pyglet's GUID reading bug
 #
+# References:
+#   https://github.com/pyglet/pyglet/issues/574#issuecomment-1102608401
+#   https://github.com/pyglet/pyglet/issues/705
+#
 
 
 def apply_fix():
