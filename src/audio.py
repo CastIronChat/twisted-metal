@@ -16,18 +16,27 @@ class TwistedSound:
     def channel(self):
         return self._channel
 
+    @property
+    def volume(self):
+        return self._volume
+
+    @volume.setter
+    def volume(self, value):
+        self._volume = value
+        self.channel.set_volume(self._volume)
+
     def __init__(self, selection, times=1):
         self._sound = pygame.mixer.Sound(selection)
         self._channel = pygame.mixer.find_channel()
+        self.volume = 0.2
 
-        self._channel.set_volume(0.2)
         self.play(times)
 
     def play(self, times):
-        self._channel.play(self._sound, times)
+        self.channel.play(self.sound, times)
 
     def stop(self):
-        self._channel.stop()
+        self.channel.stop()
 
 
 pygame.mixer.init()
