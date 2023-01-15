@@ -6,6 +6,7 @@ import arcade
 from pyglet.input import get_controllers
 from pyglet.window.key import KeyStateHandler
 
+import mac_input_hack
 from arena.arena import Arena
 from constants import (
     KEYBOARD_PLAYER_ALSO_USES_A_CONTROLLER,
@@ -17,6 +18,8 @@ from iron_math import set_sprite_location
 from player import Player
 from player_input import PlayerInput, bind_to_keyboard, set_controller_layout
 from sprite_lists import SpriteLists
+
+mac_input_hack.apply_fix()
 
 
 class PlayerManager:
