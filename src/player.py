@@ -18,6 +18,8 @@ from weapons.laser_beam import LaserBeam
 from weapons.machine_gun import MachineGun
 from weapons.rocket_launcher import RocketLauncher
 from weapons.weapon import Weapon
+from audio import TwistedSound
+from audio import SoundList
 
 
 class Player:
@@ -60,6 +62,8 @@ class Player:
         self.vehicle = MovementControls(
             LinkedSprite[Player](texture=RED_CAR, scale=0.18)
         )
+
+        self.engine_sound = TwistedSound(SoundList.engine_1, -1)
 
     def update(self, delta_time: float):
         #
