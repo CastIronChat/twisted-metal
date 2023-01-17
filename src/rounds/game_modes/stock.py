@@ -1,7 +1,8 @@
 from __future__ import annotations
 
-from arena.arena import Arena
 from game_modes.game_mode import GameMode
+
+from arena.arena import Arena
 from player import Player
 from player_manager import PlayerManager
 from sprite_lists import SpriteLists
