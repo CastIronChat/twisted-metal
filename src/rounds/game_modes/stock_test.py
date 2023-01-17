@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from unittest import TestCase
 
-from game_modes.stock import StockGameMode
+from rounds.game_modes.stock import StockGameMode
 
 
 class TestStock(TestCase):
