@@ -22,6 +22,8 @@ from weapons.weapon import Weapon
 if TYPE_CHECKING:
     from player import Player
 
+import math
+
 
 class Vehicle:
     def __init__(self, player: Player, sprite_lists: SpriteLists):
@@ -54,7 +56,7 @@ class Vehicle:
         "Translational velocity -- (x,y) tuple -- measured in pixels per second"
 
         self.movement = MovementControls(
-            LinkedSprite[Vehicle](texture=RED_CAR, scale=0.18)
+            LinkedSprite[Vehicle](texture=RED_CAR, scale=0.2)
         )
 
     def update(self, delta_time: float):
