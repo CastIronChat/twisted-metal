@@ -33,8 +33,8 @@ import pyglet
 def apply_fix():
     if platform.system() == "Darwin":
 
-        # Replacement implementation of pyglet's get_guid method.
-        # This was copy-pasted out of pyglet's source code, then modified to
+        # Replacement implementations of two of pyglet's functions.
+        # They were copy-pasted out of pyglet's source code, then modified to
         # fix the bug
         def get_guid(self):
             """Generate an SDL2 style GUID from the product guid."""
@@ -66,6 +66,22 @@ def apply_fix():
                 name = name.encode().hex()
                 return "{:04x}0000{:0<24}".format(bustype, name)
 
+        def _create_controller(device, display):
+            if isinstance(device.transport, str) and device.transport.upper() in (
+                "USB",
+                "BLUETOOTH",
+            ):
+                mapping = pyglet.input.darwin_hid.get_mapping(device.get_guid())
+                if not mapping:
+                    return
+                return pyglet.input.darwin_hid.Controller(
+                    pyglet.input.darwin_hid.PygletDevice(
+                        display, device, pyglet.input.darwin_hid._hid_manager
+                    ),
+                    mapping,
+                )
+
         pyglet.input.darwin_hid.Device.get_guid = get_guid
+        pyglet.input.darwin_hid._create_controller = _create_controller
 
         pyglet.input.controller.add_mappings_from_file("assets/gamecontrollerdb.txt")
