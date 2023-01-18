@@ -67,6 +67,16 @@ def apply_fix():
                 return "{:04x}0000{:0<24}".format(bustype, name)
 
         def _create_controller(device, display):
+            try:
+                print(
+                    device.manufacturer,
+                    "-",
+                    device.product,
+                    device.transport,
+                    device.get_guid(),
+                )
+            except Exception:
+                print(device.transport, device.get_guid())
             if isinstance(device.transport, str) and device.transport.upper() in (
                 "USB",
                 "BLUETOOTH",

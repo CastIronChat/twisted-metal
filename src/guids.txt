@@ -1,0 +1,5 @@
+8BitDo - 8BitDo Receiver USB 03000000c82d00000031000001000000
+dinput mode (- and dpadleft)
+8BitDo - 8BitDo Receiver USB 03000000c82d00000031000001000000
+mac mode (- and dpadright)
+Sony Computer Entertainment - Wireless Controller USB 030000004c050000c405000000010000
