@@ -4,15 +4,13 @@ from typing import TYPE_CHECKING, List, Optional, Tuple, cast
 
 import arcade
 
-from arena.wall import Wall
 from iron_math import set_sprite_location
-from linked_sprite import LinkedSprite, LinkedSpriteCircle
+from linked_sprite import LinkedSprite
 from sprite_lists import SpriteLists
 
 # This allows a circular import only for the purposes of type hints
-# Weapon will never create and instance of Player
 if TYPE_CHECKING:
-    from player import Player
+    from vehicle import Vehicle
 
 
 class Ordnance:
@@ -38,12 +36,11 @@ class Ordnance:
         self,
         sprite: LinkedSprite[Ordnance],
         sprite_lists: SpriteLists,
-        payload_list: list[Ordnance],
     ):
         self.sprite = sprite
         sprite.owner = self
         self.sprite_lists = sprite_lists
-        self.payload_list = payload_list
+        self.payload_list = []
         self.sprite_rotation_offset = 0
         self.exists = False
 
@@ -77,8 +74,10 @@ class Ordnance:
     def on_collision_with_wall(self, walls_touching_projectile: arcade.SpriteList):
         ...
 
-    def on_collision_with_player(
-        self, delta_time: float, players_touching_projectile: list[LinkedSprite[Player]]
+    def on_collision_with_vehicle(
+        self,
+        delta_time: float,
+        vehicles_touching_projectile: list[LinkedSprite[Vehicle]],
     ):
         ...
 

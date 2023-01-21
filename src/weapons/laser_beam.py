@@ -28,7 +28,6 @@ class LaserBeam(Weapon):
         self.create_beam()
 
     def update(self, delta_time: float):
-        super().update()
         if self.input_button.pressed:
             self.shoot()
         if self.input_button.released:
@@ -39,6 +38,10 @@ class LaserBeam(Weapon):
         self.beam.append_sprite()
 
     def swap_out(self):
+        super().swap_out()
+        self.remove_beam()
+
+    def deactivate(self):
         self.remove_beam()
 
     def remove_beam(self):
@@ -49,9 +52,7 @@ class LaserBeam(Weapon):
         beam_appearance = LinkedSpriteSolidColor[Ordnance](
             self.beam_range, 3, arcade.color.RED
         )
-        self.beam = Beam(
-            beam_appearance, self.sprite_lists, [], self.dps, self.beam_range
-        )
+        self.beam = Beam(beam_appearance, self.sprite_lists, self.dps, self.beam_range)
 
     def aim_beam(self):
         if self.beam.exists:

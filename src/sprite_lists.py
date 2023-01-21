@@ -8,22 +8,22 @@ class SpriteLists:
     Structure that contains SpriteLists
     """
 
-    players: arcade.SpriteList
+    vehicles: arcade.SpriteList
+    vehicle_attachments: arcade.SpriteList
     ordnance: arcade.SpriteList
-    beams: arcade.SpriteList
     walls: arcade.SpriteList
     huds: arcade.SpriteList
 
     def __init__(self):
-        self.players = arcade.SpriteList()
+        self.vehicles = arcade.SpriteList()
+        self.vehicle_attachments = arcade.SpriteList()
         self.ordnance = arcade.SpriteList()
-        self.beams = arcade.SpriteList()
         self.walls = arcade.SpriteList()
         self.huds = arcade.SpriteList()
 
     def draw(self):
         self.walls.draw()
-        self.players.draw()
+        self.vehicles.draw()
+        self.vehicle_attachments.draw()
         self.ordnance.draw()
-        self.beams.draw()
         self.huds.draw()

@@ -45,7 +45,7 @@ class DebugHud:
             player_input = player.input
             lines += [f"Player #{index + 1}"]
             if DRAW_DRIVE_MODE_DEBUG_HUD:
-                lines += [f"Drive mode: {player.drive_mode.name}"]
+                lines += [f"Drive mode: {player.vehicle.drive_mode.name}"]
             if DRAW_INPUT_DEBUG_HUD:
                 lines += [f"Layout: {player_input.layout_name}"]
                 lines += [

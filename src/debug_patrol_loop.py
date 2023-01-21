@@ -32,4 +32,4 @@ class DebugPatrolLoop:
         position_soon = self.arena.patrol_loop.sample(patrol_timer_soon)
         heading_vec = subtract_vec(position_soon, position)
         heading_radians = math.atan2(heading_vec[1], heading_vec[0])
-        player.location = (position[0], position[1], heading_radians)
+        player.vehicle.location = (position[0], position[1], heading_radians)

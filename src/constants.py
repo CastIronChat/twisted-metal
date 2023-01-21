@@ -9,6 +9,9 @@ SCREEN_TITLE = "John Deer Clown School"
 TICK_DURATION = 1 / 60
 "Duration of a single update tick of the game, measured in seconds"
 
+HIT_INDICATOR_DURATION = 0.2
+"How long the car flashes for in seconds"
+
 USE_DEBUGGER_TIMING_FIXES = os.environ.get("USE_DEBUGGER_TIMING_FIXES") == "true"
 """
 Locks delta_time to exactly 1/60 of a second regardless of system clock,
