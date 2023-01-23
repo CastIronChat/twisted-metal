@@ -1,14 +1,12 @@
 import pygame
 
-
-class SoundList:
-    engine_1 = "assets/audio/engine.ogg"
+# This is a WIP and may not look anything like the solution
+# The problem is as follows:
+# Play an audio clip/synth with loopless playback/infinitely sends a tone that can be pitch shifted up and down
 
 
 class TwistedSound:
-    @property
-    def mixer(self):
-        return self._mixer
+    engine_1 = "assets/audio/engine.ogg"
 
     @property
     def sound(self):
@@ -28,7 +26,7 @@ class TwistedSound:
         self.channel.set_volume(self._volume)
 
     def __init__(self, selection, times=1):
-        self._mixer = pygame.mixer
+        self.mixer = pygame.mixer
         self.mixer.init()
 
         self._sound = self.mixer.Sound(selection)
