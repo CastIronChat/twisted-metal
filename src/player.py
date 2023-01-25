@@ -22,7 +22,7 @@ class Player:
         player_index: int,
     ):
         self.input = input
-        self.vehicle = Vehicle(self, sprite_lists)
+        self.vehicle = Vehicle(self, sprite_lists, player_index)
         self.vehicle.location = initial_spawn_points[player_index].transform
         self.alive: bool = True
         self.controls_active: bool = False
