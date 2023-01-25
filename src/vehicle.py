@@ -59,13 +59,14 @@ class Vehicle:
     def update(self, delta_time: float):
 
         # Driving and movement
-        if self.player.alive:
+        if self.player.alive and self.player.controls_active:
             self.movement.drive_input(delta_time, self, self.player.input)
+        # TODO test if we need to reset velocity to zero between rounds,
+        # otherwise someone might be moving during the 3-2-1 of next round
         self.movement.move(delta_time, self, self.sprite_lists.walls)
 
         # Weapons
-        if self.player.alive:
-            self.movement.drive_input(delta_time, self, self.player.input)
+        if self.player.alive and self.player.controls_active:
             self.primary_weapon.update(delta_time)
             self.secondary_weapon.update(delta_time)
             if self.player.input.swap_weapons_button.pressed:
@@ -93,6 +94,8 @@ class Vehicle:
         self.sprite_lists.vehicle_attachments.append(self.fire_sprite)
         self.primary_weapon.deactivate()
         self.secondary_weapon.deactivate()
+        # Holy chained property access, batman
+        self.player.round_controller.game_mode.on_player_death(self.player)
 
     def respawn(self, location):
         self.health = 100

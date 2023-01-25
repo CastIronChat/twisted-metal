@@ -1,13 +1,14 @@
 from __future__ import annotations
 
-from typing import Protocol
+from typing import TYPE_CHECKING, Optional, Protocol
 
 from arena.arena import Arena
-from player import Player
 from sprite_lists import SpriteLists
 
+if TYPE_CHECKING:
+    from player import Player
 
-# QUESTION: rename to WinCondition?
+
 class GameMode:
     """
     Subclass GameMode to implement each mode.
@@ -24,21 +25,33 @@ class GameMode:
     which one it is.  It will call the methods where appropriate.
     """
 
-    def on_round_start(
+    def on_round_init(
         self, players: list[Player], arena: Arena, sprite_lists: SpriteLists
     ):
         """
-        Called once when the round starts to do any setup.
-        TBD what this method accepts, probably references to the player manager, arena, sprite_list, hud?
+        Called once when the round 3-2-1 timer starts, to do any setup.
 
         For example, in a CTF mode, this may spawn the flags.
         """
         pass
 
-    def create_mode_specific_player_hud(self):
+    def on_round_start(self):
+        """
+        Called once when the round 3-2-1 timer hits GO.
+        """
         pass
 
-    def create_mode_specific_hud(self):
+    def create_hud(self):
+        """
+        Create a HUD object -- interface TBD -- that shows mode-specific info.
+        """
+        pass
+
+    def create_player_hud(self, player: Player):
+        """
+        Create a HUD object for a single player -- interface TBD -- that shows
+        mode-specific info about that player.
+        """
         pass
 
     def update(self, delta_time: float):
@@ -54,13 +67,10 @@ class GameMode:
         """
         pass
 
-    # QUESTION: Potentially confusing: when is this called?  When the respawn happens, or immediately upon death?
-    # Should be immediately upon death to prevent the respawn timer from appearing.
-    # But if that's the case, should we collapse into on_player_death?  Return value of on_player_death?
-    def is_player_allowed_to_respawn(self, player: Player) -> bool:
+    def get_winner(self) -> Optional[Player]:
         """
-        Called by the game to ask if a player is allowed to respawn anymore.
-        For example, game modes may return False if this player has run out of
-        lives.
+        Return a `Player` to crown a winner, `None` if game is not over yet.
+
+        Will be called every frame by `RoundController`.
         """
-        return True
+        return None
