@@ -60,3 +60,9 @@ ARENA = "default"
 """
 Loads this arena at startup, from assets/arenas/<ARENA>.tmx
 """
+
+STOCK_LIVES_PER_PLAYER = 3
+"""
+For stock game mode.  Set lower to make debugging round lifecycle easier.
+Can be paired with PLAYER_COUNT=2
+"""

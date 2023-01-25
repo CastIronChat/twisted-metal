@@ -3,12 +3,11 @@ from __future__ import annotations
 from typing import Optional
 
 from arena.arena import Arena
+from constants import STOCK_LIVES_PER_PLAYER
 from player import Player
 from player_manager import PlayerManager
 from rounds.game_modes.game_mode import GameMode
 from sprite_lists import SpriteLists
-
-DEFAULT_LIVES_PER_PLAYER = 3
 
 
 class PlayerState:
@@ -40,7 +39,7 @@ class StockGameMode(GameMode):
     _winner: Optional[Player]
     "None while the round is in progress, non-None as soon as someone wins"
 
-    def __init__(self, lives_per_player=DEFAULT_LIVES_PER_PLAYER):
+    def __init__(self, lives_per_player=STOCK_LIVES_PER_PLAYER):
         super().__init__()
         self._lives_per_player = lives_per_player
 

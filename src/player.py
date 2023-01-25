@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import random
+from typing import Sequence
 
 from arena.spawn_point import SpawnPoint
 from player_input import PlayerInput
@@ -18,12 +19,14 @@ class Player:
         self,
         input: PlayerInput,
         sprite_lists: SpriteLists,
-        initial_spawn_points: list[SpawnPoint],
+        initial_spawn_point: SpawnPoint,
+        spawn_points: Sequence[SpawnPoint],
         player_index: int,
     ):
         self.input = input
         self.vehicle = Vehicle(self, sprite_lists, player_index)
-        self.vehicle.location = initial_spawn_points[player_index].transform
+        self._initial_spawn_point = initial_spawn_point
+        self._spawn_points = spawn_points
         self.alive: bool = True
         self.controls_active: bool = False
         "Is false between rounds, when you're not allowed to move yet"
@@ -34,7 +37,6 @@ class Player:
         """
         self.respawn_time_passed: float = 0
         self.time_to_respawn: float = 5
-        self.initial_spawn_points = initial_spawn_points
         self.player_index = player_index
 
     def __hash__(self) -> int:
@@ -50,10 +52,22 @@ class Player:
             if self.respawn_time_passed > self.time_to_respawn:
                 self.respawn()
 
+    def round_start_spawn(self):
+        """
+        Spawning that happens at round start
+        """
+        self._spawn(self._initial_spawn_point)
+
     def respawn(self):
+        """
+        Spawning that happens mid-round, following a death.
+        """
+        chosen_spawn_point = self._spawn_points[
+            random.randrange(len(self._spawn_points))
+        ]
+        self._spawn(chosen_spawn_point)
+
+    def _spawn(self, spawn_point: SpawnPoint):
         self.alive = True
         self.respawn_time_passed = 0
-        chosen_spawn_point = self.initial_spawn_points[
-            random.randrange(len(self.initial_spawn_points))
-        ].transform
-        self.vehicle.respawn(chosen_spawn_point)
+        self.vehicle.respawn(spawn_point.transform)

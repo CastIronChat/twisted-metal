@@ -62,7 +62,6 @@ class MyGame(arcade.Window):
         )
 
         # Chicken-and-egg wiring
-        # TODO ask the team if they're ok with using an observables / events mechanism
         for player in self.player_manager.players:
             player.round_controller = self.round_controller
 

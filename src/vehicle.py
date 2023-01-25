@@ -61,8 +61,6 @@ class Vehicle:
         # Driving and movement
         if self.player.alive and self.player.controls_active:
             self.movement.drive_input(delta_time, self, self.player.input)
-        # TODO test if we need to reset velocity to zero between rounds,
-        # otherwise someone might be moving during the 3-2-1 of next round
         self.movement.move(delta_time, self, self.sprite_lists.walls)
 
         # Weapons
@@ -97,9 +95,12 @@ class Vehicle:
         # Holy chained property access, batman
         self.player.round_controller.game_mode.on_player_death(self.player)
 
-    def respawn(self, location):
+    def respawn(self, location: tuple[float, float, float]):
+        """
+        Called either following a death *or* when round starts / restarts.
+        """
         self.health = 100
-        self.sprite_lists.vehicle_attachments.remove(self.fire_sprite)
+        self.fire_sprite.remove_from_sprite_lists()
         self.location = location
         self.movement.reset_velocity()
 

@@ -71,6 +71,8 @@ class RoundController:
         self._generator = None
 
     def update(self, delta_time: float):
+        # Every frame, tick our state machine generator.
+        # When it finishes, restart it.  Infinite loop.
         if not self._generator:
             self._generator = self._state_machine()
             self._generator.send(cast(float, None))
@@ -84,14 +86,19 @@ class RoundController:
     # TODO Rewrite to not be a generator; is not worth the complexity
     def _state_machine(self) -> Generator[None, float, None]:
         countdown_time = COUNTDOWN_SECONDS
+        # This method is a python "generator"
+        # Every time we `yield`, this function effectively pauses and will be
+        # resumed next frame by `update()`
         delta_time = yield
 
         # Init for new round and reset from the previous round
         for player in self._players:
+            player.round_start_spawn()
             player.allowed_to_respawn = True
             player.controls_active = False
         self.game_mode.on_round_init(self._players, self._arena, self._sprite_lists)
 
+        # 3-2-1 countdown timer
         while countdown_time > 0:
             delta_time = yield
             countdown_time -= delta_time
@@ -105,6 +112,7 @@ class RoundController:
             player.controls_active = True
         self.game_mode.on_round_start()
 
+        # Loop endlessly until we have a winner
         while True:
             delta_time = yield
 
@@ -113,11 +121,13 @@ class RoundController:
                 countdown_time -= delta_time
                 if countdown_time <= -GO_DISPLAY_DURATION:
                     self._hud.text = ""
+
             winner = self.game_mode.get_winner()
             if winner:
                 break
 
         # We have a winner
+        # Display a banner and give them time for a victory lap
         self._hud.text = f"Player {winner.player_index + 1} Wins!"
         victory_lap_countdown = VICTORY_LAP_DURATION
         while victory_lap_countdown > 0:
