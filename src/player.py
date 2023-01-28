@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import random
-from typing import Sequence
+from typing import Any, Sequence
 
 from arena.spawn_point import SpawnPoint
 from player_input import PlayerInput
@@ -14,6 +14,8 @@ class Player:
 
     round_controller: RoundController
     "Necessary for player to notify the round controller and game mode about relevant events"
+
+    game_mode_state: Any
 
     def __init__(
         self,

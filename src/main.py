@@ -56,10 +56,12 @@ class MyGame(arcade.Window):
             self.arena,
         )
 
-        game_mode = StockGameMode()
+        game_mode = StockGameMode(self.player_manager.players)
         self.round_controller = RoundController(
             game_mode, self.player_manager.players, self.arena, self.sprite_lists
         )
+        # AT THIS POINT, SOMETHING SHOULD HAVE SET GAME_MODE_STATE ON EVERY PLAYER
+        # YES, THE StockGameMode constructor DID THIS
 
         # Chicken-and-egg wiring
         for player in self.player_manager.players:
@@ -69,6 +71,7 @@ class MyGame(arcade.Window):
         self.input_debug_hud = DebugHud(self.player_manager.players)
 
         # Player Huds
+        # WHEN WE CREATE HUD, EACH PLAYER SHOULD ALREADY HAVE GAME_MODE_STATE ON IT
         self.hud = Hud(self.player_manager.players, self.sprite_lists)
 
         # Debug thingie that puppeteers a player on a patrol loop

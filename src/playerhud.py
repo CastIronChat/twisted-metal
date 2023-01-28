@@ -2,7 +2,9 @@ from __future__ import annotations
 
 import arcade
 
+from lives_hud import LivesHud
 from player import Player
+from rounds.game_modes.stock import StockGameModePlayerState
 from textures import RESPAWN_COUNTDOWN
 
 
@@ -48,6 +50,9 @@ class PlayerHud:
         self.health_sprite.center_x = hud_x
         self.health_sprite.center_y = hud_y
 
+        if isinstance(self.player.game_mode_state, StockGameModePlayerState):
+            self.lives_hud = LivesHud(self.player.game_mode_state, hud_x, hud_y)
+
     def update(self):
 
         # changes healthbar length based on current ratio and left sets healthbar
@@ -70,3 +75,5 @@ class PlayerHud:
             ]
         else:
             self.player_respawn_countdown_sprite.visible = False
+
+        self.lives_hud.update()
