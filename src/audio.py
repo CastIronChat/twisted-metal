@@ -1,38 +1,43 @@
-import pygame
+from pygame import mixer
 
-# This is a WIP and may not look anything like the solution
-# The problem is as follows:
-# Play an audio clip/synth with loopless playback/infinitely sends a tone that can be pitch shifted up and down
+# This class is intended to be used as a controller
+# that controls a universal mixer.
+# The interface allows devs to add sounds as objects
+# with some control over volume without blocking other sounds.
+
+MASTER = mixer
+MASTER.init()
 
 
 class TwistedSound:
     engine_1 = "assets/audio/engine.ogg"
+
+    # channel.play
+    # channel.stop
+    # channel.pause
+    # channel.unpause
+    @property
+    def channel(self):
+        return self._channel
 
     @property
     def sound(self):
         return self._sound
 
     @property
-    def channel(self):
-        return self._channel
-
-    @property
     def volume(self):
         return self._volume
 
+    # A value of 1 is very loud
     @volume.setter
     def volume(self, value):
         self._volume = value
         self.channel.set_volume(self._volume)
 
     def __init__(self, selection, times=1):
-        self.mixer = pygame.mixer
-        self.mixer.init()
-
-        self._sound = self.mixer.Sound(selection)
-        self._channel = self.mixer.find_channel()
-        self.volume = 0.2
-
+        self._sound = MASTER.Sound(selection)
+        self._channel = MASTER.find_channel()
+        self._channel.set_volume(0.1)
         self.play(times)
 
     def play(self, times):
