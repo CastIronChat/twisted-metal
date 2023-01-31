@@ -36,12 +36,11 @@ class Ordnance:
         self,
         sprite: LinkedSprite[Ordnance],
         sprite_lists: SpriteLists,
-        payload_list: list[Ordnance],
     ):
         self.sprite = sprite
         sprite.owner = self
         self.sprite_lists = sprite_lists
-        self.payload_list = payload_list
+        self.payload_list = []
         self.sprite_rotation_offset = 0
         self.exists = False
 

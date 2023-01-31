@@ -51,11 +51,11 @@ class PlayerHud:
     def update(self):
 
         # changes healthbar length based on current ratio and left sets healthbar
-        if self.player.player_health > 0:
-            ratio = self.player.player_health / 100
+        if self.player.vehicle.health > 0:
+            ratio = self.player.vehicle.health / 100
             self.health_sprite.width = self.health_width * ratio
             self.health_sprite.left = self.hud_x - (self.health_width // 2)
-        elif self.player.player_health <= 0:
+        elif self.player.vehicle.health <= 0:
             self.health_sprite.width = 0.1
             self.health_sprite.left = self.hud_x - (self.health_width // 2)
         # creates respawn timer on player's hud

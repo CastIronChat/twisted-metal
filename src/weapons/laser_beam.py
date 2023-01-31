@@ -41,6 +41,9 @@ class LaserBeam(Weapon):
         super().swap_out()
         self.remove_beam()
 
+    def deactivate(self):
+        self.remove_beam()
+
     def remove_beam(self):
         if self.beam.exists:
             self.beam.remove_sprite()
@@ -49,9 +52,7 @@ class LaserBeam(Weapon):
         beam_appearance = LinkedSpriteSolidColor[Ordnance](
             self.beam_range, 3, arcade.color.RED
         )
-        self.beam = Beam(
-            beam_appearance, self.sprite_lists, [], self.dps, self.beam_range
-        )
+        self.beam = Beam(beam_appearance, self.sprite_lists, self.dps, self.beam_range)
 
     def aim_beam(self):
         if self.beam.exists:

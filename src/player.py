@@ -17,10 +17,9 @@ class Player:
         player_index: int,
     ):
         self.input = input
-        self.vehicle = Vehicle(self, sprite_lists)
+        self.vehicle = Vehicle(self, sprite_lists, player_index)
         self.vehicle.location = initial_spawn_points[player_index].transform
-        self.player_health = 100
-        self.alive = True
+        self.alive: bool = True
         self.respawn_time_passed: float = 0
         self.time_to_respawn: float = 5
         self.initial_spawn_points = initial_spawn_points
@@ -28,28 +27,17 @@ class Player:
     def update(self, delta_time: float):
         self.vehicle.update(delta_time)
         #
-        # Respawn
+        # Wait for Respawn
         #
-        if self.player_health <= 0:
-            self.die(delta_time)
-
-    def take_damage(self, damage: float):
-        self.player_health -= damage
-        if self.player_health < 0:
-            self.player_health = 0
-
-    def die(self, delta_time):
-        self.alive = False
-        self.respawn_time_passed = self.respawn_time_passed + delta_time
-        if self.respawn_time_passed > self.time_to_respawn:
-            self.respawn()
+        if not self.alive:
+            self.respawn_time_passed = self.respawn_time_passed + delta_time
+            if self.respawn_time_passed > self.time_to_respawn:
+                self.respawn()
 
     def respawn(self):
-        self.player_health = 100
         self.alive = True
         self.respawn_time_passed = 0
         chosen_spawn_point = self.initial_spawn_points[
             random.randrange(len(self.initial_spawn_points))
         ].transform
-        self.vehicle.location = chosen_spawn_point
-        self.vehicle.movement.reset_velocity()
+        self.vehicle.respawn(chosen_spawn_point)
