@@ -53,7 +53,8 @@ class PlayerManager:
         self._did_setup = True
 
         _controller_manager = ControllerManager()
-        controllers = []
+        controllers = _controller_manager.get_controllers()
+
         for player_index in range(0, PLAYER_COUNT):
             controller = None
             controller_index = player_index
