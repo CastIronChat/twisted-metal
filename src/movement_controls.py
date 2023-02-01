@@ -78,7 +78,7 @@ class MovementControls:
 
         self.drive_modes = create_drive_modes(self)
 
-        self.change_car(1)
+        self.change_car(2)
         print(self.car_type.name)
 
     def change_car(self, index: int):
@@ -107,16 +107,25 @@ class MovementControls:
             self.car_type.drive_input(delta_time, vehicle, input)
 
     # called from the player to tell the vehicle to act on it's intended velocity and rotation
-    def move(self, delta_time: float, vehicle: Vehicle, walls: arcade.SpriteList):
+    def move(
+        self,
+        delta_time: float,
+        vehicle: Vehicle,
+        walls: arcade.SpriteList,
+        vehicles: arcade.SpriteList,
+    ):
         if self.car_type is not None:
-            self.car_type.move(delta_time, vehicle, walls)
+            self.car_type.move(delta_time, vehicle, walls, vehicles)
 
-    def check_for_valid_movement(self, vehicle: Vehicle, velocity, walls):
+    def check_for_valid_movement(self, vehicle: Vehicle, velocity, walls, vehicles):
         # the shadow sprite is used to simplify math and planning to deal with the arena not being an array
 
         self.set_shadow_sprite_position(vehicle.location, velocity)
 
         if len(arcade.check_for_collision_with_list(self.shadow_sprite, walls)) > 0:
+
+            return False
+        if len(arcade.check_for_collision_with_list(self.shadow_sprite, vehicles)) > 1:
 
             return False
         return True

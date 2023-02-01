@@ -157,7 +157,13 @@ class Ghost(DriveMode):
 
         return turn
 
-    def move(self, delta_time: float, vehicle: Vehicle, walls: arcade.SpriteList):
+    def move(
+        self,
+        delta_time: float,
+        vehicle: Vehicle,
+        walls: arcade.SpriteList,
+        vehicles: arcade.SpriteList,
+    ):
 
         # If there are external forces moving the car, apply friction
         self.apply_reductive_force(self.friction, delta_time)
@@ -169,7 +175,7 @@ class Ghost(DriveMode):
 
         # check if the car can move to its new position
         is_valid_position = self.move_controls.check_for_valid_movement(
-            vehicle, real_velocity, walls
+            vehicle, real_velocity, walls, vehicles
         )
 
         if is_valid_position is False:
@@ -183,7 +189,7 @@ class Ghost(DriveMode):
 
             # check if the car can move to its new position
             is_valid_position = self.move_controls.check_for_valid_movement(
-                vehicle, smaller_velocity, walls
+                vehicle, smaller_velocity, walls, vehicles
             )
 
             if is_valid_position is True:

@@ -63,11 +63,13 @@ class Vehicle:
         # Driving and movement
         if self.player.alive:
             self.movement.drive_input(delta_time, self, self.player.input)
-        self.movement.move(delta_time, self, self.sprite_lists.walls)
+        self.movement.move(
+            delta_time, self, self.sprite_lists.walls, self.sprite_lists.vehicles
+        )
 
         # Weapons
         if self.player.alive:
-            self.movement.drive_input(delta_time, self, self.player.input)
+            # self.movement.drive_input(delta_time, self, self.player.input)
             self.primary_weapon.update(delta_time)
             self.secondary_weapon.update(delta_time)
             if self.player.input.swap_weapons_button.pressed:

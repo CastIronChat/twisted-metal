@@ -26,5 +26,11 @@ class DriveMode:
     def drive_input(self, delta_time: float, vehicle: Vehicle, input: PlayerInput):
         ...
 
-    def move(self, delta_time: float, vehicle: Vehicle, walls: arcade.SpriteList):
+    def move(
+        self,
+        delta_time: float,
+        vehicle: Vehicle,
+        walls: arcade.SpriteList,
+        vehicles: arcade.SpriteList,
+    ):
         ...
