@@ -12,6 +12,7 @@ from constants import (
     SCREEN_WIDTH,
     TICK_DURATION,
     USE_DEBUGGER_TIMING_FIXES,
+    GAME_MODE
 )
 from debug_hud import DebugHud
 from debug_patrol_loop import DebugPatrolLoop
@@ -21,6 +22,7 @@ from hud import Hud
 from ordnances.ordnance import update_ordnance
 from player_manager import PlayerManager
 from rounds.game_modes.stock import StockGameMode
+from rounds.game_modes.empty import EmptyGameMode
 from rounds.round_controller import RoundController
 from sprite_lists import SpriteLists
 
@@ -56,7 +58,13 @@ class MyGame(arcade.Window):
             self.arena,
         )
 
-        game_mode = StockGameMode(self.player_manager.players)
+        if GAME_MODE == 'stock' :
+            game_mode = StockGameMode(self.player_manager.players)
+        elif GAME_MODE == 'empty' :
+            game_mode = EmptyGameMode(self.player_manager.players)
+        
+        
+        # game_mode = StockGameMode(self.player_manager.players)
         self.round_controller = RoundController(
             game_mode, self.player_manager.players, self.arena, self.sprite_lists
         )

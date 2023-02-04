@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import os
+# from rounds.game_modes.stock import StockGameMode
+
 
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
@@ -61,8 +63,13 @@ ARENA = "default"
 Loads this arena at startup, from assets/arenas/<ARENA>.tmx
 """
 
-STOCK_LIVES_PER_PLAYER = 3
+STOCK_LIVES_PER_PLAYER = 1
 """
 For stock game mode.  Set lower to make debugging round lifecycle easier.
 Can be paired with PLAYER_COUNT=2
+"""
+
+GAME_MODE = 'stock'
+"""
+For stock game mode, set to 'stock'. For empty game mode, set to 'empty'
 """

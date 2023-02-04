@@ -4,6 +4,7 @@ from typing import Optional
 
 from arena.arena import Arena
 from constants import STOCK_LIVES_PER_PLAYER
+from constants import GAME_MODE
 from player import Player
 from player_manager import PlayerManager
 from rounds.game_modes.game_mode import GameMode
