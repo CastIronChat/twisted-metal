@@ -37,7 +37,7 @@ class TwistedSound:
     def __init__(self, selection, times=1):
         self._sound = MASTER.Sound(selection)
         self._channel = MASTER.find_channel()
-        self._channel.set_volume(0.1)
+        self._volume = 0.1
         self.play(times)
 
     def play(self, times):
