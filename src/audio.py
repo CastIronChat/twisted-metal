@@ -21,10 +21,6 @@ class TwistedSound:
         return self._channel
 
     @property
-    def sound(self):
-        return self._sound
-
-    @property
     def volume(self):
         return self._volume
 
@@ -37,6 +33,7 @@ class TwistedSound:
     def __init__(self):
         self._channel = MASTER.find_channel()
         self._volume = 0.1
+        self.sound = None
 
     def play(self, times=1):
         self.channel.play(self.sound, times - 1)
@@ -45,4 +42,4 @@ class TwistedSound:
         self.channel.stop()
 
     def select(self, selection):
-        self._sound = MASTER.Sound(selection)
+        self.sound = MASTER.Sound(selection)
