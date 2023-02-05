@@ -10,7 +10,7 @@ MASTER.init()
 
 
 class TwistedSound:
-    engine_1 = "assets/audio/engine.ogg"
+    machine_gun1 = "assets/audio/machine_gun1.ogg"
 
     # channel.play
     # channel.stop
@@ -34,14 +34,15 @@ class TwistedSound:
         self._volume = value
         self.channel.set_volume(self._volume)
 
-    def __init__(self, selection, times=1):
-        self._sound = MASTER.Sound(selection)
+    def __init__(self):
         self._channel = MASTER.find_channel()
         self._volume = 0.1
-        self.play(times)
 
-    def play(self, times):
-        self.channel.play(self.sound, times)
+    def play(self, times=1):
+        self.channel.play(self.sound, times - 1)
 
     def stop(self):
         self.channel.stop()
+
+    def select(self, selection):
+        self._sound = MASTER.Sound(selection)
