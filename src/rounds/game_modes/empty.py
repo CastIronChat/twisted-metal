@@ -10,6 +10,12 @@ from player import Player
 if TYPE_CHECKING:
     from player import Player
 
+class EmptyGameModePlayerState:
+
+    def __init__(self, player: Player, lives: int):
+        self.lives = lives
+        self.player = player
+
 
 class EmptyGameMode(GameMode):
 
@@ -18,10 +24,15 @@ class EmptyGameMode(GameMode):
         super().__init__()
         self.players = players
 
+        for player in players:
+            player.game_mode_state = EmptyGameModePlayerState(player, lives = 99)
+
 
 
     def on_round_init(self, players: list[Player], arena: Arena, sprite_lists: SpriteLists):
-        pass
+
+        super().on_round_init(players, arena, sprite_lists)
+        
 
 
 
@@ -38,7 +49,10 @@ class EmptyGameMode(GameMode):
         pass
 
     def on_player_death(self, player: Player):
-        pass
+        state = player.game_mode_state
+        state.lives = 99
+        player.allowed_to_respawn = state.lives > 0
+        
 
     def get_winner(self) -> Optional[Player]:
 
