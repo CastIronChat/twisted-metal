@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import math
+from enum import Enum
 from math import radians
 from typing import TYPE_CHECKING, Generator, cast
 
@@ -23,6 +24,13 @@ GO_DISPLAY_DURATION = 0.5
 VICTORY_LAP_DURATION = 5.0
 
 
+class State(Enum):
+    INIT = 0
+    COUNTDOWN = 1
+    PLAYING = 2
+    VICTORY_LAP = 3
+
+
 class RoundController:
     """
     A single `RoundController` is responsible for starting and ending each round
@@ -36,6 +44,11 @@ class RoundController:
     Once `GameMode` says the round is over, `RoundController` handles the flashy stuff:
     "Player X Wins!" graphics, camerawork, etc.
     """
+
+    # State machine
+    _state: State
+    _countdown_time: float
+    _victory_lap_countdown: float
 
     def __init__(
         self,
@@ -68,73 +81,73 @@ class RoundController:
             rotation=hud_rotation_deg,
             bold=True,
         )
-        self._generator = None
+
+        self._state = State.INIT
 
     def update(self, delta_time: float):
-        # Every frame, tick our state machine generator.
-        # When it finishes, restart it.  Infinite loop.
-        if not self._generator:
-            self._generator = self._state_machine()
-            self._generator.send(cast(float, None))
-        try:
-            self._generator.send(delta_time)
-        except StopIteration:
-            self._generator = None
+        # Implemented as a state machine.  `self._state` determines what phase we are in.
+        # Each frame, we update according to current state, and conditionally move to the next state
+        # by assigning `self._state`
 
-        self.game_mode.update(delta_time)
+        if self._state == State.INIT:
+            self._countdown_time = COUNTDOWN_SECONDS
+            self._hud.text = ""
 
-    # TODO Rewrite to not be a generator; is not worth the complexity
-    def _state_machine(self) -> Generator[None, float, None]:
-        countdown_time = COUNTDOWN_SECONDS
-        # This method is a python "generator"
-        # Every time we `yield`, this function effectively pauses and will be
-        # resumed next frame by `update()`
-        delta_time = yield
+            # Init for new round and reset from the previous round
+            for player in self._players:
+                player.round_start_spawn()
+                player.allowed_to_respawn = True
+                player.controls_active = False
+            self.game_mode.on_round_init(self._players, self._arena, self._sprite_lists)
 
-        # Init for new round and reset from the previous round
-        for player in self._players:
-            player.round_start_spawn()
-            player.allowed_to_respawn = True
-            player.controls_active = False
-        self.game_mode.on_round_init(self._players, self._arena, self._sprite_lists)
+            self._state = State.COUNTDOWN
 
-        # 3-2-1 countdown timer
-        while countdown_time > 0:
-            delta_time = yield
-            countdown_time -= delta_time
-            display_countdown_number = math.ceil(countdown_time)
-            self._hud.text = display_countdown_number
+        if self._state == State.COUNTDOWN:
+            # 3-2-1 countdown timer
+            self._countdown_time -= delta_time
 
-        # Timer reached zero
-        # Start the game
-        self._hud.text = "GO"
-        for player in self._players:
-            player.controls_active = True
-        self.game_mode.on_round_start()
+            if self._countdown_time > 0:
+                display_countdown_number = math.ceil(self._countdown_time)
+                self._hud.text = display_countdown_number
 
-        # Loop endlessly until we have a winner
-        while True:
-            delta_time = yield
+            else:
+                # Timer reached zero
+                # Start the game
+                self._hud.text = "GO"
+                for player in self._players:
+                    player.controls_active = True
+                self.game_mode.on_round_start()
+
+                self._state = State.PLAYING
+
+        if self._state == State.PLAYING:
+            # Wait until we have a winner
 
             # Hide "GO" text after a delay
-            if countdown_time > -GO_DISPLAY_DURATION:
-                countdown_time -= delta_time
-                if countdown_time <= -GO_DISPLAY_DURATION:
+            self._countdown_time -= delta_time
+            if self._countdown_time > -GO_DISPLAY_DURATION:
+                self._countdown_time -= delta_time
+                if self._countdown_time <= -GO_DISPLAY_DURATION:
                     self._hud.text = ""
 
             winner = self.game_mode.get_winner()
             if winner:
-                break
+                # We have a winner
+                # Display a banner and give them time for a victory lap
+                self._hud.text = f"Player {winner.player_index + 1} Wins!"
+                self._victory_lap_countdown = VICTORY_LAP_DURATION
 
-        # We have a winner
-        # Display a banner and give them time for a victory lap
-        self._hud.text = f"Player {winner.player_index + 1} Wins!"
-        victory_lap_countdown = VICTORY_LAP_DURATION
-        while victory_lap_countdown > 0:
-            delta_time = yield
-            victory_lap_countdown -= delta_time
+                self._state = State.VICTORY_LAP
 
-        self._hud.text = ""
+        if self._state == State.VICTORY_LAP:
+            if self._victory_lap_countdown > 0:
+                self._victory_lap_countdown -= delta_time
+
+            else:
+                # Victory lap finished
+                self._state = State.INIT
+
+        self.game_mode.update(delta_time)
 
     def draw(self):
         self._hud.draw()
