@@ -5,6 +5,7 @@ from typing import Sequence
 
 from arena.spawn_point import SpawnPoint
 from player_input import PlayerInput
+from rounds.game_modes.game_mode import GameModePlayerState
 from rounds.round_controller import RoundController
 from sprite_lists import SpriteLists
 from vehicle import Vehicle
@@ -14,6 +15,9 @@ class Player:
 
     round_controller: RoundController
     "Necessary for player to notify the round controller and game mode about relevant events"
+
+    game_mode_state: GameModePlayerState
+    "Set by the gamemode to store per-player information specific to the game mode."
 
     def __init__(
         self,

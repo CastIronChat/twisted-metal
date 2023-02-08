@@ -9,6 +9,13 @@ if TYPE_CHECKING:
     from player import Player
 
 
+class GameModePlayerState:
+    """
+    If a game mode must store player-specific information, it can subclass this
+    class.  A state object can be attached to each player by the game mode.
+    """
+
+
 class GameMode:
     """
     Subclass GameMode to implement each mode.

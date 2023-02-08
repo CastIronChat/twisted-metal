@@ -1,16 +1,16 @@
 from __future__ import annotations
 
-from typing import Optional
+from typing import Optional, cast
 
 from arena.arena import Arena
 from constants import STOCK_LIVES_PER_PLAYER
 from player import Player
 from player_manager import PlayerManager
-from rounds.game_modes.game_mode import GameMode
+from rounds.game_modes.game_mode import GameMode, GameModePlayerState
 from sprite_lists import SpriteLists
 
 
-class PlayerState:
+class StockGameModePlayerState(GameModePlayerState):
     """
     State of a player relevant in the Stock game mode.
     """
@@ -22,7 +22,10 @@ class PlayerState:
         Decrements at the moment of death, not at the moment of respawn.
         """
 
-        self.player = player
+
+def _get_state(player: Player):
+    "Convenience to get a player's state with type hinting"
+    return cast(StockGameModePlayerState, player.game_mode_state)
 
 
 # QUESTION: how do we render "lives" on screen?
@@ -35,13 +38,20 @@ class PlayerState:
 
 class StockGameMode(GameMode):
     _lives_per_player: int
-    _player_states: dict[Player, PlayerState]
     _winner: Optional[Player]
     "None while the round is in progress, non-None as soon as someone wins"
 
-    def __init__(self, lives_per_player=STOCK_LIVES_PER_PLAYER):
+    def __init__(self, players: list[Player], lives_per_player=STOCK_LIVES_PER_PLAYER):
         super().__init__()
         self._lives_per_player = lives_per_player
+
+        self.players = players
+
+        # Store number of lives on each player
+        for player in players:
+            player.game_mode_state = StockGameModePlayerState(
+                player, lives=self._lives_per_player
+            )
 
     def on_round_init(
         self, players: list[Player], arena: Arena, sprite_lists: SpriteLists
@@ -50,15 +60,11 @@ class StockGameMode(GameMode):
 
         self._winner: Optional[Player] = None
 
-        # Create a mapping between each player and its number of lives
-        self._player_states = dict()
         for player in players:
-            self._player_states[player] = PlayerState(
-                player, lives=self._lives_per_player
-            )
+            _get_state(player).lives = self._lives_per_player
 
     def on_player_death(self, player: Player):
-        state = self._player_states[player]
+        state = _get_state(player)
         state.lives -= 1
         player.allowed_to_respawn = state.lives > 0
         # Once we have a winner, future deaths should not revoke victory.
@@ -67,12 +73,13 @@ class StockGameMode(GameMode):
             self._winner = self._check_if_we_have_a_winner()
 
     def _check_if_we_have_a_winner(self):
-        players_with_remaining_lives: list[PlayerState] = []
-        for player_state in self._player_states.values():
+        players_with_remaining_lives: list[Player] = []
+        for player in self.players:
+            player_state = _get_state(player)
             if player_state.lives > 0:
-                players_with_remaining_lives.append(player_state)
+                players_with_remaining_lives.append(player)
         if len(players_with_remaining_lives) == 1:
-            return players_with_remaining_lives[0].player
+            return players_with_remaining_lives[0]
         if len(players_with_remaining_lives) == 0:
             raise Exception(
                 "Everyone died at once; this is not implemented yet.  Should be declared a draw?"

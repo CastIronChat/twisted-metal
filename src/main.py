@@ -56,7 +56,7 @@ class MyGame(arcade.Window):
             self.arena,
         )
 
-        game_mode = StockGameMode()
+        game_mode = StockGameMode(self.player_manager.players)
         self.round_controller = RoundController(
             game_mode, self.player_manager.players, self.arena, self.sprite_lists
         )
