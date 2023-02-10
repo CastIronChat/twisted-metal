@@ -63,6 +63,9 @@ class StockGameMode(GameMode):
     def on_player_death(self, player: Player):
         state = player.game_mode_state
         state.lives -= 1
+        print('player.game_mode_state.lives', player.game_mode_state.lives)
+        print('---state.lives', state.lives)
+        # player.game_mode_state.lives = state.lives
         player.allowed_to_respawn = state.lives > 0
         # Once we have a winner, future deaths should not revoke victory.
         # E.g. maybe it's fun to kill self during victory dance.

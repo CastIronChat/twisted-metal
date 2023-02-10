@@ -69,7 +69,7 @@ For stock game mode.  Set lower to make debugging round lifecycle easier.
 Can be paired with PLAYER_COUNT=2
 """
 
-GAME_MODE = 'empty'
+GAME_MODE = 'stock'
 """
 For stock game mode, set to 'stock'. For empty game mode, set to 'empty'
 """

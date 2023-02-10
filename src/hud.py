@@ -32,6 +32,7 @@ class Hud:
                 self.player_hud_startx,
                 self.player_hud_starty,
                 self.player_hud_avatars[self.player_number_tracker],
+                sprite_lists
             )
             self.player_huds.append(player_hud)
 
