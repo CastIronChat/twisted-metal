@@ -53,14 +53,12 @@ class StockGameMode(GameMode):
                 player, lives=self._lives_per_player
             )
 
-    def on_round_init(
-        self, players: list[Player], arena: Arena, sprite_lists: SpriteLists
-    ):
-        super().on_round_init(players, arena, sprite_lists)
+    def on_round_init(self, arena: Arena, sprite_lists: SpriteLists):
+        super().on_round_init(arena, sprite_lists)
 
         self._winner: Optional[Player] = None
 
-        for player in players:
+        for player in self.players:
             _get_state(player).lives = self._lives_per_player
 
     def on_player_death(self, player: Player):

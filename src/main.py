@@ -61,10 +61,6 @@ class MyGame(arcade.Window):
             game_mode, self.player_manager.players, self.arena, self.sprite_lists
         )
 
-        # Chicken-and-egg wiring
-        for player in self.player_manager.players:
-            player.round_controller = self.round_controller
-
         # Debug UI for input handling
         self.input_debug_hud = DebugHud(self.player_manager.players)
 

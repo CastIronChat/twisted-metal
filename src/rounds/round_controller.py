@@ -59,6 +59,9 @@ class RoundController:
     ) -> None:
         self.game_mode = game_mode
         self._players = players
+        for player in players:
+            player.game_mode = game_mode
+
         # In the future, we might have a mechanism to change the arena between rounds
         self._arena = arena
         self._sprite_lists = sprite_lists
@@ -69,8 +72,6 @@ class RoundController:
             (SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2),
             polar_to_cartesian(-SCREEN_WIDTH / 2, radians(hud_rotation_deg)),
         )
-        print(hud_x, hud_y)
-        print(polar_to_cartesian(-SCREEN_WIDTH / 2, radians(hud_rotation_deg)))
         self._hud = Text(
             "",
             hud_x,
@@ -98,7 +99,7 @@ class RoundController:
                 player.round_start_spawn()
                 player.allowed_to_respawn = True
                 player.controls_active = False
-            self.game_mode.on_round_init(self._players, self._arena, self._sprite_lists)
+            self.game_mode.on_round_init(self._arena, self._sprite_lists)
 
             self._state = State.COUNTDOWN
 

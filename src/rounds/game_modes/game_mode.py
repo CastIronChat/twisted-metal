@@ -32,9 +32,7 @@ class GameMode:
     which one it is.  It will call the methods where appropriate.
     """
 
-    def on_round_init(
-        self, players: list[Player], arena: Arena, sprite_lists: SpriteLists
-    ):
+    def on_round_init(self, arena: Arena, sprite_lists: SpriteLists):
         """
         Called once when the round 3-2-1 timer starts, to do any setup.
 
@@ -45,19 +43,6 @@ class GameMode:
     def on_round_start(self):
         """
         Called once when the round 3-2-1 timer hits GO.
-        """
-        pass
-
-    def create_hud(self):
-        """
-        Create a HUD object -- interface TBD -- that shows mode-specific info.
-        """
-        pass
-
-    def create_player_hud(self, player: Player):
-        """
-        Create a HUD object for a single player -- interface TBD -- that shows
-        mode-specific info about that player.
         """
         pass
 
