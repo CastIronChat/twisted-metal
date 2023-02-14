@@ -71,7 +71,11 @@ class PlayerManager:
                 bind_to_keyboard(player_input)
             set_controller_layout(player_input, START_WITH_ALTERNATE_CONTROLLER_LAYOUT)
             player = Player(
-                player_input, sprite_lists, arena.initial_spawn_points, player_index
+                player_input,
+                sprite_lists,
+                arena.initial_spawn_points[player_index],
+                arena.spawn_points,
+                player_index,
             )
             self.players.append(player)
 

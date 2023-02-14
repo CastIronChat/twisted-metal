@@ -123,7 +123,6 @@ def get_object_transform_and_size(object: TiledObject, pivot_is_at_bottom: bool)
     )
     rotation = radians(-object.rotation)
 
-    # TODO I kinda hate this syntax; why is python like this?
     height_offset = object.size.height if pivot_is_at_bottom else -object.size.height
 
     center_offset = scale_vec((object.size.width, height_offset), 0.5)
