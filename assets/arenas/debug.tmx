@@ -6,23 +6,23 @@
   <object id="2" name="left-upper" class="Wall" x="-91.3333" y="0" width="123.333" height="225"/>
   <object id="3" name="obstacle" class="Wall" x="284.628" y="227.89" width="267.863" height="37.4674" rotation="20"/>
   <object id="7" name="right-lower" class="Wall" x="768" y="356" width="172.667" height="247.05"/>
-  <object id="17" class="SpawnPoint" gid="1" x="108.756" y="129.289" width="50" height="30" rotation="26.7898">
+  <object id="17" class="SpawnPoint" gid="1" x="108.756" y="129.289" width="50" height="30">
    <properties>
     <property name="initial_spawn_for_player" value="3"/>
    </properties>
   </object>
   <object id="18" class="SpawnPoint" gid="1" x="421.407" y="253.389" width="50" height="30" rotation="270.214"/>
-  <object id="19" class="SpawnPoint" gid="1" x="642.495" y="115.49" width="50" height="30" rotation="148.536">
+  <object id="19" class="SpawnPoint" gid="1" x="642.495" y="115.49" width="50" height="30" rotation="180">
    <properties>
     <property name="initial_spawn_for_player" value="2"/>
    </properties>
   </object>
-  <object id="20" class="SpawnPoint" gid="1" x="666.842" y="458.092" width="50" height="30" rotation="219.364">
+  <object id="20" class="SpawnPoint" gid="1" x="666.842" y="458.092" width="50" height="30" rotation="180">
    <properties>
     <property name="initial_spawn_for_player" value="1"/>
    </properties>
   </object>
-  <object id="21" class="SpawnPoint" gid="1" x="123.999" y="478.792" width="50" height="30" rotation="330.791">
+  <object id="21" class="SpawnPoint" gid="1" x="123.999" y="478.792" width="50" height="30">
    <properties>
     <property name="initial_spawn_for_player" value="0"/>
    </properties>

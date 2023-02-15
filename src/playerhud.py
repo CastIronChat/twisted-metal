@@ -62,6 +62,7 @@ class PlayerHud:
         if (
             self.player.alive == False
             and len(RESPAWN_COUNTDOWN) >= self.player.time_to_respawn
+            and self.player.allowed_to_respawn
         ):
             self.player_respawn_countdown_sprite.visible = True
             self.player_respawn_countdown_sprite.texture = RESPAWN_COUNTDOWN[

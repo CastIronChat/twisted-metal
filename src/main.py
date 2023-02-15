@@ -20,6 +20,8 @@ from global_input import GlobalInput, bind_global_inputs_to_keyboard
 from hud import Hud
 from ordnances.ordnance import update_ordnance
 from player_manager import PlayerManager
+from rounds.game_modes.stock import StockGameMode
+from rounds.round_controller import RoundController
 from sprite_lists import SpriteLists
 
 
@@ -54,6 +56,11 @@ class MyGame(arcade.Window):
             self.arena,
         )
 
+        game_mode = StockGameMode(self.player_manager.players)
+        self.round_controller = RoundController(
+            game_mode, self.player_manager.players, self.arena, self.sprite_lists
+        )
+
         # Debug UI for input handling
         self.input_debug_hud = DebugHud(self.player_manager.players)
 
@@ -86,6 +93,7 @@ class MyGame(arcade.Window):
         )
         ordnance_hits_wall(self.sprite_lists)
         ordnance_hits_vehicle(delta_time, self.sprite_lists)
+        self.round_controller.update(delta_time)
         self.hud.update()
 
     def on_draw(self):
@@ -95,6 +103,7 @@ class MyGame(arcade.Window):
         # clear screen
         self.clear()
         self.sprite_lists.draw()
+        self.round_controller.draw()
         self.input_debug_hud.draw()
 
 
