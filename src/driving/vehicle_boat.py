@@ -108,7 +108,7 @@ class Boat(DriveMode):
         delta_time: float,
         vehicle: Vehicle,
         walls: arcade.SpriteList,
-        vehicles: arcade.SpriteList,
+        cars: arcade.SpriteList,
     ):
 
         # If there are external forces moving the car, apply friction
@@ -126,7 +126,7 @@ class Boat(DriveMode):
 
         # check if the car can move to its new position
         is_valid_position = self.move_controls.check_for_valid_movement(
-            vehicle, real_velocity, walls, vehicles
+            vehicle, real_velocity, walls, cars
         )
 
         if is_valid_position is False:
@@ -140,7 +140,7 @@ class Boat(DriveMode):
 
             # check if the car can move to its new position
             is_valid_position = self.move_controls.check_for_valid_movement(
-                vehicle, smaller_velocity, walls, vehicles
+                vehicle, smaller_velocity, walls, cars
             )
 
             if is_valid_position is True:

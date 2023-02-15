@@ -11,7 +11,7 @@ DEFAULT_WORLD_SIZE_X = constants.SCREEN_WIDTH
 DEFAULT_WORLD_SIZE_Y = constants.SCREEN_HEIGHT
 DEFAULT_ACCELERATION_RATE = 2
 DEFAULT_DECELERATION_RATE = 0.2
-DEFAULT_BRAKE_RATE = 25
+DEFAULT_BRAKE_RATE = 1
 DEFAULT_FRICTION = 25
 DEFAULT_DRIVE_SPEED = 100
 DEFAULT_TURN_SPEED = 0.8
@@ -117,7 +117,7 @@ class BasicCar(DriveMode):
         delta_time: float,
         vehicle: Vehicle,
         walls: arcade.SpriteList,
-        vehicles: arcade.SpriteList,
+        cars: arcade.SpriteList,
     ):
 
         # If there are external forces moving the car, apply friction
@@ -130,7 +130,7 @@ class BasicCar(DriveMode):
 
         # check if the car can move to its new position
         is_valid_position = self.move_controls.check_for_valid_movement(
-            vehicle, real_velocity, walls
+            vehicle, real_velocity, walls, cars
         )
 
         if is_valid_position is False:
@@ -144,7 +144,7 @@ class BasicCar(DriveMode):
 
             # check if the car can move to its new position
             is_valid_position = self.move_controls.check_for_valid_movement(
-                vehicle, smaller_velocity, walls
+                vehicle, smaller_velocity, walls, cars
             )
 
             if is_valid_position is True:

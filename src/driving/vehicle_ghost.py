@@ -21,6 +21,7 @@ DEFAULT_CONTROL_LOCKOUT = 0.4
 IMPACT_FORCE_FLOOR = 1.5
 
 AXIS_FLOOR = 0.3
+TURN_FLOOR = 5
 
 
 class Ghost(DriveMode):
@@ -125,7 +126,7 @@ class Ghost(DriveMode):
 
         angle = 0
         # to prevent jitterness from input inprecision create a floor to ignore the rotation
-        if abs(turn) > 5:
+        if abs(turn) > TURN_FLOOR:
             angle = math.copysign(1, turn) * self.turn_speed
 
         self.vehicle_velocity = (x, y, turn)
@@ -162,7 +163,7 @@ class Ghost(DriveMode):
         delta_time: float,
         vehicle: Vehicle,
         walls: arcade.SpriteList,
-        vehicles: arcade.SpriteList,
+        cars: arcade.SpriteList,
     ):
 
         # If there are external forces moving the car, apply friction
@@ -175,7 +176,7 @@ class Ghost(DriveMode):
 
         # check if the car can move to its new position
         is_valid_position = self.move_controls.check_for_valid_movement(
-            vehicle, real_velocity, walls, vehicles
+            vehicle, real_velocity, walls, cars
         )
 
         if is_valid_position is False:
@@ -189,7 +190,7 @@ class Ghost(DriveMode):
 
             # check if the car can move to its new position
             is_valid_position = self.move_controls.check_for_valid_movement(
-                vehicle, smaller_velocity, walls, vehicles
+                vehicle, smaller_velocity, walls, cars
             )
 
             if is_valid_position is True:

@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from vehicle import Vehicle
 
 
-class cars:
+class vehicles:
     Car = 0
     Ghost = 1
     Tank = 2
@@ -68,6 +68,8 @@ class MovementControls:
 
     current_acceleration: float
 
+    # index tracks which drive mode is in use
+    index: int
     drive_modes: [drive_mode]
 
     def __init__(self, sprite: arcade.Sprite):
@@ -76,17 +78,21 @@ class MovementControls:
         self.debug_world_boundary_x = DEFAULT_WORLD_SIZE_X
         self.debug_world_boundary_y = DEFAULT_WORLD_SIZE_Y
 
+        self.index = 0
         self.drive_modes = create_drive_modes(self)
 
-        self.change_car(2)
-        print(self.car_type.name)
+        self.change_car(0)
 
-    def change_car(self, index: int):
+    def change_car(self, index_change: int):
         if len(self.drive_modes) > 0:
-            clamped_index = index % (len(self.drive_modes))
+            self.index = self.index + index_change
+            if self.index >= len(self.drive_modes):
+                self.index = 0
+            elif self.index < 0:
+                self.index = len(self.drive_modes) - 1
 
-            if self.drive_modes[clamped_index] is not None:
-                self.car_type = self.drive_modes[clamped_index]
+            if self.drive_modes[self.index] is not None:
+                self.vehicle_type = self.drive_modes[self.index]
 
     #   Drive input is called by the player and passed that player's input
     #   to set what the vehicle's velocity and rotation should be
@@ -96,15 +102,15 @@ class MovementControls:
         # for changing drive modes
         if input.accelerate_axis.value > 0:
             if input.reload_button.value is True:
-                if input.primary_fire_button.value is True:
-                    self.change_car(cars.Car)
+                if input.ry_axis.value == 1:
+                    self.change_car(vehicles.Car)
                     return
-                if input.secondary_fire_button.value is True:
-                    self.change_car(cars.Ghost)
+                if input.ry_axis.value == -1:
+                    self.change_car(vehicles.Ghost)
                     return
 
-        if self.car_type is not None:
-            self.car_type.drive_input(delta_time, vehicle, input)
+        if self.vehicle_type is not None:
+            self.vehicle_type.drive_input(delta_time, vehicle, input)
 
     # called from the player to tell the vehicle to act on it's intended velocity and rotation
     def move(
@@ -112,12 +118,12 @@ class MovementControls:
         delta_time: float,
         vehicle: Vehicle,
         walls: arcade.SpriteList,
-        vehicles: arcade.SpriteList,
+        cars: arcade.SpriteList,
     ):
-        if self.car_type is not None:
-            self.car_type.move(delta_time, vehicle, walls, vehicles)
+        if self.vehicle_type is not None:
+            self.vehicle_type.move(delta_time, vehicle, walls, cars)
 
-    def check_for_valid_movement(self, vehicle: Vehicle, velocity, walls, vehicles):
+    def check_for_valid_movement(self, vehicle: Vehicle, velocity, walls, cars):
         # the shadow sprite is used to simplify math and planning to deal with the arena not being an array
 
         self.set_shadow_sprite_position(vehicle.location, velocity)
@@ -125,7 +131,7 @@ class MovementControls:
         if len(arcade.check_for_collision_with_list(self.shadow_sprite, walls)) > 0:
 
             return False
-        if len(arcade.check_for_collision_with_list(self.shadow_sprite, vehicles)) > 1:
+        if len(arcade.check_for_collision_with_list(self.shadow_sprite, cars)) > 1:
 
             return False
         return True
@@ -138,12 +144,12 @@ class MovementControls:
 
     def apply_external_force(self, vector: (float, float)):
 
-        if self.car_type is not None:
-            self.car_type.apply_external_force((vector[0], vector[1], 0))
+        if self.vehicle_type is not None:
+            self.vehicle_type.apply_external_force((vector[0], vector[1], 0))
 
     def apply_external_force(self, vector: (float, float, float)):
-        if self.car_type is not None:
-            self.car_type.apply_external_force(vector)
+        if self.vehicle_type is not None:
+            self.vehicle_type.apply_external_force(vector)
 
     def add_vector3(self, vec_a, vec_b):
         x = vec_a[0] + vec_b[0]
