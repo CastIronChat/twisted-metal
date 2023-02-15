@@ -40,7 +40,7 @@ class TwistedSound:
 
     def __init__(self):
         self._channel = MASTER.find_channel()
-        self._volume = 0.1
+        self.volume = 0.05
         self.sound = None
 
     def play(self, times=1):
