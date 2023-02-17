@@ -17,7 +17,11 @@ class LivesHud:
 
         self.sprite_lists = sprite_lists
         self.starting_lives = self.game_state_mode.lives
-        self.hud_x = hud_x - 20
+        
+        # for x in range(self.starting_lives):
+            # self.hud_x = hud_x - (x * 10)
+        self.hud_x = hud_x - ((self.starting_lives - 1) * 7)
+        # self.hud_x = hud_x # - 20
         self.hud_y = hud_y - 60
         self.hearts = []
         # self.heart = arcade.Sprite(texture=HEART, scale=1.5)
@@ -38,7 +42,7 @@ class LivesHud:
 
         for z in range(0, self.starting_lives):
             heart = arcade.Sprite(texture=HEART, scale=1.1)
-            heart.center_x = self.hud_x + (z * 15)
+            heart.center_x = self.hud_x + (z * 14)
             heart.center_y = self.hud_y
             self.hearts.append(heart)
             self.sprite_lists.huds.append(heart)
@@ -50,6 +54,7 @@ class LivesHud:
 
     def update(self):
         print('LH GSM', self.game_state_mode.lives)
+        print('self.hud_x',self.hud_x)
         # if self.game_state_mode.lives >= 1:
         #     self.heart.visible = True
         # elif self.game_state_mode.lives < 1:
