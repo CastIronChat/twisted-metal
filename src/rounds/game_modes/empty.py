@@ -25,7 +25,7 @@ class EmptyGameMode(GameMode):
         self.players = players
 
         for player in players:
-            player.game_mode_state = EmptyGameModePlayerState(player, lives = 99)
+            player.game_mode_state = EmptyGameModePlayerState(player, lives = 1)
 
 
 
@@ -50,7 +50,7 @@ class EmptyGameMode(GameMode):
 
     def on_player_death(self, player: Player):
         state = player.game_mode_state
-        state.lives = 99
+        state.lives = 1
         player.allowed_to_respawn = state.lives > 0
         
 
