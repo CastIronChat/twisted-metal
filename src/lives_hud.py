@@ -18,27 +18,11 @@ class LivesHud:
         self.sprite_lists = sprite_lists
         self.starting_lives = self.game_state_mode.lives
         
-        # for x in range(self.starting_lives):
-            # self.hud_x = hud_x - (x * 10)
+        # Sets x position of 1st heart based on how many lives player has
         self.hud_x = hud_x - ((self.starting_lives - 1) * 7)
-        # self.hud_x = hud_x # - 20
+        
         self.hud_y = hud_y - 60
         self.hearts = []
-        # self.heart = arcade.Sprite(texture=HEART, scale=1.5)
-        # self.sprite_lists.huds.append(self.heart)
-        # self.heart.center_x = self.hud_x
-        # self.heart.center_y = self.hud_y
-        # for x in self.game_state_mode.lives:
-            # self.hearts.append(self.heart[x])
-
-        # x = self.lives
-        # while x > 0:
-        #     self.hearts.append(self.heart)
-        #     x -= 1
-
-        # print(self.hearts)
-        # for y in self.hearts:
-        #     self.sprite_lists.huds.append(y)
 
         for z in range(0, self.starting_lives):
             heart = arcade.Sprite(texture=HEART, scale=1.1)
@@ -47,19 +31,7 @@ class LivesHud:
             self.hearts.append(heart)
             self.sprite_lists.huds.append(heart)
 
-
-        # self.sprite_lists.huds.append(self.hearts)
-
-            # use .scene.add_sprite instead of direct to sprite_lits?
-
     def update(self):
-        print('LH GSM', self.game_state_mode.lives)
-        print('self.hud_x',self.hud_x)
-        # if self.game_state_mode.lives >= 1:
-        #     self.heart.visible = True
-        # elif self.game_state_mode.lives < 1:
-        #     self.heart.visible = False
-        # self.heart.texture = HEART
         for x in range(self.starting_lives):
             if x <= self.game_state_mode.lives - 1:
                 self.hearts[x].visible = True
