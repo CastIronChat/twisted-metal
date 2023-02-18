@@ -7,12 +7,12 @@ from arena.arena_loader import load_arena_by_name
 from collision import ordnance_hits_vehicle, ordnance_hits_wall
 from constants import (
     ARENA,
+    GAME_MODE,
     SCREEN_HEIGHT,
     SCREEN_TITLE,
     SCREEN_WIDTH,
     TICK_DURATION,
     USE_DEBUGGER_TIMING_FIXES,
-    GAME_MODE
 )
 from debug_hud import DebugHud
 from debug_patrol_loop import DebugPatrolLoop
@@ -21,8 +21,8 @@ from global_input import GlobalInput, bind_global_inputs_to_keyboard
 from hud import Hud
 from ordnances.ordnance import update_ordnance
 from player_manager import PlayerManager
-from rounds.game_modes.stock import StockGameMode
 from rounds.game_modes.empty import EmptyGameMode
+from rounds.game_modes.stock import StockGameMode
 from rounds.round_controller import RoundController
 from sprite_lists import SpriteLists
 
@@ -58,22 +58,14 @@ class MyGame(arcade.Window):
             self.arena,
         )
 
-        if GAME_MODE == 'stock' :
+        if GAME_MODE == "stock":
             game_mode = StockGameMode(self.player_manager.players)
-        elif GAME_MODE == 'empty' :
+        elif GAME_MODE == "empty":
             game_mode = EmptyGameMode(self.player_manager.players)
-        
-        
-        # game_mode = StockGameMode(self.player_manager.players)
+
         self.round_controller = RoundController(
             game_mode, self.player_manager.players, self.arena, self.sprite_lists
         )
-        # AT THIS POINT, SOMETHING SHOULD HAVE SET GAME_MODE_STATE ON EVERY PLAYER
-        # YES, THE StockGameMode constructor DID THIS
-
-        # Chicken-and-egg wiring
-        for player in self.player_manager.players:
-            player.round_controller = self.round_controller
 
         # Debug UI for input handling
         self.input_debug_hud = DebugHud(self.player_manager.players)

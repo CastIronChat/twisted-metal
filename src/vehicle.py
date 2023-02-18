@@ -93,7 +93,7 @@ class Vehicle:
         self.primary_weapon.deactivate()
         self.secondary_weapon.deactivate()
         # Holy chained property access, batman
-        self.player.round_controller.game_mode.on_player_death(self.player)
+        self.player.game_mode.on_player_death(self.player)
 
     def respawn(self, location: tuple[float, float, float]):
         """
