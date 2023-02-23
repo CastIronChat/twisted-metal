@@ -70,7 +70,8 @@ For stock game mode.  Set lower to make debugging round lifecycle easier.
 Can be paired with PLAYER_COUNT=2
 """
 
-GAME_MODE = "stock"
+GAME_MODE = "macguffin"
 """
-For stock game mode, set to 'stock'. For empty game mode, set to 'empty'
+For Stock game mode, set to 'stock'. For Empty game mode, set to 'empty'.
+For MacGuffin game mode, set to 'macguffin'.
 """

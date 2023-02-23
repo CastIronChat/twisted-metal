@@ -59,6 +59,8 @@ FIRE = kenney_sheet_1bit.get_texture(15, 10)
 
 HEART = kenney_sheet_1bit.get_texture(39, 10)
 
+MACGUFFIN = kenney_sheet_1bit.get_texture(35, 14)
+
 VEHICLES = [load_texture(f"assets/vehicle/vehicle{index}.png") for index in range(1, 5)]
 
 PLAYER_AVATARS = [
