@@ -19,6 +19,7 @@ from weapons.laser_beam import LaserBeam
 from weapons.machine_gun import MachineGun
 from weapons.rocket_launcher import RocketLauncher
 from weapons.weapon import Weapon
+from audio import TwistedSound
 
 if TYPE_CHECKING:
     from player import Player
@@ -51,6 +52,7 @@ class Vehicle:
         self.fire_sprite = arcade.Sprite(texture=FIRE, scale=3)
         self.drive_mode_index = 0
         self.drive_modes = create_drive_modes(self)
+        self.twisted_sound = TwistedSound()
 
         self.movement = MovementControls(
             LinkedSprite[Vehicle](texture=VEHICLES[1], scale=0.18)
@@ -94,6 +96,7 @@ class Vehicle:
         self.secondary_weapon.deactivate()
         # Holy chained property access, batman
         self.player.game_mode.on_player_death(self.player)
+        self.twisted_sound.play(self.twisted_sound.explosion1, 0.25)
 
     def respawn(self, location: tuple[float, float, float]):
         """

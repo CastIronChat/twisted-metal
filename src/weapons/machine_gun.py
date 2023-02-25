@@ -25,7 +25,6 @@ class MachineGun(Weapon):
         self.bullet_damage = 10
         self.fire_rate = 8
         self.muzzle_transform = (7, 2, 0)
-        self.twisted_sound.select(self.twisted_sound.machine_gun1)
 
     def update(self, delta_time: float):
         if self.input_button.value and self.time_since_shoot > 1 / self.fire_rate:
@@ -42,5 +41,5 @@ class MachineGun(Weapon):
             self.bullet_speed,
             self.weapon_sprite.radians,
         )
-        self.twisted_sound.play()
+        self.twisted_sound.play(self.twisted_sound.machine_gun1)
         self.time_since_shoot = 0

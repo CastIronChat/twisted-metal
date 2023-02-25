@@ -15,15 +15,17 @@ MASTER.set_num_channels(128)
 
 # This class is intended to be used as a controller
 # that controls a universal mixer.
-# The interface allows devs to add sounds as objects
+# The interface allows devs to add sounds as properties on objects
 # with some control over volume without blocking other sounds.
 class TwistedSound:
     machine_gun1 = "assets/audio/machine_gun1.ogg"
+    explosion1 = "assets/audio/explosion1.ogg"
 
     sound = None
     channel = None
 
-    def play(self, times=1, volume=0.05):
+    def play(self, selection, volume=0.05, times=1):
+        self.select(selection)
         self.channel = MASTER.find_channel()
         self.channel.set_volume(volume)
         self.channel.play(self.sound, times - 1)
