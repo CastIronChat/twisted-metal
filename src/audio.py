@@ -13,7 +13,6 @@ MASTER = pygame.mixer
 MASTER.init()
 MASTER.set_num_channels(128)
 
-
 # This class is intended to be used as a controller
 # that controls a universal mixer.
 # The interface allows devs to add sounds as objects
