@@ -11,6 +11,7 @@ if platform.system() == 'Windows':
 
 MASTER = pygame.mixer
 MASTER.init()
+MASTER.set_num_channels(128)
 
 
 # This class is intended to be used as a controller
@@ -22,18 +23,6 @@ class TwistedSound:
 
     sound = None
     channel = None
-
-    @property
-    def volume(self):
-        return self._volume
-
-    # A value of 1 is very loud
-    @volume.setter
-    def volume(self, value):
-        self._volume = value
-
-    def __init__(self):
-        self.volume = 0.05
 
     def play(self, times=1, volume=0.05):
         self.channel = MASTER.find_channel()
