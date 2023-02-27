@@ -31,6 +31,10 @@ class LivesHud:
             self.hearts.append(heart)
             self.sprite_lists.huds.append(heart)
 
+        self.score = 56
+        output = f"Time: {self.score}"
+        time_clock = arcade.draw_text(output, self.hud_x-5, self.hud_y-68, arcade.color.WHITE, 14)
+        self.sprite_lists.huds
     def update(self):
         for x in range(self.starting_lives):
             if x <= self.game_state_mode.lives - 1:

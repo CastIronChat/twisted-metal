@@ -61,6 +61,8 @@ HEART = kenney_sheet_1bit.get_texture(39, 10)
 
 MACGUFFIN = kenney_sheet_1bit.get_texture(35, 14)
 
+MACGUFFINS = [kenney_sheet_1bit.get_texture((30+x), 14) for x in range(5, 9)]
+
 VEHICLES = [load_texture(f"assets/vehicle/vehicle{index}.png") for index in range(1, 5)]
 
 PLAYER_AVATARS = [

@@ -10,7 +10,7 @@ from player import Player
 from player_manager import PlayerManager
 from rounds.game_modes.game_mode import GameMode, GameModePlayerState
 from sprite_lists import SpriteLists
-from textures import MACGUFFIN
+from textures import MACGUFFIN, MACGUFFINS
 from iron_math import get_transformed_location, move_sprite_relative_to_parent
 
 class MacGuffinGameModePlayerState(GameModePlayerState):
@@ -59,10 +59,19 @@ class MacGuffinGameMode(GameMode):
 
         self.sprite_lists = sprite_lists
 
-        self.macguffin = arcade.Sprite(texture=MACGUFFIN)
-        self.macguffin.center_x = 56
-        self.macguffin.center_y = 56
-        sprite_lists.vehicle_attachments.append(self.macguffin)
+        # z = 0
+        # while z < 5:
+        #     self.macguffins = (arcade.Sprite(texture=MACGUFFINS[z], scale=2))
+        #     z += 1
+        #     if z == 4:
+        #         z = 0
+        
+        self.macguffins = arcade.Sprite(texture=MACGUFFINS[2], scale=2)
+
+        # self.macguffin = arcade.Sprite(texture=MACGUFFIN, scale=2)
+        self.macguffins.center_x = 56
+        self.macguffins.center_y = 56
+        sprite_lists.vehicle_attachments.append(self.macguffins)
         
         self._winner: Optional[Player] = None
 
@@ -72,17 +81,27 @@ class MacGuffinGameMode(GameMode):
     def on_round_start(self):
         pass
 
-    def create_hud(self):
-        pass
-
-    def create_player_hud(self, player: Player):
-        pass
 
     def update(self, delta_time: float):
-        macguffin_hit_list = arcade.check_for_collision_with_list(self.macguffin, self.sprite_lists.vehicles)
+
+        # z = 0
+        # while z < 5:
+        #     self.macguffins = (arcade.Sprite(texture=MACGUFFINS[z], scale=2))
+        #     z += 1
+        #     if z == 4:
+        #         z = 0
+
+        macguffin_hit_list = arcade.check_for_collision_with_list(self.macguffins, self.sprite_lists.vehicles)
+        
+        z = 0
         for player in macguffin_hit_list:
-            move_sprite_relative_to_parent(self.macguffin, player, (-15, 0, 0))
+            move_sprite_relative_to_parent(self.macguffins, player, (-15, 0, 0))
+            self.macguffins.texture = MACGUFFINS[z]
+            z += 1
+            if z == 4:
+                z = 0
         # pass
+
 
     def on_player_death(self, player: Player):
         state = player.game_mode_state
