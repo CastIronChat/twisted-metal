@@ -7,8 +7,6 @@ from player import Player
 from rounds.game_modes.game_mode import GameMode
 from sprite_lists import SpriteLists
 
-# from player_manager import PlayerManager
-
 if TYPE_CHECKING:
     from player import Player
 
@@ -16,7 +14,7 @@ if TYPE_CHECKING:
 class EmptyGameModePlayerState:
     def __init__(self, player: Player, lives: int):
         self.lives = lives
-        self.player = player
+        # self.player = player
 
 
 class EmptyGameMode(GameMode):
@@ -34,20 +32,10 @@ class EmptyGameMode(GameMode):
     def on_round_start(self):
         pass
 
-    def create_hud(self):
-        pass
-
-    def create_player_hud(self, player: Player):
-        pass
-
     def update(self, delta_time: float):
         pass
 
-    def on_player_death(self, player: Player):
-        state = player.game_mode_state
-        state.lives = 1
-        player.allowed_to_respawn = state.lives > 0
-
-    def get_winner(self) -> Optional[Player]:
-
-        return None
+    # def on_player_death(self, player: Player):
+    #     state = player.game_mode_state
+    #     state.lives = 1
+    #     player.allowed_to_respawn = state.lives > 0

@@ -2,8 +2,6 @@ from __future__ import annotations
 
 import os
 
-# from rounds.game_modes.stock import StockGameMode
-
 
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
