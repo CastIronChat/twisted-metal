@@ -3,3 +3,4 @@ arcade
 mypy
 black
 isort
+pygame

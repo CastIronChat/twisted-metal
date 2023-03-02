@@ -54,6 +54,8 @@ class PlayerManager:
 
         _controller_manager = ControllerManager()
         controllers = _controller_manager.get_controllers()
+        if not controllers:
+            controllers = []
 
         for player_index in range(0, PLAYER_COUNT):
             controller = None

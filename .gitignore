@@ -1,2 +1,5 @@
 __pycache__
 assets/arenas/arenas.tiled-session
+.idea/
+*.DS_Store
+*.swp

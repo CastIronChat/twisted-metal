@@ -6,6 +6,7 @@ import arcade
 
 from player_input import VirtualButton
 from sprite_lists import SpriteLists
+from audio import TwistedSound
 
 
 class Weapon:
@@ -31,6 +32,7 @@ class Weapon:
         self.time_since_shoot = 100
         self.weapon_sprite = arcade.Sprite(texture=self.weapon_icon, scale=1)
         self.sprite_lists.vehicle_attachments.append(self.weapon_sprite)
+        self.twisted_sound = TwistedSound()
         self.setup()
 
     def setup(self):
