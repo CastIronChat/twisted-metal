@@ -96,7 +96,7 @@ class Vehicle:
         self.secondary_weapon.deactivate()
         # Holy chained property access, batman
         self.player.game_mode.on_player_death(self.player)
-        self.twisted_sound.play(self.twisted_sound.explosion1, 0.25)
+        self.twisted_sound.play(self.twisted_sound.EXPLOSION1, 0.25)
 
     def respawn(self, location: tuple[float, float, float]):
         """
