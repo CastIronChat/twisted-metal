@@ -69,6 +69,8 @@ class StockGameMode(GameMode):
         # E.g. maybe it's fun to kill self during victory dance.
         if self._winner is None:
             self._winner = self._check_if_we_have_a_winner()
+        if state.lives == 0:
+            player.controls_active = False
 
     def _check_if_we_have_a_winner(self):
         players_with_remaining_lives: list[Player] = []

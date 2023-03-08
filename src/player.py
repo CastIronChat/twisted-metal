@@ -39,7 +39,7 @@ class Player:
         criteria that mode has
         """
         self.respawn_time_passed: float = 0
-        self.time_to_respawn: float = 5
+        self.time_to_respawn: float = 10
         self.player_index = player_index
 
     def __hash__(self) -> int:
@@ -52,7 +52,10 @@ class Player:
         #
         if not self.alive and self.allowed_to_respawn:
             self.respawn_time_passed = self.respawn_time_passed + delta_time
-            if self.respawn_time_passed > self.time_to_respawn:
+            if (
+                self.respawn_time_passed > self.time_to_respawn
+                or self.input.reload_button.pressed
+            ):
                 self.respawn()
 
     def round_start_spawn(self):
