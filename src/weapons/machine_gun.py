@@ -41,5 +41,5 @@ class MachineGun(Weapon):
             self.bullet_speed,
             self.weapon_sprite.radians,
         )
-        self.twisted_sound.play(self.twisted_sound.machine_gun1)
+        self.twisted_sound.play(self.twisted_sound.MACHINE_GUN1)
         self.time_since_shoot = 0
