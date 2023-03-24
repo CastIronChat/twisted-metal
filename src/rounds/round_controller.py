@@ -12,6 +12,7 @@ from constants import SCREEN_HEIGHT, SCREEN_WIDTH
 from iron_math import add_vec, polar_to_cartesian
 from rounds.game_modes.game_mode import GameMode
 from sprite_lists import SpriteLists
+from audio import TwistedSound
 
 if TYPE_CHECKING:
     from player import Player
@@ -49,6 +50,7 @@ class RoundController:
     _state: State
     _countdown_time: float
     _victory_lap_countdown: float
+    _countdown_sound_switch: bool
 
     def __init__(
         self,
@@ -84,6 +86,7 @@ class RoundController:
         )
 
         self._state = State.INIT
+        self.twisted_sound = TwistedSound()
 
     def update(self, delta_time: float):
         # Implemented as a state machine.  `self._state` determines what phase we are in.
@@ -92,6 +95,7 @@ class RoundController:
 
         if self._state == State.INIT:
             self._countdown_time = COUNTDOWN_SECONDS
+            self._countdown_sound_switch = False
             self._hud.text = ""
 
             # Init for new round and reset from the previous round
@@ -110,11 +114,19 @@ class RoundController:
             if self._countdown_time > 0:
                 display_countdown_number = math.ceil(self._countdown_time)
                 self._hud.text = display_countdown_number
-
+                if display_countdown_number % 2 == 0:
+                    if self._countdown_sound_switch == True:
+                        self.twisted_sound.play(self.twisted_sound.COUNTDOWN1)
+                        self._countdown_sound_switch = False
+                else:
+                    if self._countdown_sound_switch == False:
+                        self.twisted_sound.play(self.twisted_sound.COUNTDOWN1)
+                        self._countdown_sound_switch = True
             else:
                 # Timer reached zero
                 # Start the game
                 self._hud.text = "GO"
+                self.twisted_sound.play(self.twisted_sound.COUNTDOWN2)
                 for player in self._players:
                     player.controls_active = True
                 self.game_mode.on_round_start()

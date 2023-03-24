@@ -21,6 +21,8 @@ MASTER.set_num_channels(128)
 class TwistedSound:
     EXPLOSION1 = "assets/audio/explosion1.ogg"
     MACHINE_GUN1 = "assets/audio/machine_gun1.ogg"
+    COUNTDOWN1 = "assets/audio/countdown1.ogg"
+    COUNTDOWN2 = "assets/audio/countdown2.ogg"
 
     sound: Optional[MASTER.Sound] = None
     channel: Optional[MASTER.Channel] = None
