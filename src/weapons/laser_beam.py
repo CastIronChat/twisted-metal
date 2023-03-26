@@ -36,6 +36,7 @@ class LaserBeam(Weapon):
 
     def shoot(self):
         self.beam.append_sprite()
+        self.twisted_sound.play(self.twisted_sound.LASER, .05, -1)
 
     def swap_out(self):
         super().swap_out()
@@ -47,6 +48,7 @@ class LaserBeam(Weapon):
     def remove_beam(self):
         if self.beam.exists:
             self.beam.remove_sprite()
+            self.twisted_sound.stop()
 
     def create_beam(self):
         beam_appearance = LinkedSpriteSolidColor[Ordnance](
