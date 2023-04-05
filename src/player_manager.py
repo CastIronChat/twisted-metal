@@ -57,7 +57,7 @@ class PlayerManager:
         if not controllers:
             controllers = []
 
-        for player_index in range(0, PLAYER_COUNT):
+        for player_index in range(0, 4):
             controller = None
             controller_index = player_index
             if (
