@@ -1,16 +1,26 @@
 from __future__ import annotations
 
 import math
+from enum import Enum
 from typing import TYPE_CHECKING
 
 import arcade
 
 import constants
+from driving.create_drive_modes import create_drive_modes
 from player_input import PlayerInput
 
 # This allows a circular import only for the purposes of type hints
 if TYPE_CHECKING:
     from vehicle import Vehicle
+
+
+class vehicles:
+    Car = 0
+    Ghost = 1
+    Tank = 2
+    Walker = 3
+
 
 # This is setup for the Player to call "drive_input" where the vehicle updates it's
 # intended velocity and rotation based on the player input
@@ -24,17 +34,16 @@ if TYPE_CHECKING:
 
 DEFAULT_WORLD_SIZE_X = constants.SCREEN_WIDTH
 DEFAULT_WORLD_SIZE_Y = constants.SCREEN_HEIGHT
-DEFAULT_ACCELERATION_RATE = 2.5
-DEFAULT_BRAKE_RATE = 0.8
-DEFAULT_FRICTION = 0.1
-DEFAULT_DRIVE_SPEED = 150
-DEFAULT_TURN_SPEED = 75
+DEFAULT_ACCELERATION_RATE = 1.5
+DEFAULT_BRAKE_RATE = 10.8
+DEFAULT_FRICTION = 0.91
+DEFAULT_DRIVE_SPEED = 10.1
+DEFAULT_TURN_SPEED = 1.1
 
 IMPACT_FORCE_FLOOR = 1.5
 
 
 class MovementControls:
-
     # The stat for max (x,y) linear speed
     drive_speed: float
     # The stat for max rotational speed
@@ -47,140 +56,106 @@ class MovementControls:
     # how fast the vehicle's current acceleration slows while not accelerating
     friction: float
 
+    # velocity is x,y,angular
+    # the velocity applied when updationg the position
+    # is a combination of the vehicle velocity and external forces
+    real_velocity: (float, float, float)
+    # external is the combination of forces applied on the vehicle
+    external_velocity: (float, float, float)
     # These are the values the vehicle updates in "drive_input"
-    current_velocity_x: float
-    current_velocity_y: float
-    current_velocity_turn: float
+    # representing the intended movement of the player's input
+    vehicle_velocity: (float, float, float)
+
     current_acceleration: float
+
+    # index tracks which drive mode is in use
+    index: int
+    drive_modes: [drive_mode]
 
     def __init__(self, sprite: arcade.Sprite):
         self.shadow_sprite = sprite
-        self.shadow_sprite.center_x = sprite.center_x
-        self.shadow_sprite.center_y = sprite.center_y
-        self.shadow_sprite.angle = sprite.angle
+
         self.debug_world_boundary_x = DEFAULT_WORLD_SIZE_X
         self.debug_world_boundary_y = DEFAULT_WORLD_SIZE_Y
-        self.current_velocity_x = 0
-        self.current_velocity_y = 0
-        self.current_velocity_turn = 0
-        self.current_acceleration = 0
-        self.external_velocity_turn = 0
 
-        self.acceleration_rate = DEFAULT_ACCELERATION_RATE
-        self.brake_rate = DEFAULT_BRAKE_RATE
-        self.friction = DEFAULT_FRICTION
-        self.drive_speed = DEFAULT_DRIVE_SPEED
-        self.turn_speed = DEFAULT_TURN_SPEED
-        self.impact_buffer = 0
+        self.index = 0
+        self.drive_modes = create_drive_modes(self)
+
+        self.change_car(0)
+
+    def change_car(self, index_change: int):
+        if len(self.drive_modes) > 0:
+            self.index = self.index + index_change
+            if self.index >= len(self.drive_modes):
+                self.index = 0
+            elif self.index < 0:
+                self.index = len(self.drive_modes) - 1
+
+            if self.drive_modes[self.index] is not None:
+                self.vehicle_type = self.drive_modes[self.index]
 
     #   Drive input is called by the player and passed that player's input
     #   to set what the vehicle's velocity and rotation should be
     #   Does not change the vehicles position
     def drive_input(self, delta_time: float, vehicle: Vehicle, input: PlayerInput):
 
-        if self.impact_buffer > 0:
-            self.impact_buffer -= 1
-            if self.impact_buffer <= 0:
-                self.external_velocity_turn = 0
+        # for changing drive modes
+        if input.accelerate_axis.value > 0:
+            if input.reload_button.value is True:
+                if input.ry_axis.value == 1:
+                    self.change_car(vehicles.Car)
+                    return
+                if input.ry_axis.value == -1:
+                    self.change_car(vehicles.Ghost)
+                    return
 
-        # updates the vehicles intended  velocity and rotation based on type
-        acceleration_change = 0
-        self.shadow_sprite.center_x = vehicle.center_x
-        self.shadow_sprite.center_y = vehicle.center_y
-
-        if input.accelerate_axis.value:
-            if self.current_acceleration < 0:
-                acceleration_change += self.brake_rate
-            acceleration_change += self.acceleration_rate
-        elif input.brake_axis.value:
-            acceleration_change -= self.brake_rate
-        else:
-            if abs(self.current_acceleration) != 0:
-                if abs(self.current_acceleration) <= delta_time * self.friction:
-                    self.current_acceleration = 0
-                else:
-                    acceleration_change -= (
-                        math.copysign(1, self.current_acceleration) * self.friction
-                    )
-        # the current acceleration is used to have speed progress from zero to its maximum
-        self.current_acceleration = self.clamp(
-            self.current_acceleration + (acceleration_change * delta_time), -1, 1
-        )
-
-        car_angle = math.radians(vehicle.angle)
-
-        # find the X and Y movement based on the angle of the sprite
-        self.current_velocity_x = (
-            self.drive_speed
-            * math.cos(car_angle)
-            * self.current_acceleration
-            * delta_time
-        )
-        self.current_velocity_y = (
-            self.drive_speed
-            * math.sin(car_angle)
-            * self.current_acceleration
-            * delta_time
-        )
-
-        # a stationary car cant turn
-        self.current_velocity_turn = (
-            input.x_axis.value
-            * self.turn_speed
-            * delta_time
-            * -self.current_acceleration
-        )
-
-    def reset_velocity(self):
-        self.current_acceleration = 0
-        self.current_velocity_x = 0
-        self.current_velocity_y = 0
-        self.current_velocity_turn = 0
+        if self.vehicle_type is not None:
+            self.vehicle_type.drive_input(delta_time, vehicle, input)
 
     # called from the player to tell the vehicle to act on it's intended velocity and rotation
-    def move(self, delta_time: float, vehicle: Vehicle, walls: arcade.SpriteList):
-        # the shadow sprite is used to simply math and planning to deal with the arena not being an array
-        self.shadow_sprite.center_x = vehicle.center_x + self.current_velocity_x
-        self.shadow_sprite.center_y = vehicle.center_y + self.current_velocity_y
-        self.shadow_sprite.angle = (
-            self.current_velocity_turn + vehicle.angle + self.external_velocity_turn
-        )
-        walls_touching_player = arcade.check_for_collision_with_list(
-            self.shadow_sprite, walls
-        )
-        if len(walls_touching_player) > 0:
-            # high speed impact should damage the car, and greatly cut the velocity
-            if self.current_acceleration > IMPACT_FORCE_FLOOR:
-                self.current_velocity_x -= self.current_velocity_x * 0.5
-                self.current_velocity_y -= self.current_velocity_y * 0.5
-            else:
-                self.current_acceleration -= (
-                    self.current_acceleration * self.acceleration_rate * delta_time
-                )
-                self.current_velocity_x = 0
-                self.current_velocity_y = 0
-                if abs(self.current_acceleration) < 0.1:
-                    self.current_acceleration = 0
-                    self.current_velocity_x = 0
-                    self.current_velocity_y = 0
+    def move(
+        self,
+        delta_time: float,
+        vehicle: Vehicle,
+        walls: arcade.SpriteList,
+        cars: arcade.SpriteList,
+    ):
+        if self.vehicle_type is not None:
+            self.vehicle_type.move(delta_time, vehicle, walls, cars)
 
-            self.shadow_sprite.center_x = vehicle.center_x
-            self.shadow_sprite.center_y = vehicle.center_y
-        else:
-            # no wall collisions means a valid spot to move to
-            vehicle.location = (
-                self.shadow_sprite.center_x,
-                self.shadow_sprite.center_y,
-                self.shadow_sprite.radians,
-            )
+    def check_for_valid_movement(self, vehicle: Vehicle, velocity, walls, cars):
+        # the shadow sprite is used to simplify math and planning to deal with the arena not being an array
 
-        # NOTE: place holder boundaries to wrap aroung like pacman
-        if self.debug_world_boundary_x != 0:
-            vehicle.location = (
-                vehicle.center_x % self.debug_world_boundary_x,
-                vehicle.center_y % self.debug_world_boundary_y,
-                vehicle.radians,
-            )
+        self.set_shadow_sprite_position(vehicle.location, velocity)
+
+        if len(arcade.check_for_collision_with_list(self.shadow_sprite, walls)) > 0:
+
+            return False
+        if len(arcade.check_for_collision_with_list(self.shadow_sprite, cars)) > 1:
+
+            return False
+        return True
+
+    def set_shadow_sprite_position(self, location, vector):
+
+        self.shadow_sprite.center_x = location[0] + vector[0]
+        self.shadow_sprite.center_y = location[1] + vector[1]
+        self.shadow_sprite.angle = location[2] + vector[2]
+
+    def apply_external_force(self, vector: (float, float)):
+
+        if self.vehicle_type is not None:
+            self.vehicle_type.apply_external_force((vector[0], vector[1], 0))
+
+    def apply_external_force(self, vector: (float, float, float)):
+        if self.vehicle_type is not None:
+            self.vehicle_type.apply_external_force(vector)
+
+    def add_vector3(self, vec_a, vec_b):
+        x = vec_a[0] + vec_b[0]
+        y = vec_a[1] + vec_b[1]
+        angle = vec_a[2] + vec_b[2]
+        return (x, y, angle)
 
     def clamp(self, num, min_value, max_value):
         return max(min(num, max_value), min_value)
