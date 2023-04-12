@@ -33,7 +33,7 @@ class LivesHud:
 
     def update(self):
         for x in range(self.starting_lives):
-            if x <= self.game_state_mode.lives - 1:
+            if x < self.game_state_mode.lives:
                 self.hearts[x].visible = True
             else:
                 self.hearts[x].visible = False

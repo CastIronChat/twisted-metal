@@ -55,8 +55,8 @@ class PlayerHud:
 
         if isinstance(self.player.game_mode_state, StockGameModePlayerState):
             self.lives_hud = LivesHud(self.player.game_mode_state, hud_x, hud_y, sprite_lists)
-        elif isinstance(self.player.game_mode_state, EmptyGameModePlayerState):
-            self.lives_hud = LivesHud(self.player.game_mode_state, hud_x, hud_y, sprite_lists)
+        # elif isinstance(self.player.game_mode_state, EmptyGameModePlayerState):
+        #     self.lives_hud = LivesHud(self.player.game_mode_state, hud_x, hud_y, sprite_lists)
 
     def update(self):
 
@@ -81,4 +81,5 @@ class PlayerHud:
         else:
             self.player_respawn_countdown_sprite.visible = False 
         
-        self.lives_hud.update()
+        if isinstance(self.player.game_mode_state, StockGameModePlayerState):
+            self.lives_hud.update()

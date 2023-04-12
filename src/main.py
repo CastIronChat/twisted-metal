@@ -71,7 +71,6 @@ class MyGame(arcade.Window):
         self.input_debug_hud = DebugHud(self.player_manager.players)
 
         # Player Huds
-        # WHEN WE CREATE HUD, EACH PLAYER SHOULD ALREADY HAVE GAME_MODE_STATE ON IT
         self.hud = Hud(self.player_manager.players, self.sprite_lists)
 
         # Debug thingie that puppeteers a player on a patrol loop
