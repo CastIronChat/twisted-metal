@@ -98,11 +98,19 @@ class Vehicle:
 
     def respawn(self, location: tuple[float, float, float]):
         """
-        Called either following a death *or* when round starts / restarts.
+        Called when round starts / restarts.
         """
         self.health = 100
         self.fire_sprite.remove_from_sprite_lists()
         self.location = location
+        self.movement.reset_velocity()
+
+    def ghost_respawn(self):
+        """
+        Called following a death.
+        """
+        self.health = 100
+        self.fire_sprite.remove_from_sprite_lists()
         self.movement.reset_velocity()
 
     def _swap_weapons(self):

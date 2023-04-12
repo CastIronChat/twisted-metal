@@ -56,13 +56,19 @@ class Player:
                 self.respawn_time_passed > self.time_to_respawn
                 or self.input.reload_button.pressed
             ):
-                self.respawn()
+                self.ghost_respawn()
 
     def round_start_spawn(self):
         """
         Spawning that happens at round start
         """
         self._spawn(self._initial_spawn_point)
+
+    def ghost_respawn(self):
+
+        self.alive = True
+        self.respawn_time_passed = 0
+        self.vehicle.ghost_respawn()
 
     def respawn(self):
         """
