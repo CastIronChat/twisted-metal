@@ -46,7 +46,10 @@ def load_arena_by_name(name: str) -> Arena:
                 "initial_spawn_for_player"
             )
             initial_spawn_for_player = None
-            if initial_spawn_for_player_str is not None:
+            if (
+                initial_spawn_for_player_str is not None
+                and initial_spawn_for_player_str != ""
+            ):
                 initial_spawn_for_player = int(initial_spawn_for_player_str)
 
             spawn_point = SpawnPoint(transform, initial_spawn_for_player)

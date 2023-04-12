@@ -27,7 +27,7 @@
     <property name="initial_spawn_for_player" value="0"/>
    </properties>
   </object>
-  <object id="22" template="tiled_templates/spawn_point.tx" class="SpawnPoint" x="390.16" y="342.738" rotation="90.3662"/>
+  <object id="22" class="SpawnPoint" gid="1" x="390.16" y="342.738" rotation="90.3662"/>
   <object id="25" class="PatrolWaypoint" x="668.667" y="322">
    <properties>
     <property name="next" type="object" value="26"/>
