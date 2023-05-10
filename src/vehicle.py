@@ -61,7 +61,7 @@ class Vehicle:
     def update(self, delta_time: float):
 
         # Driving and movement
-        if self.player.alive and self.player.controls_active:
+        if self.player.controls_active:
             self.movement.drive_input(delta_time, self, self.player.input)
         self.movement.move(
             delta_time, self, self.sprite_lists.walls, self.sprite_lists.vehicles
@@ -76,7 +76,7 @@ class Vehicle:
             if self.player.input.swap_weapons_button.pressed:
                 self._swap_weapons()
 
-        if self.hit_indicator:
+        if self.hit_indicator and self.player.alive:
             self.time_since_hit += delta_time
             if self.time_since_hit > HIT_INDICATOR_DURATION:
                 self.sprite.alpha = 255
@@ -100,14 +100,23 @@ class Vehicle:
         self.secondary_weapon.deactivate()
         # Holy chained property access, batman
         self.player.game_mode.on_player_death(self.player)
+        self.sprite.alpha = 100
 
     def respawn(self, location: tuple[float, float, float]):
         """
-        Called either following a death *or* when round starts / restarts.
+        Called when round starts / restarts.
         """
         self.health = 100
         self.fire_sprite.remove_from_sprite_lists()
         self.location = location
+        self.movement.reset_velocity()
+
+    def ghost_respawn(self):
+        """
+        Called following a death.
+        """
+        self.health = 100
+        self.fire_sprite.remove_from_sprite_lists()
         self.movement.reset_velocity()
 
     def _swap_weapons(self):

@@ -39,7 +39,7 @@ class Player:
         criteria that mode has
         """
         self.respawn_time_passed: float = 0
-        self.time_to_respawn: float = 5
+        self.time_to_respawn: float = 10
         self.player_index = player_index
 
     def __hash__(self) -> int:
@@ -52,14 +52,23 @@ class Player:
         #
         if not self.alive and self.allowed_to_respawn:
             self.respawn_time_passed = self.respawn_time_passed + delta_time
-            if self.respawn_time_passed > self.time_to_respawn:
-                self.respawn()
+            if (
+                self.respawn_time_passed > self.time_to_respawn
+                or self.input.reload_button.pressed
+            ):
+                self.ghost_respawn()
 
     def round_start_spawn(self):
         """
         Spawning that happens at round start
         """
         self._spawn(self._initial_spawn_point)
+
+    def ghost_respawn(self):
+
+        self.alive = True
+        self.respawn_time_passed = 0
+        self.vehicle.ghost_respawn()
 
     def respawn(self):
         """
