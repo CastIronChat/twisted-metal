@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 
+
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 SCREEN_TITLE = "John Deer Clown School"
@@ -27,7 +28,7 @@ and triggers are primary/secondary fire.  At this early stage of development,
 this flag is meant for experimentation.
 """
 
-PLAYER_COUNT = 4
+PLAYER_COUNT = 2
 KEYBOARD_PLAYER_INDEX = 0
 KEYBOARD_PLAYER_ALSO_USES_A_CONTROLLER = True
 """
@@ -65,4 +66,10 @@ STOCK_LIVES_PER_PLAYER = 3
 """
 For stock game mode.  Set lower to make debugging round lifecycle easier.
 Can be paired with PLAYER_COUNT=2
+"""
+
+GAME_MODE = "stock"
+"""
+For stock game mode, set to 'stock'. For empty game mode, set to 'empty'
+Empty Game mode will currently will draw one heart for each player, but lives are infinte.
 """

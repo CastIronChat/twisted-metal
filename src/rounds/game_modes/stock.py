@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Optional, cast
 
 from arena.arena import Arena
-from constants import STOCK_LIVES_PER_PLAYER
+from constants import GAME_MODE, STOCK_LIVES_PER_PLAYER
 from player import Player
 from player_manager import PlayerManager
 from rounds.game_modes.game_mode import GameMode, GameModePlayerState
@@ -11,6 +11,7 @@ from sprite_lists import SpriteLists
 
 
 class StockGameModePlayerState(GameModePlayerState):
+
     """
     State of a player relevant in the Stock game mode.
     """
